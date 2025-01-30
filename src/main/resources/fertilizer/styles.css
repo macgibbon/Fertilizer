@@ -1,0 +1,36 @@
+
+.text-field-table-cell:even {
+	-fx-background-color:lightgoldenrodyellow ;
+}
+
+.text-field-table-cell:odd {
+	-fx-background-color: lightgrey;
+}
+
+.text-field-table-cell.pricecolumn {
+	-fx-background-color: honeydew;
+}
+
+.text-field-table-cell.pricecolumn:selected {
+	-fx-background-color: deepskyblue;
+}
+
+.text-field-table-cell:empty {
+	-fx-background-color: white;
+}
+
+.text-field-table-cell:selected {
+	-fx-background-color: deepskyblue;
+	-fx-padding:0;
+	-fx-text-fill : black;
+}
+
+.text-field-table-cell.pricecolumn:empty {
+	-fx-background-color: white;
+}
+
+.text-field-table-cell .text-field {
+   -fx-padding: 1; 
+   -fx-border-color:blue; 
+   -fx-background-color:yellow;  
+}

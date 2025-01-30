@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fertilizer.MainController">
+   <center>
+      <TabPane fx:id="tabpane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+        <tabs>
+            <Tab text="Prices">
+               <content>
+                  <TableView fx:id="pricestable" />
+               </content>
+            </Tab>
+            <Tab text="Requirements">
+               <content>                
+                <TableView fx:id="requirementstable" />
+               </content>
+            </Tab>
+          <Tab text="Ingredients">
+               <content>
+                 <TableView fx:id="ingredientstable" />
+               </content>
+            </Tab>
+            <Tab fx:id="tabsolution" text="Solution">
+               <content>
+                  <BorderPane prefHeight="200.0" prefWidth="200.0">
+                     <center>
+                        <TableView fx:id="solutiontable" BorderPane.alignment="CENTER" />
+                     </center>
+                  </BorderPane>
+               </content>
+            </Tab>
+            <Tab text="Work Order">
+               <content>
+                  <TableView fx:id="worktable" />
+               </content>
+            </Tab>
+        </tabs>
+      </TabPane>
+   </center>
+   <top>
+      <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+        <buttons>
+          <Button fx:id="buttonPrices" mnemonicParsing="false" onAction="#editPrices" text="Edit Prices" />
+            <Button fx:id="buttonRequirements" mnemonicParsing="false" onAction="#editRequirements" text="Edit Requirements" />
+            <Button fx:id="buttonAnalysis" mnemonicParsing="false" onAction="#editAnalysis" text="Edit Analysis" />
+            <Button fx:id="buttonSolve" mnemonicParsing="false" onAction="#solve" text="Solve" />
+        </buttons>
+      </ButtonBar>
+   </top>
+   <bottom>
+      <TextArea fx:id="textarea" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+   </bottom>
+</BorderPane>
