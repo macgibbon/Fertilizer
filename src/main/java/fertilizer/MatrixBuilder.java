@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class MatrixBuilder {
 
-    private double[] ingredientPrices, nutrientRequirements;
+
     private double[][] analysisMatrix;
 
     private LinkedHashMap<String,Double> ingredientMap, nutrientMap;
@@ -22,15 +22,9 @@ public class MatrixBuilder {
         ingredientMap = priceRows.stream()
                 .skip(1) // skip headers
                 .collect(Collectors.toMap(row -> row.get(0), row -> convertDouble(row.get(1)), (x, y) -> y, LinkedHashMap::new));
-        
-        ingredientPrices = ingredientMap.values().stream()
-                .mapToDouble(val -> val/2000.0).toArray();        
 
         nutrientMap = requirementRows.stream().skip(1) // skip headers
                 .collect(Collectors.toMap(row -> row.get(0), row -> convertDouble(row.get(1)), (x, y) -> y, LinkedHashMap::new));        
-
-        nutrientRequirements = nutrientMap.values().stream()
-                .mapToDouble(val -> val).toArray();
         
         analysisIngredientMap = new HashMap<String, Integer>();
         for (int i = 1; i < ingredientRows.size(); i++) {
@@ -71,8 +65,16 @@ public class MatrixBuilder {
         return nutrientMap;
     }
 
-    public double[][] getAnalysisMatrixs() {
-        return analysisMatrix;
+    public ArrayList<ArrayList<Double>> getAnalysisMatrixs() {
+       ArrayList<ArrayList<Double>> matrixList = new ArrayList<>();
+       for (int i = 0; i < analysisMatrix.length; i++) {
+           ArrayList<Double> rowList= new ArrayList<>();
+           for (int j = 0; j <analysisMatrix[i].length; j++) {
+               rowList.add(analysisMatrix[i][j]);
+           } 
+           matrixList.add(rowList);       
+       }
+       return matrixList;
     }
 
 }

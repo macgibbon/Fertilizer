@@ -24,18 +24,20 @@ import javafx.util.converter.DefaultStringConverter;
 public class Model { 
     
     private static final double objectiveConstant= 0.0;
-
+    
+    // Inputs as collections for easier insertion and deletion
     private LinkedHashMap<String, Double> ingredientMap;
     private LinkedHashMap<String, Double> nutrientMap;
-    private double[][] coefficients;
+    private ArrayList<ArrayList<Double>> coefficients;
 
+    // Output as arrays for simplicity and easier interface with LP optimization library
     private double[] solutionIngredientAmounts;
     private String solutionPrice;
     private double[] solutionNutrientAmounts;
     private String solutionTotal;
     private ArrayList<String> solutionHeaders;
   
-    public Model( LinkedHashMap<String,Double> nutrientMap, LinkedHashMap<String,Double> ingredientMap, double[][] coefficients) {
+    public Model( LinkedHashMap<String,Double> nutrientMap, LinkedHashMap<String,Double> ingredientMap, ArrayList<ArrayList<Double>> coefficients) {
         this.ingredientMap = ingredientMap;
         this.nutrientMap = nutrientMap;
         this.coefficients = coefficients;
@@ -56,7 +58,7 @@ public class Model {
 
         Collection<LinearConstraint> constraints = new ArrayList<>();
         for (int i = 0; i < numberOfNutrientContraints; i++) {
-            double[] constraintCoefficients = coefficients[i];
+            double[] constraintCoefficients = coefficients.get(i).stream().mapToDouble(D -> D.doubleValue()).toArray();
             double constraint = nutrientAmounts[i];
             Relationship r = constraintRelationsShips[i];
             constraints.add(new LinearConstraint(constraintCoefficients, r, constraint));
@@ -80,7 +82,7 @@ public class Model {
             solutionIngredientAmounts[i] = amount;
             total+=amount;
             for (int j = 0; j < numberOfNutrientContraints; j++) {
-                double analysis = coefficients[j][i];
+                double analysis = coefficients.get(j).get(i);
                 solutionNutrientAmounts[j] += amount * analysis;
             }
         }
@@ -128,7 +130,7 @@ public class Model {
                             String ingredient = (String) ingredientMap.keySet().toArray()[row]; 
                             return new Content(ingredientMap.get(ingredient)); 
                         }
-                         return new Content(coefficients[column-1][row]);
+                         return new Content(coefficients.get(column-1).get(row));
                     }
 
                     @Override
@@ -149,7 +151,7 @@ public class Model {
                             String ingredient = (String) ingredientMap.keySet().toArray()[row]; 
                             ingredientMap.put(ingredient, cell.value);
                         }
-                        else coefficients[column-1][row]= cell.value; 
+                        else coefficients.get(column-1).set(row, cell.value); 
                         return cell;
                     }
                 };
@@ -184,7 +186,7 @@ public class Model {
             String cellValue = "";
             try {
                 cellValue = cellData.getValue().get(col).toString();
-            } catch (ArrayIndexOutOfBoundsException e) {
+            } catch (IndexOutOfBoundsException e) {
             }
             return new ReadOnlyStringWrapper(cellValue);
         });

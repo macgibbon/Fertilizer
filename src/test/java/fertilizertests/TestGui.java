@@ -34,7 +34,7 @@ public class TestGui{
     
     @Test
     void solve(FxRobot robot) {
-        robot.clickOn("Solve");
+        robot.clickOn("#solve");
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
