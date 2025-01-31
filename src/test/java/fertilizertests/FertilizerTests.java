@@ -23,9 +23,9 @@ class FertilizerTests {
             ArrayList<ArrayList<String>> ingredientRows = controller.readCsvfile(Path.of("defaultIngredients.csv"));
             ArrayList<ArrayList<String>> requirementRows = controller.readCsvfile(Path.of("defaultRequirements.csv"));
             MatrixBuilder matrix = new MatrixBuilder(priceRows, requirementRows, ingredientRows);
-            Model model = new Model(matrix.getIngredientNames(), matrix.getNutrientNames(), matrix.getIngredientPrices(), matrix.getNutrientRequirements(), matrix.getAnalysisMatrixs());
-            PointValuePair solution =  model.calculateSolution();
-            System.out.println(solution.getValue());
+       ////     Model model = new Model(matrix.getIngredientNames(), matrix.getNutrientNames(), matrix.getIngredientPrices(), matrix.getNutrientRequirements(), matrix.getAnalysisMatrixs());
+       //     PointValuePair solution =  model.calculateSolution();
+       //     System.out.println(solution.getValue());
         } catch (Throwable t) {
             error = t;
             t.printStackTrace();

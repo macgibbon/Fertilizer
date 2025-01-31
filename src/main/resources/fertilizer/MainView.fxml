@@ -6,17 +6,11 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity"
-	minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
-	prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1"
-	xmlns:fx="http://javafx.com/fxml/1"
-	fx:controller="fertilizer.MainController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fertilizer.MainController">
 	<center>
-		<TabPane fx:id="tabpane" prefHeight="200.0" prefWidth="200.0"
-			tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+		<TabPane fx:id="tabpane" prefHeight="200.0" prefWidth="200.0" side="BOTTOM" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
 			<tabs>
 				<Tab text="Prices">
 					<content>
@@ -37,8 +31,7 @@
 					<content>
 						<BorderPane prefHeight="200.0" prefWidth="200.0">
 							<center>
-								<TableView fx:id="solutiontable"
-									BorderPane.alignment="CENTER" />
+								<TableView fx:id="solutiontable" BorderPane.alignment="CENTER" />
 							</center>
 						</BorderPane>
 					</content>
@@ -51,10 +44,6 @@
 			</tabs>
 		</TabPane>
 	</center>
-	<bottom>
-		<TextArea fx:id="textarea" prefHeight="200.0"
-			prefWidth="200.0" BorderPane.alignment="CENTER" />
-	</bottom>
 	<top>
 		<MenuBar BorderPane.alignment="CENTER">
 			<menus>
@@ -66,18 +55,14 @@
 				</Menu>
 				<Menu mnemonicParsing="false" text="Edit">
 					<items>
-						<MenuItem mnemonicParsing="false" onAction="#editPrices"
-							text="Edit Default Prices" />
-						<MenuItem mnemonicParsing="false"
-							onAction="#editRequirements" text="Edit Default Requirements" />
-						<MenuItem mnemonicParsing="false"
-							onAction="#editAnalysis" text="Edit Default Ingredient Analysis" />
+						<MenuItem mnemonicParsing="false" onAction="#editPrices" text="Edit Default Prices" />
+						<MenuItem mnemonicParsing="false" onAction="#editRequirements" text="Edit Default Requirements" />
+						<MenuItem mnemonicParsing="false" onAction="#editAnalysis" text="Edit Default Ingredient Analysis" />
 					</items>
 				</Menu>
 				<Menu mnemonicParsing="false" text="Action">
 					<items>
-						<MenuItem mnemonicParsing="false" onAction="#solve"
-							text="Calculate least cost solution" />
+						<MenuItem mnemonicParsing="false" onAction="#solve" text="Calculate least cost solution" />
 					</items>
 				</Menu>
 				<Menu mnemonicParsing="false" text="Help">

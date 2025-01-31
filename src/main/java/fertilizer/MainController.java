@@ -76,7 +76,7 @@ public class MainController implements Initializable {
 		requirementsPath = Path.of("defaultRequirements.csv");
 		requirementRows = readCsvfile(requirementsPath);
 	    MatrixBuilder matrix = new MatrixBuilder(priceRows, requirementRows, ingredientRows);
-        model = new Model(matrix.getIngredientNames(), matrix.getNutrientNames(), matrix.getIngredientPrices(), matrix.getNutrientRequirements(), matrix.getAnalysisMatrixs());
+        model = new Model(matrix.getNutrientMap(), matrix.getIngredientMap(), matrix.getAnalysisMatrixs());
  
 		var priceHeaders = new ArrayList<String>(priceRows.remove(0));
 		pricestable.setItems(FXCollections.observableArrayList(priceRows));
@@ -148,7 +148,6 @@ public class MainController implements Initializable {
 
 	public void solve() throws IOException {
 		PointValuePair result =  model.calculateSolution();
-
 		System.out.println(result.getValue());
 	//	updateTable(result);
 		tabpane.getSelectionModel().select(3);

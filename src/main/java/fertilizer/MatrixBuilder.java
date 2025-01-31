@@ -12,7 +12,7 @@ public class MatrixBuilder {
     private double[] ingredientPrices, nutrientRequirements;
     private double[][] analysisMatrix;
 
-    private LinkedHashMap<String,String> ingredientMap, nutrientMap;
+    private LinkedHashMap<String,Double> ingredientMap, nutrientMap;
 
     private HashMap<String, Integer> analysisIngredientMap,analysisNutrientMap;
     private String[] nutrientNames, ingredientNames;
@@ -21,16 +21,16 @@ public class MatrixBuilder {
     public MatrixBuilder(ArrayList<ArrayList<String>> priceRows, ArrayList<ArrayList<String>> requirementRows, ArrayList<ArrayList<String>> ingredientRows) {
         ingredientMap = priceRows.stream()
                 .skip(1) // skip headers
-                .collect(Collectors.toMap(row -> row.get(0), row -> row.get(1), (x, y) -> y, LinkedHashMap::new));
+                .collect(Collectors.toMap(row -> row.get(0), row -> convertDouble(row.get(1)), (x, y) -> y, LinkedHashMap::new));
         
         ingredientPrices = ingredientMap.values().stream()
-                .mapToDouble(val -> convertDouble(val)/2000.0).toArray();        
+                .mapToDouble(val -> val/2000.0).toArray();        
 
         nutrientMap = requirementRows.stream().skip(1) // skip headers
-                .collect(Collectors.toMap(row -> row.get(0), row -> row.get(1), (x, y) -> y, LinkedHashMap::new));        
+                .collect(Collectors.toMap(row -> row.get(0), row -> convertDouble(row.get(1)), (x, y) -> y, LinkedHashMap::new));        
 
         nutrientRequirements = nutrientMap.values().stream()
-                .mapToDouble(str -> convertDouble(str)).toArray();
+                .mapToDouble(val -> val).toArray();
         
         analysisIngredientMap = new HashMap<String, Integer>();
         for (int i = 1; i < ingredientRows.size(); i++) {
@@ -62,25 +62,17 @@ public class MatrixBuilder {
             }
         }
     }
-
-    public double[] getIngredientPrices() {
-        return ingredientPrices;
+ 
+    public LinkedHashMap<String, Double> getIngredientMap() {
+        return ingredientMap;
     }
 
-    public double[] getNutrientRequirements() {
-        return nutrientRequirements;
+    public LinkedHashMap<String, Double> getNutrientMap() {
+        return nutrientMap;
     }
 
     public double[][] getAnalysisMatrixs() {
         return analysisMatrix;
-    }
-    
-    public String[] getNutrientNames() {
-        return nutrientNames;
-    }
-
-    public String[] getIngredientNames() {
-        return ingredientNames;
     }
 
 }
