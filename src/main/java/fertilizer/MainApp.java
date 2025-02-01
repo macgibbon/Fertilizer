@@ -2,6 +2,7 @@ package fertilizer;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URL;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -13,6 +14,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -20,13 +22,16 @@ import javafx.stage.Stage;
 public class MainApp extends Application {
 
     static Stage currentStage;
+    protected static MainController controller;
 
     @Override
 	public void start(Stage primaryStage) throws Exception {
         currentStage = primaryStage;
         Thread.setDefaultUncaughtExceptionHandler((Thread t, Throwable e) -> showError(t,e)); 
-
-		Parent root = FXMLLoader.load(getClass().getResource("/fertilizer/MainView.fxml"));
+        URL resource = MainApp.class.getResource("/fertilizer/MainView.fxml");
+        FXMLLoader loader = new FXMLLoader(resource);
+        Pane  root = (Pane) loader.load();
+        controller = loader.getController();
 		primaryStage.setTitle("Fertilizer formulator");
 		Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
 		double width = primScreenBounds.getWidth();
@@ -34,11 +39,11 @@ public class MainApp extends Application {
 		primaryStage.setX(width / 8.0);
 		primaryStage.setY(height / 8.0);		
 		Scene scene = new Scene(root, width * 0.75, height * 0.75);
-		scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
+		scene.getStylesheets().add(getClass().getResource("/fertilizer/styles.css").toExternalForm());
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
-
+    
 	public static void main(String[] args) {
 		launch(args);
 	}
