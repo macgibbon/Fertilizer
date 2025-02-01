@@ -45,7 +45,7 @@
 		</TabPane>
 	</center>
 	<top>
-		<MenuBar BorderPane.alignment="CENTER">
+		<MenuBar fx:id="menubar" BorderPane.alignment="CENTER">
 			<menus>
 				<Menu mnemonicParsing="false" text="File">
 					<items>
@@ -62,7 +62,7 @@
 				</Menu>
 				<Menu mnemonicParsing="false" text="Action">
 					<items>
-						<MenuItem mnemonicParsing="false" fx:id="solve" onAction="#solve" text="Calculate least cost solution" />
+						<MenuItem mnemonicParsing="false" fx:id="solveaction" onAction="#solve" text="Calculate least cost solution" />
 					</items>
 				</Menu>
 				<Menu mnemonicParsing="false" text="Help">

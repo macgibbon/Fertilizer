@@ -1,5 +1,6 @@
 package fertilizertests;
 
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
@@ -16,6 +17,8 @@ import javafx.stage.Stage;
 
 @ExtendWith(ApplicationExtension.class)
 public class TestGui{
+
+   
 
     @Start
     public void start(Stage primaryStage) throws Exception {
@@ -34,13 +37,9 @@ public class TestGui{
     
     @Test
     void solve(FxRobot robot) {
-        robot.clickOn("#solve");
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+    robot.clickOn("Action");
+    robot.clickOn("Calculate least cost solution");
+    
     }
 
 }
