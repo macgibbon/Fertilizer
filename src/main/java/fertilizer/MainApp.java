@@ -109,4 +109,8 @@ public class MainApp extends Application {
             x.printStackTrace();
         }
     }
+
+    public static void close() {
+        Platform.runLater(() -> currentStage.close()); 
+    }
 }
