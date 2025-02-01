@@ -14,17 +14,6 @@ public class Content {
         this.value = value;
     }
 
-    public Content(int value) {
-        super();
-        this.name = Integer.toString(value);
-    }
-
-    @Override
-    public int hashCode() {
-        // TODO Auto-generated method stub
-        return super.hashCode();
-    }
-
     @Override
     public String toString() {
         if (name != null)

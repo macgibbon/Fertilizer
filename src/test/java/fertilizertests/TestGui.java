@@ -1,9 +1,7 @@
 package fertilizertests;
 
 
-import java.awt.Robot;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
@@ -13,8 +11,6 @@ import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
 
 import fertilizer.MainApp;
-import javafx.application.Platform;
-import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
 @ExtendWith(ApplicationExtension.class)
