@@ -1,6 +1,8 @@
 package fertilizertests;
 
 
+import java.awt.Robot;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 
 import org.junit.jupiter.api.AfterAll;
@@ -12,6 +14,7 @@ import org.testfx.framework.junit5.Start;
 
 import fertilizer.MainApp;
 import javafx.application.Platform;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
 @ExtendWith(ApplicationExtension.class)
@@ -37,7 +40,7 @@ public class TestGui extends MainApp {
     }
 
     @Test
-    void solve(FxRobot robot) throws IOException {
+    void solve(FxRobot robot) throws Exception {
         delay(5);
         robot.clickOn("Action");
         robot.clickOn("Calculate least cost solution");
@@ -50,6 +53,28 @@ public class TestGui extends MainApp {
     void editAnalysis() {
         try {
             MainApp.controller.editAnalysis();
+            delay(5);
+            java.awt.Robot awtRobot = new java.awt.Robot();
+            awtRobot.keyPress(KeyEvent.VK_ESCAPE);
+            awtRobot.keyRelease(KeyEvent.VK_ESCAPE);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            MainApp.controller.editPrices();
+            delay(5);
+            java.awt.Robot awtRobot = new java.awt.Robot();
+            awtRobot.keyPress(KeyEvent.VK_ESCAPE);
+            awtRobot.keyRelease(KeyEvent.VK_ESCAPE);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            MainApp.controller.editRequirements();
+            delay(5);
+            java.awt.Robot awtRobot = new java.awt.Robot();
+            awtRobot.keyPress(KeyEvent.VK_ESCAPE);
+            awtRobot.keyRelease(KeyEvent.VK_ESCAPE);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
