@@ -14,6 +14,7 @@ import java.util.Observable;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.math3.optim.PointValuePair;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -57,7 +58,7 @@ public class TestGui extends MainApp {
         delay(2);
         robot.push(KeyCode.PERIOD);
         robot.push(KeyCode.DIGIT4);
-        robot.push(KeyCode.DIGIT6);
+        robot.push(KeyCode.DIGIT5);
         robot.push(KeyCode.ENTER);
         delay(10);
     }
@@ -94,15 +95,25 @@ public class TestGui extends MainApp {
     
     @Test
     @Order(98)
-    void testReadMatrix() {
+    void testUncaughtExceptionHandler(FxRobot robot) {
         Throwable error = null;
         try {
-            MainController controller = new MainController();
+            
             ArrayList<ArrayList<String>> priceRows = controller.readCsvfile(Path.of("defaultPrices.csv"));
             ArrayList<ArrayList<String>> ingredientRows = controller.readCsvfile(Path.of("defaultIngredients.csv"));
             ArrayList<ArrayList<String>> requirementRows = controller.readCsvfile(Path.of("defaultRequirements.csv"));
             MatrixBuilder matrix = new MatrixBuilder(priceRows, requirementRows, ingredientRows);
-       ////     Model model = new Model(matrix.getIngredientNames(), matrix.getNutrientNames(), matrix.getIngredientPrices(), matrix.getNutrientRequirements(), matrix.getAnalysisMatrixs());
+            Model model = new Model(matrix.getNutrientMap(), matrix.getIngredientMap(), matrix.getAnalysisMatrixs()) {
+
+                @Override
+                public PointValuePair calculateSolution() {
+                    throw new RuntimeException("Deliberate exception to test exception handling");                }
+                
+            };
+            reflectiveSet(model, controller, "mode");
+            robot.clickOn("Action");
+            robot.clickOn("Calculate least cost solution");
+            delay(5);
        //     PointValuePair solution =  model.calculateSolution();
        //     System.out.println(solution.getValue());
         } catch (Throwable t) {
@@ -130,13 +141,13 @@ public class TestGui extends MainApp {
         MatrixBuilder matrix = new MatrixBuilder(rows, rows, rows);       
     }  
     
-    @Test
-    @Order(96)
-    void testUncaughtExceptionHandler(FxRobot robot) throws Throwable, SecurityException {
-    
-    }
-    
    
+    private void reflectiveSet(Model badModel, MainController controller, String string) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+        Field field = controller.getClass().getDeclaredField("model");
+        field.setAccessible(true);
+        field.set(controller, badModel);        
+    }
+
     private void delay(int secs) {
         try {
             Thread.sleep(secs * 1000);
