@@ -5,6 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.AWTException;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -29,6 +33,7 @@ import fertilizer.MainController;
 import fertilizer.MatrixBuilder;
 import fertilizer.Model;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.stage.Stage;
@@ -110,7 +115,7 @@ public class TestGui extends MainApp {
                     throw new RuntimeException("Deliberate exception to test exception handling");                }
                 
             };
-            reflectiveSet(model, controller, "mode");
+            reflectiveSet(model, controller, "model");
             robot.clickOn("Action");
             robot.clickOn("Calculate least cost solution");
             delay(5);
@@ -125,7 +130,7 @@ public class TestGui extends MainApp {
     
     @Test
     @Order(97)
-    void testRedundantRows() {
+    void testRedundantRows() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
         String prices =   """
                 Urea,640
                 Ammonium Nitrate,700
@@ -138,14 +143,47 @@ public class TestGui extends MainApp {
                 .map(line -> line.split(","))
                 .map(array -> new ArrayList<String>(Arrays.asList(array)))
                 .collect(Collectors.toCollection((ArrayList::new)));
-        MatrixBuilder matrix = new MatrixBuilder(rows, rows, rows);       
+        MatrixBuilder matrix = new MatrixBuilder(rows, rows, rows);     
+        
+        TableView<Content> solutionTable = (TableView<Content>) reflectiveGet(controller, "solutiontable");
+        TableColumn tc = solutionTable.getColumns().get(0);
+        solutionTable.getSelectionModel().select(1000,tc);
     }  
     
+    @Test
+    @Order(96)
+    void testBadDefaultFile() throws IOException {
+        Throwable expected = null;
+        try {
+            ArrayList<ArrayList<String>> priceRows = controller.readCsvfile(Path.of("notDefaultPrice.csv"));
+        } catch (Throwable t) {
+            expected = t;
+        }
+        assertTrue(expected != null);
+        FileOutputStream fos = new FileOutputStream("spacesOnly.csv");
+        try {
+            fos.write("    \n\n".getBytes());
+        } finally {
+            fos.close();
+        }
+        try {
+            ArrayList<ArrayList<String>> errorRows = controller.readCsvfile(Path.of("spacesOnly.csv"));
+        } catch (Throwable t) {
+            expected = t;
+        }
+    }
+    
    
-    private void reflectiveSet(Model badModel, MainController controller, String string) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
-        Field field = controller.getClass().getDeclaredField("model");
+    private void reflectiveSet(Object badModel, MainController controller, String name) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+        Field field = controller.getClass().getDeclaredField(name);
         field.setAccessible(true);
         field.set(controller, badModel);        
+    }
+    
+    private Object reflectiveGet( MainController controller, String name) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+        Field field = controller.getClass().getDeclaredField(name);
+        field.setAccessible(true);
+       return  field.get(controller);        
     }
 
     private void delay(int secs) {

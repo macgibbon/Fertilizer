@@ -60,10 +60,10 @@ public class MainController implements Initializable {
         solutiontable.getSelectionModel().setCellSelectionEnabled(true);
         solutiontable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         solutiontable.getSelectionModel().selectedItemProperty().addListener((o, oldSelection, newSelection) -> {
-            try { 
-            var selectedCell = solutiontable.getSelectionModel().getSelectedCells().get(0);
-            solutiontable.edit(selectedCell.getRow(), selectedCell.getTableColumn());
-            } catch (IndexOutOfBoundsException oe) {
+            var selectedCells = solutiontable.getSelectionModel().getSelectedCells();
+            if (selectedCells.size() > 0) {
+                var selectedCell = selectedCells.get(0);
+                solutiontable.edit(selectedCell.getRow(), selectedCell.getTableColumn());
             }
         });
     }
@@ -114,21 +114,17 @@ public class MainController implements Initializable {
 		}
 	}
 
-	private TableColumn<List<String>, String> createStringColumn(ArrayList<String> displayHeaders, int column) {
-		final int col = column;
-		TableColumn<List<String>, String> aTableColumn = new TableColumn<List<String>, String>(
-				displayHeaders.get(column));
-		aTableColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-		aTableColumn.setCellValueFactory(cellData -> {
-			String cellValue = "";
-			try {
-				cellValue = cellData.getValue().get(col);
-			} catch (ArrayIndexOutOfBoundsException e) {
-			}
-			return new ReadOnlyStringWrapper(cellValue);
-		});
-		return aTableColumn;
-	}
+    private TableColumn<List<String>, String> createStringColumn(ArrayList<String> displayHeaders, int column) {
+        final int col = column;
+        TableColumn<List<String>, String> aTableColumn = new TableColumn<>(displayHeaders.get(column));
+        aTableColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        aTableColumn.setCellValueFactory(cellData -> {
+            String cellValue = "";
+            cellValue = cellData.getValue().get(col);
+            return new ReadOnlyStringWrapper(cellValue);
+        });
+        return aTableColumn;
+    }
 
 	private TableColumn<List<String>, Double> createDoubleColumn(ArrayList<String> displayHeaders, int column) {
 		final int col = column;
@@ -136,13 +132,14 @@ public class MainController implements Initializable {
 		aTableColumn.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
 		aTableColumn.setPrefWidth(100.0);
 		aTableColumn.setCellValueFactory(cellData -> {
-			double cellValue = 0.0;
-			try {
-				cellValue = Double.parseDouble(cellData.getValue().get(col));
-			} catch (Throwable e) {
-			}
-			return new SimpleObjectProperty<Double>(cellValue);
-		});
+    			double cellValue = 0.0;
+    			try {
+    				cellValue = Double.parseDouble(cellData.getValue().get(col));
+    			} catch (Throwable e) {
+    			}
+    			return new SimpleObjectProperty<Double>(cellValue);
+    		}
+		);
 		return aTableColumn;
 	}
 
@@ -160,7 +157,7 @@ public class MainController implements Initializable {
 		ArrayList<ArrayList<String>> lines;
 		try {
 			lines = Files.lines(ingredientsPath)
-			        .filter(line -> line != null)
+			        .filter(line -> line.length() != 0)
 			        .map(line -> line.split(","))
 					.map(array -> new ArrayList<String>(Arrays.asList(array)))
 					.collect(Collectors.toCollection((ArrayList::new)));

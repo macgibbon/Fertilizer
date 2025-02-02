@@ -48,12 +48,10 @@ public class MainApp extends Application {
 	}
 
 	public static void showError(Thread t, Throwable e) {
-		System.out.println(e.getClass());
 		if ((e instanceof NoClassDefFoundError))
 			return;
 		if (e instanceof NoSuchMethodError)
-			return;
-		
+			return;		
 		e.printStackTrace();
 	    Platform.runLater(() -> {
 	        showErrorDialog(t, e);
