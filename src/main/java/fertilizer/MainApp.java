@@ -102,8 +102,7 @@ public class MainApp extends Application {
             Scene scene = new Scene(pane, width * 0.65, height * 0.65);
             stage.setScene(scene);
             stage.show();
-        } catch (Throwable x) {
-            e.printStackTrace();
+        } catch (Throwable x) {           
             x.printStackTrace();
         }
     }

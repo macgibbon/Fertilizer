@@ -1,20 +1,18 @@
 package fertilizertests;
 
 
+import static fertilizertests.Util.delay;
+import static fertilizertests.Util.pressGlobalExitKey;
+import static fertilizertests.Util.reflectiveGet;
+import static fertilizertests.Util.reflectiveSet;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.awt.AWTException;
-import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Observable;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -29,14 +27,13 @@ import org.testfx.framework.junit5.Start;
 
 import fertilizer.Content;
 import fertilizer.MainApp;
-import fertilizer.MainController;
 import fertilizer.MatrixBuilder;
 import fertilizer.Model;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 
 @ExtendWith(ApplicationExtension.class)
 public class TestGui extends MainApp {    
@@ -52,7 +49,7 @@ public class TestGui extends MainApp {
     }
   
     @Test
-    @Order(100)
+    @Order(94)
     void solve(FxRobot robot) throws Exception {
         delay(5);
         robot.clickOn("Action");
@@ -64,6 +61,13 @@ public class TestGui extends MainApp {
         robot.push(KeyCode.PERIOD);
         robot.push(KeyCode.DIGIT4);
         robot.push(KeyCode.DIGIT5);
+        robot.push(KeyCode.ENTER);
+        
+        robot.doubleClickOn("700.00");
+        delay(2);
+        robot.push(KeyCode.Z);
+        robot.push(KeyCode.Z);
+        robot.push(KeyCode.Z);
         robot.push(KeyCode.ENTER);
         delay(10);
     }
@@ -177,31 +181,26 @@ public class TestGui extends MainApp {
     
     @Test
     @Order(95)
-    void testgetItemsCornerCases() throws IOException {
-    }
-   
-    private void reflectiveSet(Object badModel, MainController controller, String name) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
-        Field field = controller.getClass().getDeclaredField(name);
-        field.setAccessible(true);
-        field.set(controller, badModel);        
+    void testgetItemsCornerCases() throws IOException, NoSuchFieldException, SecurityException,
+            IllegalArgumentException, IllegalAccessException {
+        Model model = (Model) reflectiveGet(controller, "model");
+        List<List<Content>> items = model.getItems();
+        int rows = items.size();
+        Content testContent = new Content(1000.0);
+        int columns = model.getTableColumns().size();
+        int itemColumns = items.get(0).size();
+        var pairs = List.of(new Pair(0, 0), new Pair(rows - 1, columns - 1), new Pair(0, columns - 2),
+                new Pair(rows - 2, 3), new Pair(3, columns-1),new Pair(11,7));
+        for (Pair pair : pairs) {
+            Integer x = (Integer) pair.getKey();
+            Integer y = (Integer) pair.getValue();
+            try {
+                items.get(x).set(y, testContent);
+            } catch (RuntimeException e) {
+            }
+        }
+      
     }
     
-    private Object reflectiveGet( MainController controller, String name) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
-        Field field = controller.getClass().getDeclaredField(name);
-        field.setAccessible(true);
-       return  field.get(controller);        
-    }
 
-    private void delay(int secs) {
-        try {
-            Thread.sleep(secs * 1000);
-        } catch (InterruptedException e) {
-        }
-    }
-
-    private void pressGlobalExitKey() throws AWTException {
-        java.awt.Robot awtRobot = new java.awt.Robot();
-        awtRobot.keyPress(KeyEvent.VK_ESCAPE);
-        awtRobot.keyRelease(KeyEvent.VK_ESCAPE);
-    }
 }

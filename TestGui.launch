@@ -7,6 +7,10 @@
     <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
         <listEntry value="1"/>
     </listAttribute>
+    <listAttribute key="org.eclipse.eclemma.core.SCOPE_IDS">
+        <listEntry value="=Fertilizer/src\/main\/resources=/maven.pomderived=/true=/=/optional=/true=/"/>
+        <listEntry value="=Fertilizer/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/"/>
+    </listAttribute>
     <stringAttribute key="org.eclipse.jdt.junit.CONTAINER" value=""/>
     <booleanAttribute key="org.eclipse.jdt.junit.KEEPRUNNING_ATTR" value="false"/>
     <stringAttribute key="org.eclipse.jdt.junit.TESTNAME" value=""/>

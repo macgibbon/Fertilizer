@@ -151,7 +151,8 @@ public class Model {
                             String ingredient = (String) ingredientMap.keySet().toArray()[row]; 
                             ingredientMap.put(ingredient, cell.value);
                         }
-                        else coefficients.get(column-1).set(row, cell.value); 
+                        else 
+                            coefficients.get(column-1).set(row, cell.value); 
                         return cell;
                     }
                 };
@@ -195,7 +196,7 @@ public class Model {
         else
             aTableColumn.setEditable(true); 
         aTableColumn.setOnEditCommit(event -> {
-            final String value = event.getNewValue() != null ? event.getNewValue() : event.getOldValue().toString();
+            final String value = event.getNewValue();
             int row = event.getTablePosition().getRow();
             try {
                 double d = Double.valueOf(value.trim());  
