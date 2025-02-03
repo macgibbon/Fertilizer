@@ -7,14 +7,14 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import org.apache.commons.math3.optim.PointValuePair;
-import org.apache.commons.math3.optim.linear.LinearConstraint;
-import org.apache.commons.math3.optim.linear.LinearConstraintSet;
-import org.apache.commons.math3.optim.linear.LinearObjectiveFunction;
-import org.apache.commons.math3.optim.linear.NonNegativeConstraint;
-import org.apache.commons.math3.optim.linear.Relationship;
-import org.apache.commons.math3.optim.linear.SimplexSolver;
-import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
+import org.apache.commons.math4.legacy.optim.PointValuePair;
+import org.apache.commons.math4.legacy.optim.linear.LinearConstraint;
+import org.apache.commons.math4.legacy.optim.linear.LinearConstraintSet;
+import org.apache.commons.math4.legacy.optim.linear.LinearObjectiveFunction;
+import org.apache.commons.math4.legacy.optim.linear.NonNegativeConstraint;
+import org.apache.commons.math4.legacy.optim.linear.Relationship;
+import org.apache.commons.math4.legacy.optim.linear.SimplexSolver;
+import org.apache.commons.math4.legacy.optim.nonlinear.scalar.GoalType;
 
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.scene.control.TableColumn;
@@ -225,15 +225,4 @@ public class Model {
         columns.get(priceColumn+1).getStyleClass().add("pricecolumn");
         return columns;
     }
-
-    /*
-    public String[] getIngredientNames() {
-        return ingredientNames;
-    }
-
-    public String[] getNutrientNames() {
-        return nutrientNames;
-    }
-    */
-    
 }

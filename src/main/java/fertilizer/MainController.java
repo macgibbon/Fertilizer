@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
-import org.apache.commons.math3.optim.PointValuePair;
+import org.apache.commons.math4.legacy.optim.PointValuePair;
 
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleObjectProperty;

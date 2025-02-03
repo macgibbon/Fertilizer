@@ -20,7 +20,8 @@ import javafx.stage.Stage;
 
 public class MainApp extends Application {
 
-    static Stage currentStage;
+    // expose these to code coveage tests
+    protected static Stage currentStage;
     protected static MainController controller;
 
     @Override
@@ -48,6 +49,7 @@ public class MainApp extends Application {
 	}
 
 	public static void showError(Thread t, Throwable e) {
+	    // workaround to catch exceptions from native image on touchscreen laptop due to needed classes not included
 		if ((e instanceof NoClassDefFoundError))
 			return;
 		if (e instanceof NoSuchMethodError)
@@ -58,6 +60,7 @@ public class MainApp extends Application {
 	    });
 	}
 
+	// limit showing error to ten to avoid very frequent accessibilit events
 	private volatile static int errorCount;
 	
     private static void showErrorDialog(Thread t, Throwable e) {

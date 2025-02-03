@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.math3.optim.PointValuePair;
+import org.apache.commons.math4.legacy.optim.PointValuePair;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
