@@ -128,6 +128,8 @@ public class TestGui extends MainApp {
         assertTrue(error == null); 
     }  
     
+    
+    
     @Test
     @Order(97)
     void testRedundantRows() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
@@ -173,6 +175,10 @@ public class TestGui extends MainApp {
         }
     }
     
+    @Test
+    @Order(95)
+    void testgetItemsCornerCases() throws IOException {
+    }
    
     private void reflectiveSet(Object badModel, MainController controller, String name) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
         Field field = controller.getClass().getDeclaredField(name);
