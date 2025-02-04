@@ -145,7 +145,7 @@
                   <directory>${basedir}</directory>
                   <filtering>true</filtering>                  
                   	<includes>
-                    	<include>**/*.csv</include>
+                    	<include>*.csv</include>
 					</includes>
                 </resource>
               </resources>              

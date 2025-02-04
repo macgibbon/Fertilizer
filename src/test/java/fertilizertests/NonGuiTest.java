@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import fertilizer.MainApp;
 
-class FertilizerTests {
+class NonGuiTest {
 
     @Test
     void testMainLauncher() {

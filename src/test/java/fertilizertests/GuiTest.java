@@ -36,7 +36,7 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 
 @ExtendWith(ApplicationExtension.class)
-public class TestGui extends MainApp {    
+public class GuiTest extends MainApp {    
   
     @Start
     void onStart(Stage primaryStage) throws Exception {
