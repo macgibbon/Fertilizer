@@ -18,6 +18,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Menu;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
@@ -45,6 +46,9 @@ public class MainController implements Initializable {
 
 	@FXML
 	TextArea textarea;
+	
+	@FXML
+	Menu menuFile;
 
 	ArrayList<ArrayList<String>> ingredientRows, priceRows, requirementRows, mergedMatrix;
 

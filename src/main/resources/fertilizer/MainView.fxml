@@ -47,7 +47,7 @@
 	<top>
 		<MenuBar fx:id="menubar" BorderPane.alignment="CENTER">
 			<menus>
-				<Menu mnemonicParsing="false" text="File">
+				<Menu fx:id="menuFile" mnemonicParsing="false" text="File">
 					<items>
 						<MenuItem mnemonicParsing="false" text="Load Formulation" />
 						<MenuItem mnemonicParsing="false" text="Save Formulation" />

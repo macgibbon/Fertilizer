@@ -49,25 +49,14 @@ public class MainApp extends Application {
 	}
 
 	public static void showError(Thread t, Throwable e) {
-	    // workaround to catch exceptions from native image on touchscreen laptop due to needed classes not included
-		if ((e instanceof NoClassDefFoundError))
-			return;
-		if (e instanceof NoSuchMethodError)
-			return;		
 		e.printStackTrace();
 	    Platform.runLater(() -> {
 	        showErrorDialog(t, e);
 	    });
 	}
-
-	// limit showing error to ten to avoid very frequent accessibilit events
-	private volatile static int errorCount;
 	
     private static void showErrorDialog(Thread t, Throwable e) {
         try {
-        	errorCount++;
-        	if (errorCount > 10)
-        		return;
             // Create a new dialog
             // Create a dialog to display the exception
             Alert alert = new Alert(AlertType.ERROR);
