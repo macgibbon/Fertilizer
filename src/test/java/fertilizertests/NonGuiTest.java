@@ -21,9 +21,8 @@ class NonGuiTest {
             t = t1;
         }
         assert (t == null);
-    }
-  
-
+    }  
+    
     @Test
     void testErrorDialogException() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         Method showErrorDialogMethod = Stream.of(MainApp.class.getDeclaredMethods())
@@ -31,13 +30,9 @@ class NonGuiTest {
                 .findFirst().get();
         showErrorDialogMethod.setAccessible(true);
         Object[] args2 = new Object[] { new Thread(), null };
-
         showErrorDialogMethod.invoke(null, args2);
     }
-    
    
-    
-
     private void delay()  {
         try {
             Thread.sleep(3000);
