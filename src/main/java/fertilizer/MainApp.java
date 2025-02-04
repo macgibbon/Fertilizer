@@ -49,7 +49,7 @@ public class MainApp extends Application {
 	}
 
 	public static void showError(Thread t, Throwable e) {
-		e.printStackTrace();
+		printCauseStackTrack(e);
 	    Platform.runLater(() -> {
 	        showErrorDialog(t, e);
 	    });
@@ -94,12 +94,17 @@ public class MainApp extends Application {
             Scene scene = new Scene(pane, width * 0.65, height * 0.65);
             stage.setScene(scene);
             stage.show();
-        } catch (Throwable x) {   
-        	while (x.getCause() != null)  {
-        		x = x.getCause();
-        	}
-            x.printStackTrace();
+        } catch (Throwable x) {
+           printCauseStackTrack(x);
         }
+    }
+    
+    public static void printCauseStackTrack(Throwable x) {
+        Throwable t = x;
+        while (t.getCause() != null) {
+            t = t.getCause();
+        }
+        t.printStackTrace();
     }
 
     public static void close() {
