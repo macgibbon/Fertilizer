@@ -4,6 +4,7 @@ import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -91,10 +92,13 @@ public class Model {
     }
 
     public List<List<Content>> getItems() {
-         final int numberOfIngredients = ingredientMap.size();
+        
          final int numberOfNutrientContraints = nutrientMap.size();  
          final int priceColumn = numberOfNutrientContraints + 1;
          final int amountColumn = numberOfNutrientContraints + 2;
+         
+         final int numberOfIngredients = ingredientMap.size();
+         final int amountRow = numberOfIngredients+1;
          var list = new AbstractList<List<Content>>() {
 
             @Override
@@ -104,6 +108,7 @@ public class Model {
 
             @Override
             public List<Content> get(int row) {
+                
                 return new AbstractList<Content>() {
                      @Override
                     public int size() {
@@ -135,16 +140,16 @@ public class Model {
 
                     @Override
                     public Content set(int column, Content cell) {
-                        if ((column == priceColumn) && (row == numberOfIngredients+1))
-                           throw new RuntimeException("Cell can't be set!");
+                        if ((column == priceColumn) && (row == numberOfIngredients))
+                            throw new RuntimeException("Cell can't be set!");
+                        if (row == amountRow)
+                            throw new RuntimeException("Cell can't be set!");
                         else if (column == 0)
                             throw new RuntimeException("Cell can't be set!");
                         else if (row == numberOfIngredients) {
                             String nutrient = (String) nutrientMap.keySet().toArray()[column-1];
                             nutrientMap.put(nutrient,cell.value);
                         }
-                        else if (row == numberOfIngredients+1)
-                            throw new RuntimeException("Cell can't be set!");
                         else if (column == amountColumn)
                             throw new RuntimeException("Cell can't be set!");
                         else if (column == priceColumn) {
