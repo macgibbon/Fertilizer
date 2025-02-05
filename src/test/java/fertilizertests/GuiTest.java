@@ -199,7 +199,7 @@ public class GuiTest extends MainApp {
             } catch (RuntimeException e) {
             }
         }
-      
+        delay(2);      
     }
     
 
