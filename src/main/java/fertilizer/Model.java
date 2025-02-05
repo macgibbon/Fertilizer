@@ -1,6 +1,5 @@
 package fertilizer;
 
-import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
