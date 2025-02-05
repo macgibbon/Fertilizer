@@ -48,14 +48,14 @@ public class MainApp extends Application {
 		launch(args);
 	}
 
-	public static void showError(Thread t, Throwable e) {
+	protected static void showError(Thread t, Throwable e) {
 		printCauseStackTrack(e);
 	    Platform.runLater(() -> {
 	        showErrorDialog(t, e);
 	    });
 	}
 	
-    private static void showErrorDialog(Thread t, Throwable e) {
+    protected static void showErrorDialog(Thread t, Throwable e) {
         try {
             // Create a new dialog
             // Create a dialog to display the exception
@@ -99,7 +99,7 @@ public class MainApp extends Application {
         }
     }
     
-    public static void printCauseStackTrack(Throwable x) {
+    protected static void printCauseStackTrack(Throwable x) {
         Throwable t = x;
         while (t.getCause() != null) {
             t = t.getCause();
@@ -107,7 +107,7 @@ public class MainApp extends Application {
         t.printStackTrace();
     }
 
-    public static void close() {
+    protected static void close() {
         Platform.runLater(() -> currentStage.close()); 
     }
 }

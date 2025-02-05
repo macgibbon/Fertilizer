@@ -1,47 +1,38 @@
 package fertilizertests;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.stream.Stream;
+import static fertilizertests.Util.delay;
 
 import org.junit.jupiter.api.Test;
 
 import fertilizer.MainApp;
 
-class NonGuiTest {
+class NonGuiTest extends MainApp {
 
+    // For code coverage of main method
     @Test
     void testMainLauncher() {
         Throwable t = null;
         try {
-            Thread launcherThread = new Thread(() ->  startup());
+            Thread launcherThread = new Thread(() ->  shutdown());
             launcherThread.start();
             MainApp.main(new String[0]);   
            } catch (Throwable t1) {
+               t1.printStackTrace();
             t = t1;
         }
         assert (t == null);
     }  
     
+    
+    // Test console stack trace when Gui framework is not available for dialog.
     @Test
-    void testErrorDialogException() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        Method showErrorDialogMethod = Stream.of(MainApp.class.getDeclaredMethods())
-                .filter(method -> method.getName().equals("showErrorDialog"))
-                .findFirst().get();
-        showErrorDialogMethod.setAccessible(true);
-        Object[] args2 = new Object[] { new Thread(), null };
-        showErrorDialogMethod.invoke(null, args2);
+    void testShowingStackTrackForExceptionInErrorDialog() {
+        MainApp.showErrorDialog( new Thread(), new Exception());
     }
-   
-    private void delay()  {
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-        }
-    }
+  
 
-    private void startup() {
-        delay();
+    private void shutdown() {
+        delay(7);
         MainApp.close();
     }
 }

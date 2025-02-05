@@ -51,25 +51,25 @@ public class GuiTest extends MainApp {
     @Test
     @Order(94)
     void solve(FxRobot robot) throws Exception {
-        delay(5);
+
         robot.clickOn("Action");
         robot.clickOn("Calculate least cost solution");
-        delay(2);
+
         robot.clickOn("Solution");
         robot.doubleClickOn("0.46");
-        delay(2);
+
         robot.push(KeyCode.PERIOD);
         robot.push(KeyCode.DIGIT4);
         robot.push(KeyCode.DIGIT5);
         robot.push(KeyCode.ENTER);
         
         robot.doubleClickOn("700.00");
-        delay(2);
+
         robot.push(KeyCode.Z);
         robot.push(KeyCode.Z);
         robot.push(KeyCode.Z);
         robot.push(KeyCode.ENTER);
-        delay(10);
+        delay(2);
     }
 
     @Test
@@ -78,7 +78,7 @@ public class GuiTest extends MainApp {
         try {
             robot.clickOn("Edit");
             robot.clickOn("Edit Default Prices");
-            delay(5);
+            delay(2);
             pressGlobalExitKey();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -86,7 +86,7 @@ public class GuiTest extends MainApp {
         try {
             robot.clickOn("Edit");
             robot.clickOn("Edit Default Requirements");
-            delay(5);
+            delay(2);
             pressGlobalExitKey();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -94,7 +94,7 @@ public class GuiTest extends MainApp {
         try {
             robot.clickOn("Edit");
             robot.clickOn("Edit Default Ingredient Analysis");
-            delay(5);
+            delay(2);
             pressGlobalExitKey();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -122,7 +122,7 @@ public class GuiTest extends MainApp {
             reflectiveSet(model, controller, "model");
             robot.clickOn("Action");
             robot.clickOn("Calculate least cost solution");
-            delay(5);
+            delay(2);
        //     PointValuePair solution =  model.calculateSolution();
        //     System.out.println(solution.getValue());
         } catch (Throwable t) {

@@ -96,7 +96,10 @@
 				<version>3.8.1</version>
 				<configuration>
 					<argLine>
-						--add-exports javafx.graphics/com.sun.javafx.application=ALL-UNNAMED --add-opens javafx.graphics/com.sun.javafx.application=ALL-UNNAMED
+						--add-exports
+						javafx.graphics/com.sun.javafx.application=ALL-UNNAMED
+						--add-opens
+						javafx.graphics/com.sun.javafx.application=ALL-UNNAMED
 					</argLine>
 				</configuration>
 			</plugin>
@@ -125,47 +128,50 @@
 					<appIdentifier>${app.identifier}</appIdentifier>
 
 				</configuration>
-			</plugin>		
-		<plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>3.3.1</version>
-        <executions>
-          <execution>
-            <id>copy-resources</id>
-            <!-- here the phase you need -->
-            <phase>compile</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>target/gluonfx/x86_64-windows</outputDirectory>
-              <resources>          
-                <resource>
-                  <directory>${basedir}</directory>
-                  <filtering>true</filtering>                  
-                  	<includes>
-                    	<include>*.csv</include>
+			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.3.1</version>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<!-- here the phase you need -->
+						<phase>compile</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>target/gluonfx/x86_64-windows</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${basedir}</directory>
+									<filtering>true</filtering>
+									<includes>
+										<include>*.csv</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.2.5</version>
+				<configuration>> <forkCount>1</forkCount>
+            <reuseForks>false</reuseForks>
+                  <includes>
+						<include>*Test.java</include>
 					</includes>
-                </resource>
-              </resources>              
-            </configuration>            
-          </execution>
-        </executions>
-      </plugin>
-      
-      <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <version>3.2.5</version>
-            <configuration>>
-            
-          <includes>
-            <include>*Test.java</include>
-          </includes>
-          <argLine>--add-exports javafx.graphics/com.sun.javafx.application=ALL-UNNAMED --add-opens javafx.graphics/com.sun.javafx.application=ALL-UNNAMED</argLine>            
-        </configuration>
-        </plugin>
-      </plugins>
+          <argLine>--add-exports
+					javafx.graphics/com.sun.javafx.application=ALL-UNNAMED
+					--add-opens
+					javafx.graphics/com.sun.javafx.application=ALL-UNNAMED</argLine>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
 
 	<profiles>
