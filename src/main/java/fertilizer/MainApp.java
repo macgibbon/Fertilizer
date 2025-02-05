@@ -1,8 +1,16 @@
 package fertilizer;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -20,14 +28,29 @@ import javafx.stage.Stage;
 
 public class MainApp extends Application {
 
-    // expose these to code coveage tests
+    // expose these to code coverage tests
     protected static Stage currentStage;
     protected static MainController controller;
+    
+    private final Logger logger = Logger.getLogger(MainApp.class.getName());
+    private FileHandler fh = null;
+
 
     @Override
 	public void start(Stage primaryStage) throws Exception {
-        currentStage = primaryStage;
         Thread.setDefaultUncaughtExceptionHandler((Thread t, Throwable e) -> showError(t,e)); 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        File userDir = new File(System.getProperty("user.home"));
+        File appDir = new File(userDir,".fertilizer");
+        if (!appDir.exists()) {
+            if (!appDir.mkdirs())
+                throw new IOException("Could not create application data directory @ " + appDir.getAbsolutePath());
+        }
+        fh = new FileHandler(appDir.getAbsolutePath() + "/" + formatter.format(LocalDateTime.now())+ ".log", 1000000l,1,true);        
+        fh.setFormatter(new SimpleFormatter());
+        logger.addHandler(fh);
+        logger.setUseParentHandlers(false);
+        currentStage = primaryStage;        
         URL resource = MainApp.class.getResource("/fertilizer/MainView.fxml");
         FXMLLoader loader = new FXMLLoader(resource);
         Pane  root = (Pane) loader.load();
@@ -48,14 +71,14 @@ public class MainApp extends Application {
 		launch(args);
 	}
 
-	protected static void showError(Thread t, Throwable e) {
-		printCauseStackTrack(e);
+	protected void showError(Thread t, Throwable e) {
+	    logger.log(Level.SEVERE, "Exception in App", getCause(e)); 	
 	    Platform.runLater(() -> {
 	        showErrorDialog(t, e);
 	    });
 	}
 	
-    protected static void showErrorDialog(Thread t, Throwable e) {
+    protected void showErrorDialog(Thread t, Throwable e) {
         try {
             // Create a new dialog
             // Create a dialog to display the exception
@@ -71,7 +94,7 @@ public class MainApp extends Application {
             // Get the stack trace as a string
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
-            e.printStackTrace(pw);
+            getCause(e).printStackTrace(pw);
             String stackTrace = sw.toString();
 
             // Set the stack trace in the TextArea
@@ -95,16 +118,16 @@ public class MainApp extends Application {
             stage.setScene(scene);
             stage.show();
         } catch (Throwable x) {
-           printCauseStackTrack(x);
+            logger.log(Level.SEVERE, "Exception in showErrorDialog", getCause(e));   
         }
     }
-    
-    protected static void printCauseStackTrack(Throwable x) {
+   
+    private static Throwable getCause(Throwable x) {
         Throwable t = x;
         while (t.getCause() != null) {
             t = t.getCause();
         }
-        t.printStackTrace();
+        return t;
     }
 
     protected static void close() {

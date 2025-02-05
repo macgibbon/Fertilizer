@@ -11,5 +11,6 @@ module stamfordcoop {
 
 	requires java.desktop;
     requires com.google.gson;
+    requires java.logging;
 	opens fertilizer;
 }

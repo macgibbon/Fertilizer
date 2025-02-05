@@ -27,7 +27,7 @@ class NonGuiTest extends MainApp {
     // Test console stack trace when Gui framework is not available for dialog.
     @Test
     void testShowingStackTrackForExceptionInErrorDialog() {
-        MainApp.showErrorDialog( new Thread(), new Exception());
+        showErrorDialog( new Thread(), new Exception());
     }
   
 
