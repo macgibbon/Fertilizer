@@ -1,7 +1,6 @@
 package fertilizer;
 
 import java.awt.Desktop;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -104,17 +103,17 @@ public class MainController implements Initializable {
 		requirementstable.setItems(FXCollections.observableArrayList(requirementRows));
 		requirementstable.getSelectionModel().setCellSelectionEnabled(true);
 		requirementstable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-
 		createColumns(requirementHeaders, requirementstable);
 		
-	    loadSolutionsFromModel();
+	    MatrixBuilder matrix = new MatrixBuilder(priceRows, requirementRows, ingredientRows);
+	    model = new Model(matrix.getNutrientMap(), matrix.getIngredientMap(), matrix.getAnalysisMatrixs());
+	    loadSolutionsFromModel(model);
 	}
 
-    private void loadSolutionsFromModel() {
-        MatrixBuilder matrix = new MatrixBuilder(priceRows, requirementRows, ingredientRows);
-	    model = new Model(matrix.getNutrientMap(), matrix.getIngredientMap(), matrix.getAnalysisMatrixs());
-		solutiontable.setItems(FXCollections.observableArrayList(model.getItems()));
-        solutiontable.getColumns().clear();
+    private void loadSolutionsFromModel(Model model) {
+        solutiontable.getColumns().clear();  
+        solutiontable.setItems(FXCollections.emptyObservableList());
+ 		solutiontable.setItems(FXCollections.observableArrayList(model.getItems()));
         solutiontable.getColumns().addAll(model.getTableColumns());
     }	
 
@@ -196,15 +195,27 @@ public class MainController implements Initializable {
 		Desktop.getDesktop().open(ingredientsPath.toFile());
 	}
 
-	public void save() throws JsonIOException, IOException {
-	    Gson gson = new GsonBuilder().setPrettyPrinting().create();
-	    gson.toJson(model, new FileWriter("model.json"));
-	}
+    public void save() throws JsonIOException, IOException {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        FileWriter writer = new FileWriter("model.json");
+        try {
+            gson.toJson(model, writer);
+        } finally {
+            writer.close();
+        }
+    }
 	
-	public void load() throws JsonSyntaxException, JsonIOException, FileNotFoundException {
+	public void load() throws JsonSyntaxException, JsonIOException, IOException {
 	    Gson gson = new GsonBuilder().setPrettyPrinting().create();
-	    model = gson.fromJson(new FileReader("model.json"), Model.class);
-	    loadSolutionsFromModel();
+	    FileReader jsonReader = new FileReader("model.json");
+	    try {
+        model = gson.fromJson(jsonReader, Model.class);
+	    } finally {
+	        jsonReader.close();
+	    }
+	    solutiontable.setItems(FXCollections.emptyObservableList());
+	    solutiontable.getColumns().clear();
+	    loadSolutionsFromModel(model);
 	    tabpane.getSelectionModel().select(3);
 	}
 }
