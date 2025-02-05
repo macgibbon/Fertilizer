@@ -49,8 +49,8 @@
 			<menus>
 				<Menu fx:id="menuFile" mnemonicParsing="false" text="File">
 					<items>
-						<MenuItem mnemonicParsing="false" text="Load Formulation" />
-						<MenuItem mnemonicParsing="false" text="Save Formulation" />
+						<MenuItem mnemonicParsing="false" onAction="#load" text="Load Formulation" />
+						<MenuItem mnemonicParsing="false" onAction="#save" text="Save Formulation" />
 					</items>
 				</Menu>
 				<Menu mnemonicParsing="false" text="Edit">

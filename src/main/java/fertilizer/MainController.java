@@ -1,6 +1,9 @@
 package fertilizer;
 
 import java.awt.Desktop;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -12,6 +15,11 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import org.apache.commons.math4.legacy.optim.PointValuePair;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleObjectProperty;
@@ -79,8 +87,6 @@ public class MainController implements Initializable {
 		ingredientRows = readCsvfile(ingredientsPath);
 		requirementsPath = Path.of("defaultRequirements.csv");
 		requirementRows = readCsvfile(requirementsPath);
-	    MatrixBuilder matrix = new MatrixBuilder(priceRows, requirementRows, ingredientRows);
-        model = new Model(matrix.getNutrientMap(), matrix.getIngredientMap(), matrix.getAnalysisMatrixs());
  
 		var priceHeaders = new ArrayList<String>(priceRows.remove(0));
 		pricestable.setItems(FXCollections.observableArrayList(priceRows));
@@ -100,10 +106,17 @@ public class MainController implements Initializable {
 		requirementstable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 
 		createColumns(requirementHeaders, requirementstable);
+		
+	    loadSolutionsFromModel();
+	}
+
+    private void loadSolutionsFromModel() {
+        MatrixBuilder matrix = new MatrixBuilder(priceRows, requirementRows, ingredientRows);
+	    model = new Model(matrix.getNutrientMap(), matrix.getIngredientMap(), matrix.getAnalysisMatrixs());
 		solutiontable.setItems(FXCollections.observableArrayList(model.getItems()));
         solutiontable.getColumns().clear();
         solutiontable.getColumns().addAll(model.getTableColumns());
-	}	
+    }	
 
 	private void createColumns(ArrayList<String> displayHeaders, TableView<List<String>> tableView) {
 		tableView.getColumns().clear();
@@ -183,4 +196,15 @@ public class MainController implements Initializable {
 		Desktop.getDesktop().open(ingredientsPath.toFile());
 	}
 
+	public void save() throws JsonIOException, IOException {
+	    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+	    gson.toJson(model, new FileWriter("model.json"));
+	}
+	
+	public void load() throws JsonSyntaxException, JsonIOException, FileNotFoundException {
+	    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+	    model = gson.fromJson(new FileReader("model.json"), Model.class);
+	    loadSolutionsFromModel();
+	    tabpane.getSelectionModel().select(3);
+	}
 }

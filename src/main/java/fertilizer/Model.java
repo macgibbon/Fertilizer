@@ -1,5 +1,6 @@
 package fertilizer;
 
+import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,7 +22,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.converter.DefaultStringConverter;
 
-public class Model { 
+public class Model implements Serializable{ 
     
     private static final double objectiveConstant= 0.0;
     
@@ -31,11 +32,11 @@ public class Model {
     private ArrayList<ArrayList<Double>> coefficients;
 
     // Output as arrays for simplicity and easier interface with LP optimization library
-    private double[] solutionIngredientAmounts;
-    private String solutionPrice;
-    private double[] solutionNutrientAmounts;
-    private String solutionTotal;
-    private ArrayList<String> solutionHeaders;
+    private transient double[] solutionIngredientAmounts;
+    private transient String solutionPrice;
+    private transient double[] solutionNutrientAmounts;
+    private transient String solutionTotal;
+    private transient ArrayList<String> solutionHeaders;
   
     public Model( LinkedHashMap<String,Double> nutrientMap, LinkedHashMap<String,Double> ingredientMap, ArrayList<ArrayList<Double>> coefficients) {
         this.ingredientMap = ingredientMap;

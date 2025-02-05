@@ -9,7 +9,7 @@ module stamfordcoop {
 	requires javafx.fxml;
 	requires transitive javafx.graphics;
 
-	requires com.google.common;
 	requires java.desktop;
+    requires com.google.gson;
 	opens fertilizer;
 }
