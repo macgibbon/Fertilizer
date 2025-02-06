@@ -1,6 +1,7 @@
 package fertilizer;
 
 import java.awt.Desktop;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 
 import org.apache.commons.math4.legacy.optim.PointValuePair;
@@ -32,9 +34,13 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.util.converter.DoubleStringConverter;
 
 public class MainController implements Initializable {
+    
+    private static final String LAST_USED_FOLDER = "lastUsedFolder";
 
 	@FXML
 	TableView<List<Content>> solutiontable;
@@ -56,6 +62,11 @@ public class MainController implements Initializable {
 	
 	@FXML
 	Menu menuFile;
+	
+    FileChooser fileChooser;
+    Preferences preferences;
+   
+
 
 	ArrayList<ArrayList<String>> ingredientRows, priceRows, requirementRows, mergedMatrix;
 
@@ -77,6 +88,8 @@ public class MainController implements Initializable {
                 solutiontable.edit(selectedCell.getRow(), selectedCell.getTableColumn());
             }
         });
+       fileChooser = new FileChooser();
+       preferences = Preferences.userNodeForPackage(getClass());
     }
 
 	private void loadDefaultData() {
@@ -196,26 +209,61 @@ public class MainController implements Initializable {
 	}
 
     public void save() throws JsonIOException, IOException {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        FileWriter writer = new FileWriter("model.json");
-        try {
-            gson.toJson(model, writer);
-        } finally {
-            writer.close();
+        File userDir = new File(System.getProperty("user.home"));
+        File appDir = new File(userDir, ".fertilizer");
+
+        // Load the last used directory
+        String lastUsedDirectory = preferences.get(LAST_USED_FOLDER, appDir.getAbsolutePath());
+        if (lastUsedDirectory != null) {
+            fileChooser.setInitialDirectory(new File(lastUsedDirectory));
+        }
+
+        // Show the save file dialog
+        File file = fileChooser.showSaveDialog((Stage) solutiontable.getScene().getWindow());
+        if (file != null) {
+            // Save the directory of the chosen file
+            preferences.put(LAST_USED_FOLDER, file.getParent());
+
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            FileWriter writer = new FileWriter(file);
+            try {
+                gson.toJson(model, writer);
+            } finally {
+                writer.close();
+            }
         }
     }
 	
-	public void load() throws JsonSyntaxException, JsonIOException, IOException {
-	    Gson gson = new GsonBuilder().setPrettyPrinting().create();
-	    FileReader jsonReader = new FileReader("model.json");
-	    try {
-        model = gson.fromJson(jsonReader, Model.class);
-	    } finally {
-	        jsonReader.close();
-	    }
-	    solutiontable.setItems(FXCollections.emptyObservableList());
-	    solutiontable.getColumns().clear();
-	    loadSolutionsFromModel(model);
-	    tabpane.getSelectionModel().select(3);
-	}
+    public void load() throws JsonSyntaxException, JsonIOException, IOException {
+        File userDir = new File(System.getProperty("user.home"));
+        File appDir = new File(userDir, ".fertilizer");
+
+        // Load the last used directory
+        String lastUsedDirectory = preferences.get(LAST_USED_FOLDER, appDir.getAbsolutePath());
+        if (lastUsedDirectory != null) {
+            fileChooser.setInitialDirectory(new File(lastUsedDirectory));
+        }
+
+        // Show the save file dialog
+        File file = fileChooser.showOpenDialog((Stage) solutiontable.getScene().getWindow());
+        if (file != null) {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            FileReader jsonReader = new FileReader(file);
+            try {
+                model = gson.fromJson(jsonReader, Model.class);
+            } finally {
+                jsonReader.close();
+            }
+            solutiontable.setItems(FXCollections.emptyObservableList());
+            solutiontable.getColumns().clear();
+            loadSolutionsFromModel(model);
+            tabpane.getSelectionModel().select(3);
+        }
+    }
+	
+
+private void saveFile(File file) {
+    // Implement your file saving logic here
+    System.out.println("File saved to: " + file.getAbsolutePath());
+}
 }
