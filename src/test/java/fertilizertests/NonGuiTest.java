@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import org.junit.jupiter.api.Test;
 
 import fertilizer.MainApp;
+import fertilizer.Model;
 
 class NonGuiTest extends MainApp {
 
@@ -45,4 +46,12 @@ class NonGuiTest extends MainApp {
         delay(7);
         MainApp.close();
     }
+    
+    @Test
+    void testModelSingleton() {
+        Model model = Model.getInstance();
+        Model model2 = Model.getInstance();
+        assert( model == model2);
+    }
+  
 }

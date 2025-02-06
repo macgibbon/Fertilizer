@@ -1,19 +1,13 @@
 package fertilizer;
 
-import java.awt.Desktop;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.prefs.Preferences;
-import java.util.stream.Collectors;
 
 import org.apache.commons.math4.legacy.optim.PointValuePair;
 
@@ -35,6 +29,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.util.converter.DoubleStringConverter;
 
@@ -71,10 +66,6 @@ public class MainController implements Initializable {
         super();
         this.model = model;
     }
-
-    public MainController() {
-        
-    }
    
 	@SuppressWarnings("unchecked")
     @Override
@@ -91,7 +82,7 @@ public class MainController implements Initializable {
             }
         });
        fileChooser = new FileChooser();
-      
+       fileChooser.getExtensionFilters().add(new ExtensionFilter("Json Files", "*.json"));      
     }
 
 	private void loadDefaultData() {
@@ -189,12 +180,10 @@ public class MainController implements Initializable {
 
         // Load the last used directory
         String lastUsedDirectory = model.preferences.get(LAST_USED_FOLDER, appDir.getAbsolutePath());
-        if (lastUsedDirectory != null) {
-            fileChooser.setInitialDirectory(new File(lastUsedDirectory));
-        }
+        fileChooser.setInitialDirectory(new File(lastUsedDirectory)); 
 
         // Show the save file dialog
-        File file = fileChooser.showSaveDialog((Stage) solutiontable.getScene().getWindow());
+        File file = fileChooser.showSaveDialog((Stage) solutiontable.getScene().getWindow()); 
         if (file != null) {
             // Save the directory of the chosen file
             model.preferences.put(LAST_USED_FOLDER, file.getParent());
@@ -202,7 +191,7 @@ public class MainController implements Initializable {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             FileWriter writer = new FileWriter(file);
             try {
-                gson.toJson(model, writer);
+                gson.toJson(solution, writer);
             } finally {
                 writer.close();
             }
@@ -215,9 +204,7 @@ public class MainController implements Initializable {
 
         // Load the last used directory
         String lastUsedDirectory = model.preferences.get(LAST_USED_FOLDER, appDir.getAbsolutePath());
-        if (lastUsedDirectory != null) {
-            fileChooser.setInitialDirectory(new File(lastUsedDirectory));
-        }
+        fileChooser.setInitialDirectory(new File(lastUsedDirectory)); 
 
         // Show the save file dialog
         File file = fileChooser.showOpenDialog((Stage) solutiontable.getScene().getWindow());
@@ -237,13 +224,4 @@ public class MainController implements Initializable {
     }
 	
 
-private void saveFile(File file) {
-    // Implement your file saving logic here
-    System.out.println("File saved to: " + file.getAbsolutePath());
-}
-
-public void setModel(Model model2) {
-   this.model = model2;
-    
-}
 }

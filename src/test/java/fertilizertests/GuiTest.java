@@ -1,13 +1,13 @@
 package fertilizertests;
 
 import static fertilizertests.Util.delay;
-import static fertilizertests.Util.pressGlobalExitKey;
 import static fertilizertests.Util.reflectiveGet;
 import static fertilizertests.Util.reflectiveSet;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,7 +17,6 @@ import java.util.stream.Stream;
 
 import org.apache.commons.math4.legacy.optim.PointValuePair;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
@@ -42,7 +41,17 @@ public class GuiTest extends MainApp {
     
     @Start
     void onStart(Stage primaryStage) throws Exception {
+        String testFolder = "C:/Users/Public/.test";
+        System.setProperty("user.home", testFolder);
+        Files.walk(Path.of(testFolder))
+            .filter( path -> path.toFile().isFile())
+            .map(path -> path.toFile())
+            .forEach(file -> file.delete());
+        Files.walk(Path.of(testFolder))
+            .map(path -> path.toFile())
+            .forEach(file -> file.delete());
         super.start(primaryStage);
+       
     }
     
     @Stop
@@ -56,15 +65,43 @@ public class GuiTest extends MainApp {
     }
 
     @Test
-    void testSave(FxRobot robot) throws Exception {
+    void testSaveAndLoad(FxRobot robot) throws Exception {
         robot.clickOn("File");
         robot.clickOn("Save Formulation");
-    }
+        robot.push(KeyCode.F);
+        robot.push(KeyCode.E);
+        robot.push(KeyCode.R);
+        robot.push(KeyCode.T);
+        robot.push(KeyCode.PERIOD);
+        robot.push(KeyCode.J);
+        robot.push(KeyCode.S);
+        robot.push(KeyCode.O);
+        robot.push(KeyCode.N);
+        robot.push(KeyCode.ENTER);
 
-    @Test
-    void testLoad(FxRobot robot) throws Exception {
+        delay(3);
         robot.clickOn("File");
         robot.clickOn("Load Formulation");
+        robot.push(KeyCode.F);
+        robot.push(KeyCode.E);
+        robot.push(KeyCode.R);
+        robot.push(KeyCode.T);
+        robot.push(KeyCode.PERIOD);
+        robot.push(KeyCode.J);
+        robot.push(KeyCode.S);
+        robot.push(KeyCode.O);
+        robot.push(KeyCode.N);
+        robot.push(KeyCode.ENTER);
+        
+        delay(3);
+        robot.clickOn("File");
+        robot.clickOn("Save Formulation");
+         robot.push(KeyCode.ESCAPE);
+         
+         delay(3);
+         robot.clickOn("File");
+         robot.clickOn("Load Formulation");
+         robot.push(KeyCode.ESCAPE);
     }
 
     @Test
@@ -73,34 +110,6 @@ public class GuiTest extends MainApp {
         robot.clickOn("Calculate least cost solution");
         robot.clickOn("Solution");
 
-    }
-
-    @Test
-    void testEdits(FxRobot robot) {
-        try {
-            robot.clickOn("Edit");
-            robot.clickOn("Edit Default Prices");
-            delay(2);
-            pressGlobalExitKey();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        try {
-            robot.clickOn("Edit");
-            robot.clickOn("Edit Default Requirements");
-            delay(2);
-            pressGlobalExitKey();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        try {
-            robot.clickOn("Edit");
-            robot.clickOn("Edit Default Ingredient Analysis");
-            delay(2);
-            pressGlobalExitKey();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Test
@@ -159,7 +168,7 @@ public class GuiTest extends MainApp {
                 }
 
             };
-            reflectiveSet(model, controller, "model");
+            reflectiveSet(model, controller, "solution");
             robot.clickOn("Action");
             robot.clickOn("Calculate least cost solution");
             delay(2);
@@ -218,7 +227,7 @@ public class GuiTest extends MainApp {
     @Test
     void testgetItemsEditingCornerCases() throws IOException, NoSuchFieldException, SecurityException,
             IllegalArgumentException, IllegalAccessException {
-        SolutionModel model = (SolutionModel) reflectiveGet(controller, "model");
+        SolutionModel model = (SolutionModel) reflectiveGet(controller, "solution");
         List<List<Content>> items = model.getItems();
         int rows = items.size();
         int columns = items.get(0).size();

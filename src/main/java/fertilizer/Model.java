@@ -11,15 +11,21 @@ import java.util.stream.Collectors;
 
 public class Model {
 
-    public Model() {
+    private Model() {
         super();
-       loadDefaults();
+        loadDefaults();
     }
 
-    final static public Model instance = new Model();
+    private static Model instance;
 
-    public static Model getInstance() {
+    public static synchronized Model getInstance() {
+        if (instance == null)
+            instance = new Model();
         return instance;
+    }
+    
+    public static void reset() {
+        instance = null;
     }
 
     public Preferences preferences;

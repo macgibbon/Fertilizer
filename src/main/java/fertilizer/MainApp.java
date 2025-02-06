@@ -1,6 +1,5 @@
 package fertilizer;
 
-import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
@@ -48,12 +47,9 @@ public class MainApp extends Application {
         currentStage = primaryStage;        
         URL resource = MainApp.class.getResource("/fertilizer/MainView.fxml");
         FXMLLoader loader = new FXMLLoader(resource);
+       
+        loader.setControllerFactory((c) -> controller = new MainController(model)); 
         Pane  root = (Pane) loader.load();
-        loader.setControllerFactory((c) -> {
-            MainController controller = new MainController(); 
-            controller.setModel(model);
-            return controller;
-        });
 		primaryStage.setTitle("Fertilizer formulator");
 		Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
 		double width = primScreenBounds.getWidth();
@@ -70,6 +66,7 @@ public class MainApp extends Application {
     public void stop() throws Exception {
         logger.removeHandler(fh);
         fh.close();
+        Model.reset();
         super.stop();
     }
 
