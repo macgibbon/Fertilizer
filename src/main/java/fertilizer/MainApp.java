@@ -1,7 +1,6 @@
 package fertilizer;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
@@ -43,8 +42,7 @@ public class MainApp extends Application {
         File userDir = new File(System.getProperty("user.home"));
         File appDir = new File(userDir,".fertilizer");
         if (!appDir.exists()) {
-            if (!appDir.mkdirs())
-                throw new IOException("Could not create application data directory @ " + appDir.getAbsolutePath());
+            appDir.mkdirs();
         }
         fh = new FileHandler(appDir.getAbsolutePath() + "/" + formatter.format(LocalDateTime.now())+ ".log", 1000000l,1,true);        
         fh.setFormatter(new SimpleFormatter());
@@ -67,19 +65,26 @@ public class MainApp extends Application {
 		primaryStage.show();
 	}
     
-	public static void main(String[] args) {
+	@Override
+    public void stop() throws Exception {
+        logger.removeHandler(fh);
+        fh.close();
+        super.stop();
+    }
+
+    public static void main(String[] args) {
 		launch(args);
 	}
 
 	protected void showError(Thread t, Throwable e) {
-	    logger.log(Level.SEVERE, "Exception in App", getCause(e)); 	
 	    Platform.runLater(() -> {
 	        showErrorDialog(t, e);
 	    });
 	}
 	
     protected void showErrorDialog(Thread t, Throwable e) {
-        try {
+        try {       
+            logger.log(Level.SEVERE, "Exception in App", getCause(e));  
             // Create a new dialog
             // Create a dialog to display the exception
             Alert alert = new Alert(AlertType.ERROR);
@@ -118,7 +123,7 @@ public class MainApp extends Application {
             stage.setScene(scene);
             stage.show();
         } catch (Throwable x) {
-            logger.log(Level.SEVERE, "Exception in showErrorDialog", getCause(e));   
+            logger.log(Level.SEVERE, "Exception in showErrorDialog", getCause(x));   
         }
     }
    

@@ -23,6 +23,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
+import org.testfx.framework.junit5.Stop;
 
 import fertilizer.Content;
 import fertilizer.MainApp;
@@ -37,9 +38,16 @@ import javafx.util.Pair;
 @ExtendWith(ApplicationExtension.class)
 public class GuiTest extends MainApp {
 
+    
+    
     @Start
     void onStart(Stage primaryStage) throws Exception {
         super.start(primaryStage);
+    }
+    
+    @Stop
+    void onStop() throws Exception {
+        super.stop();
     }
 
     @AfterAll

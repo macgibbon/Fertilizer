@@ -2,6 +2,10 @@ package fertilizertests;
 
 import static fertilizertests.Util.delay;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+
 import org.junit.jupiter.api.Test;
 
 import fertilizer.MainApp;
@@ -10,7 +14,13 @@ class NonGuiTest extends MainApp {
 
     // For code coverage of main method
     @Test
-    void testMainLauncher() {
+    void testMainLauncher() throws IOException {
+        File userDir = new File(System.getProperty("user.home"));
+        File appDir = new File(userDir,".fertilizer");
+        if (appDir.exists()) {
+            Files.list(appDir.toPath()).forEach( path -> path.toFile().delete());
+            appDir.delete();
+        }
         Throwable t = null;
         try {
             Thread launcherThread = new Thread(() ->  shutdown());
