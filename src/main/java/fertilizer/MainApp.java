@@ -29,22 +29,19 @@ public class MainApp extends Application {
 
     // expose these to code coverage tests
     protected static Stage currentStage;
-    protected static MainController controller;
+    protected MainController controller;
     
     private final Logger logger = Logger.getLogger(MainApp.class.getName());
     private FileHandler fh = null;
+    protected Model model;
 
 
     @Override
 	public void start(Stage primaryStage) throws Exception {
         Thread.setDefaultUncaughtExceptionHandler((Thread t, Throwable e) -> showError(t,e)); 
+        model = Model.getInstance();        
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-        File userDir = new File(System.getProperty("user.home"));
-        File appDir = new File(userDir,".fertilizer");
-        if (!appDir.exists()) {
-            appDir.mkdirs();
-        }
-        fh = new FileHandler(appDir.getAbsolutePath() + "/" + formatter.format(LocalDateTime.now())+ ".log", 1000000l,1,true);        
+        fh = new FileHandler(model.appDir.getAbsolutePath() + "/" + formatter.format(LocalDateTime.now())+ ".log", 1000000l,1,true);        
         fh.setFormatter(new SimpleFormatter());
         logger.addHandler(fh);
         logger.setUseParentHandlers(false);
@@ -52,7 +49,11 @@ public class MainApp extends Application {
         URL resource = MainApp.class.getResource("/fertilizer/MainView.fxml");
         FXMLLoader loader = new FXMLLoader(resource);
         Pane  root = (Pane) loader.load();
-        controller = loader.getController();
+        loader.setControllerFactory((c) -> {
+            MainController controller = new MainController(); 
+            controller.setModel(model);
+            return controller;
+        });
 		primaryStage.setTitle("Fertilizer formulator");
 		Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
 		double width = primScreenBounds.getWidth();

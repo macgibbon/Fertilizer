@@ -44,33 +44,4 @@
 			</tabs>
 		</TabPane>
 	</center>
-	<top>
-		<MenuBar fx:id="menubar" BorderPane.alignment="CENTER">
-			<menus>
-				<Menu fx:id="menuFile" mnemonicParsing="false" text="File">
-					<items>
-						<MenuItem mnemonicParsing="false" onAction="#load" text="Load Formulation" />
-						<MenuItem mnemonicParsing="false" onAction="#save" text="Save Formulation" />
-					</items>
-				</Menu>
-				<Menu mnemonicParsing="false" text="Edit">
-					<items>
-						<MenuItem mnemonicParsing="false" onAction="#editPrices" text="Edit Default Prices" />
-						<MenuItem mnemonicParsing="false" onAction="#editRequirements" text="Edit Default Requirements" />
-						<MenuItem mnemonicParsing="false" onAction="#editAnalysis" text="Edit Default Ingredient Analysis" />
-					</items>
-				</Menu>
-				<Menu mnemonicParsing="false" text="Action">
-					<items>
-						<MenuItem mnemonicParsing="false" fx:id="solveaction" onAction="#solve" text="Calculate least cost solution" />
-					</items>
-				</Menu>
-				<Menu mnemonicParsing="false" text="Help">
-					<items>
-						<MenuItem mnemonicParsing="false" text="About" />
-					</items>
-				</Menu>
-			</menus>
-		</MenuBar>
-	</top>
 </BorderPane>

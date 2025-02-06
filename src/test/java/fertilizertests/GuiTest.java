@@ -28,7 +28,7 @@ import org.testfx.framework.junit5.Stop;
 import fertilizer.Content;
 import fertilizer.MainApp;
 import fertilizer.MatrixBuilder;
-import fertilizer.Model;
+import fertilizer.SolutionModel;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.KeyCode;
@@ -147,11 +147,11 @@ public class GuiTest extends MainApp {
         Throwable error = null;
         try {
 
-            ArrayList<ArrayList<String>> priceRows = controller.readCsvfile(Path.of("defaultPrices.csv"));
-            ArrayList<ArrayList<String>> ingredientRows = controller.readCsvfile(Path.of("defaultIngredients.csv"));
-            ArrayList<ArrayList<String>> requirementRows = controller.readCsvfile(Path.of("defaultRequirements.csv"));
+            ArrayList<ArrayList<String>> priceRows = model.readCsvfile(Path.of("defaultPrices.csv"));
+            ArrayList<ArrayList<String>> ingredientRows = model.readCsvfile(Path.of("defaultIngredients.csv"));
+            ArrayList<ArrayList<String>> requirementRows = model.readCsvfile(Path.of("defaultRequirements.csv"));
             MatrixBuilder matrix = new MatrixBuilder(priceRows, requirementRows, ingredientRows);
-            Model model = new Model(matrix.getNutrientMap(), matrix.getIngredientMap(), matrix.getAnalysisMatrixs()) {
+            SolutionModel model = new SolutionModel(matrix.getNutrientMap(), matrix.getIngredientMap(), matrix.getAnalysisMatrixs()) {
 
                 @Override
                 public PointValuePair calculateSolution() {
@@ -196,7 +196,7 @@ public class GuiTest extends MainApp {
     void testBadDefaultFile() throws IOException {
         Throwable expected = null;
         try {
-            ArrayList<ArrayList<String>> priceRows = controller.readCsvfile(Path.of("notDefaultPrice.csv"));
+            ArrayList<ArrayList<String>> priceRows = model.readCsvfile(Path.of("notDefaultPrice.csv"));
         } catch (Throwable t) {
             expected = t;
         }
@@ -208,7 +208,7 @@ public class GuiTest extends MainApp {
             fos.close();
         }
         try {
-            ArrayList<ArrayList<String>> errorRows = controller.readCsvfile(Path.of("spacesOnly.csv"));
+            ArrayList<ArrayList<String>> errorRows = model.readCsvfile(Path.of("spacesOnly.csv"));
         } catch (Throwable t) {
             expected = t;
         }
@@ -218,7 +218,7 @@ public class GuiTest extends MainApp {
     @Test
     void testgetItemsEditingCornerCases() throws IOException, NoSuchFieldException, SecurityException,
             IllegalArgumentException, IllegalAccessException {
-        Model model = (Model) reflectiveGet(controller, "model");
+        SolutionModel model = (SolutionModel) reflectiveGet(controller, "model");
         List<List<Content>> items = model.getItems();
         int rows = items.size();
         int columns = items.get(0).size();

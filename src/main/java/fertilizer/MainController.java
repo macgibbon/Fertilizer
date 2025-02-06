@@ -64,16 +64,18 @@ public class MainController implements Initializable {
 	Menu menuFile;
 	
     FileChooser fileChooser;
-    Preferences preferences;
+    Model model;
+    SolutionModel solution;
+    
+    public MainController(Model model) {
+        super();
+        this.model = model;
+    }
+
+    public MainController() {
+        
+    }
    
-
-
-	ArrayList<ArrayList<String>> ingredientRows, priceRows, requirementRows, mergedMatrix;
-
-	Path pricesPath, ingredientsPath, requirementsPath;
-
-	private Model model;
-
 	@SuppressWarnings("unchecked")
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -89,41 +91,37 @@ public class MainController implements Initializable {
             }
         });
        fileChooser = new FileChooser();
-       preferences = Preferences.userNodeForPackage(getClass());
+      
     }
 
 	private void loadDefaultData() {
-		pricesPath = Path.of("defaultPrices.csv");
-		priceRows = readCsvfile(pricesPath);
-		ingredientsPath = Path.of("defaultIngredients.csv");
-		ingredientRows = readCsvfile(ingredientsPath);
-		requirementsPath = Path.of("defaultRequirements.csv");
-		requirementRows = readCsvfile(requirementsPath);
- 
-		var priceHeaders = new ArrayList<String>(priceRows.remove(0));
-		pricestable.setItems(FXCollections.observableArrayList(priceRows));
+	    var prices = model.priceRows;
+		var priceHeaders = new ArrayList<String>(prices.remove(0));
+		pricestable.setItems(FXCollections.observableArrayList(prices));
 		pricestable.getSelectionModel().setCellSelectionEnabled(true);
 		pricestable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 		createColumns(priceHeaders, pricestable);
 
-		var ingredientHeaders = new ArrayList<String>(ingredientRows.remove(0));
-		ingredientstable.setItems(FXCollections.observableArrayList(ingredientRows));
+		var ingredients = model.ingredientRows;
+		var ingredientHeaders = new ArrayList<String>(ingredients.remove(0));
+		ingredientstable.setItems(FXCollections.observableArrayList(ingredients));
 		ingredientstable.getSelectionModel().setCellSelectionEnabled(true);
 		ingredientstable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 		createColumns(ingredientHeaders, ingredientstable);
 
-		var requirementHeaders = new ArrayList<String>(requirementRows.remove(0));
-		requirementstable.setItems(FXCollections.observableArrayList(requirementRows));
+		var requirements = model.requirementRows;
+		var requirementHeaders = new ArrayList<String>(requirements.remove(0));
+		requirementstable.setItems(FXCollections.observableArrayList(requirements));
 		requirementstable.getSelectionModel().setCellSelectionEnabled(true);
 		requirementstable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 		createColumns(requirementHeaders, requirementstable);
 		
-	    MatrixBuilder matrix = new MatrixBuilder(priceRows, requirementRows, ingredientRows);
-	    model = new Model(matrix.getNutrientMap(), matrix.getIngredientMap(), matrix.getAnalysisMatrixs());
-	    loadSolutionsFromModel(model);
+	    MatrixBuilder matrix = new MatrixBuilder(prices, requirements, ingredients);
+	    solution = new SolutionModel(matrix.getNutrientMap(), matrix.getIngredientMap(), matrix.getAnalysisMatrixs());
+	    loadSolutionsFromModel(solution);
 	}
 
-    private void loadSolutionsFromModel(Model model) {
+    private void loadSolutionsFromModel(SolutionModel model) {
         solutiontable.getColumns().clear();  
         solutiontable.setItems(FXCollections.emptyObservableList());
  		solutiontable.setItems(FXCollections.observableArrayList(model.getItems()));
@@ -173,47 +171,24 @@ public class MainController implements Initializable {
 	}
 
 	public void solve() throws IOException {
-		PointValuePair result =  model.calculateSolution();
+		PointValuePair result =  solution.calculateSolution();
 		System.out.println(result.getValue());
 	//	updateTable(result);
 		tabpane.getSelectionModel().select(3);
-		solutiontable.setItems(FXCollections.observableArrayList(model.getItems()));
+		solutiontable.setItems(FXCollections.observableArrayList(solution.getItems()));
         solutiontable.getColumns().clear();
-        solutiontable.getColumns().addAll(model.getTableColumns());
+        solutiontable.getColumns().addAll(solution.getTableColumns());
 	}
 
-	public ArrayList<ArrayList<String>> readCsvfile(Path ingredientsPath) {
-		ArrayList<ArrayList<String>> lines;
-		try {
-			lines = Files.lines(ingredientsPath)
-			        .filter(line -> line.length() != 0)
-			        .map(line -> line.split(","))
-					.map(array -> new ArrayList<String>(Arrays.asList(array)))
-					.collect(Collectors.toCollection((ArrayList::new)));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		return lines;
-	}
+	
 
-	public void editRequirements() throws IOException {
-		Desktop.getDesktop().open(requirementsPath.toFile());
-	}
-
-	public void editPrices() throws IOException {
-		Desktop.getDesktop().open(pricesPath.toFile());
-	}
-
-	public void editAnalysis() throws IOException {
-		Desktop.getDesktop().open(ingredientsPath.toFile());
-	}
-
+	
     public void save() throws JsonIOException, IOException {
         File userDir = new File(System.getProperty("user.home"));
         File appDir = new File(userDir, ".fertilizer");
 
         // Load the last used directory
-        String lastUsedDirectory = preferences.get(LAST_USED_FOLDER, appDir.getAbsolutePath());
+        String lastUsedDirectory = model.preferences.get(LAST_USED_FOLDER, appDir.getAbsolutePath());
         if (lastUsedDirectory != null) {
             fileChooser.setInitialDirectory(new File(lastUsedDirectory));
         }
@@ -222,7 +197,7 @@ public class MainController implements Initializable {
         File file = fileChooser.showSaveDialog((Stage) solutiontable.getScene().getWindow());
         if (file != null) {
             // Save the directory of the chosen file
-            preferences.put(LAST_USED_FOLDER, file.getParent());
+            model.preferences.put(LAST_USED_FOLDER, file.getParent());
 
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             FileWriter writer = new FileWriter(file);
@@ -239,7 +214,7 @@ public class MainController implements Initializable {
         File appDir = new File(userDir, ".fertilizer");
 
         // Load the last used directory
-        String lastUsedDirectory = preferences.get(LAST_USED_FOLDER, appDir.getAbsolutePath());
+        String lastUsedDirectory = model.preferences.get(LAST_USED_FOLDER, appDir.getAbsolutePath());
         if (lastUsedDirectory != null) {
             fileChooser.setInitialDirectory(new File(lastUsedDirectory));
         }
@@ -250,13 +225,13 @@ public class MainController implements Initializable {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             FileReader jsonReader = new FileReader(file);
             try {
-                model = gson.fromJson(jsonReader, Model.class);
+                solution = gson.fromJson(jsonReader, SolutionModel.class);
             } finally {
                 jsonReader.close();
             }
             solutiontable.setItems(FXCollections.emptyObservableList());
             solutiontable.getColumns().clear();
-            loadSolutionsFromModel(model);
+            loadSolutionsFromModel(solution);
             tabpane.getSelectionModel().select(3);
         }
     }
@@ -265,5 +240,10 @@ public class MainController implements Initializable {
 private void saveFile(File file) {
     // Implement your file saving logic here
     System.out.println("File saved to: " + file.getAbsolutePath());
+}
+
+public void setModel(Model model2) {
+   this.model = model2;
+    
 }
 }
