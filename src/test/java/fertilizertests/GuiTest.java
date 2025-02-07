@@ -1,5 +1,6 @@
 package fertilizertests;
 
+import static fertilizertests.Util.delDirTree;
 import static fertilizertests.Util.delay;
 import static fertilizertests.Util.reflectiveGet;
 import static fertilizertests.Util.reflectiveSet;
@@ -7,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,23 +37,16 @@ import javafx.util.Pair;
 @ExtendWith(ApplicationExtension.class)
 public class GuiTest extends MainApp {
 
-    
-    
     @Start
     void onStart(Stage primaryStage) throws Exception {
+        // setup test folder and clear it out
         String testFolder = "C:/Users/Public/.test";
         System.setProperty("user.home", testFolder);
-        Files.walk(Path.of(testFolder))
-            .filter( path -> path.toFile().isFile())
-            .map(path -> path.toFile())
-            .forEach(file -> file.delete());
-        Files.walk(Path.of(testFolder))
-            .map(path -> path.toFile())
-            .forEach(file -> file.delete());
+        delDirTree(testFolder);
         super.start(primaryStage);
-       
+        // assert folder doesn't exist
     }
-    
+
     @Stop
     void onStop() throws Exception {
         super.stop();
@@ -78,7 +71,9 @@ public class GuiTest extends MainApp {
         robot.push(KeyCode.O);
         robot.push(KeyCode.N);
         robot.push(KeyCode.ENTER);
+        // check that file exists and solution price matches
 
+        // change cell 0 0 
         delay(3);
         robot.clickOn("File");
         robot.clickOn("Load Formulation");
@@ -92,16 +87,17 @@ public class GuiTest extends MainApp {
         robot.push(KeyCode.O);
         robot.push(KeyCode.N);
         robot.push(KeyCode.ENTER);
-        
+        // assert cell 0 0 different
+
         delay(3);
         robot.clickOn("File");
         robot.clickOn("Save Formulation");
-         robot.push(KeyCode.ESCAPE);
-         
-         delay(3);
-         robot.clickOn("File");
-         robot.clickOn("Load Formulation");
-         robot.push(KeyCode.ESCAPE);
+        robot.push(KeyCode.ESCAPE);
+
+        delay(3);
+        robot.clickOn("File");
+        robot.clickOn("Load Formulation");
+        robot.push(KeyCode.ESCAPE);
     }
 
     @Test
@@ -109,6 +105,7 @@ public class GuiTest extends MainApp {
         robot.clickOn("Action");
         robot.clickOn("Calculate least cost solution");
         robot.clickOn("Solution");
+        // assert solution price is correct
 
     }
 
@@ -120,6 +117,7 @@ public class GuiTest extends MainApp {
         robot.push(KeyCode.DIGIT4);
         robot.push(KeyCode.DIGIT5);
         robot.push(KeyCode.ENTER);
+        // assert cell changed
     }
 
     @Test
@@ -130,6 +128,7 @@ public class GuiTest extends MainApp {
         robot.push(KeyCode.DIGIT0);
         robot.push(KeyCode.DIGIT1);
         robot.push(KeyCode.ENTER);
+        // solve assert solution changed
     }
 
     @Test
@@ -140,8 +139,11 @@ public class GuiTest extends MainApp {
         robot.push(KeyCode.DIGIT6);
         robot.push(KeyCode.DIGIT1);
         robot.push(KeyCode.ENTER);
+     // solve assert solution changed
     }
 
+    
+    // tests for code coverage
     @Test
     void testBadEntry(FxRobot robot) {
         robot.clickOn("Solution");
@@ -160,7 +162,8 @@ public class GuiTest extends MainApp {
             ArrayList<ArrayList<String>> ingredientRows = model.readCsvfile(Path.of("defaultIngredients.csv"));
             ArrayList<ArrayList<String>> requirementRows = model.readCsvfile(Path.of("defaultRequirements.csv"));
             MatrixBuilder matrix = new MatrixBuilder(priceRows, requirementRows, ingredientRows);
-            SolutionModel model = new SolutionModel(matrix.getNutrientMap(), matrix.getIngredientMap(), matrix.getAnalysisMatrixs()) {
+            SolutionModel model = new SolutionModel(matrix.getNutrientMap(), matrix.getIngredientMap(),
+                    matrix.getAnalysisMatrixs()) {
 
                 @Override
                 public PointValuePair calculateSolution() {
@@ -172,6 +175,7 @@ public class GuiTest extends MainApp {
             robot.clickOn("Action");
             robot.clickOn("Calculate least cost solution");
             delay(2);
+            // assert log file created
             // PointValuePair solution = model.calculateSolution();
             // System.out.println(solution.getValue());
         } catch (Throwable t) {
@@ -191,14 +195,17 @@ public class GuiTest extends MainApp {
                 Diammonium Phosphate (DAP),710
                 """;
 
-        ArrayList<ArrayList<String>> rows = Stream.of(prices.split("\n")).filter(line -> line != null)
-                .map(line -> line.split(",")).map(array -> new ArrayList<String>(Arrays.asList(array)))
+        ArrayList<ArrayList<String>> rows = Stream.of(prices.split("\n"))
+                .filter(line -> line != null)
+                .map(line -> line.split(","))
+                .map(array -> new ArrayList<String>(Arrays.asList(array)))
                 .collect(Collectors.toCollection((ArrayList::new)));
         MatrixBuilder matrix = new MatrixBuilder(rows, rows, rows);
 
         TableView<Content> solutionTable = (TableView<Content>) reflectiveGet(controller, "solutiontable");
         TableColumn tc = solutionTable.getColumns().get(0);
         solutionTable.getSelectionModel().select(1000, tc);
+        // 
     }
 
     @Test
@@ -232,21 +239,20 @@ public class GuiTest extends MainApp {
         int rows = items.size();
         int columns = items.get(0).size();
         Content testContent = new Content(1000.0);
-        int solutionAmountColumn = columns-1;
-        int priceColumn = columns-2;
-        int solutionAmountRow = rows -1;
-        int requirementRow = rows-2;
+        int solutionAmountColumn = columns - 1;
+        int priceColumn = columns - 2;
+        int solutionAmountRow = rows - 1;
+        int requirementRow = rows - 2;
         int nameColumn = 0;
 
-        var pairs = List.of(
-                new Pair(0,nameColumn),                      // test name column 
-                new Pair(0, solutionAmountColumn),  // test solution nutrient amount column              
-                new Pair(solutionAmountRow, 1),      // test solution ingredient amount column 
-                new Pair(requirementRow,priceColumn )                    // test price in requirement row 
-              //  new Pair(0, columns - 2),        
-              //  new Pair(rows - 2, 3), 
-             //   new Pair(3, columns - 1), 
-            //    new Pair(11, 7)
+        var pairs = List.of(new Pair(0, nameColumn), // test name column
+                new Pair(0, solutionAmountColumn), // test solution nutrient amount column
+                new Pair(solutionAmountRow, 1), // test solution ingredient amount column
+                new Pair(requirementRow, priceColumn) // test price in requirement row
+        // new Pair(0, columns - 2),
+        // new Pair(rows - 2, 3),
+        // new Pair(3, columns - 1),
+        // new Pair(11, 7)
         );
         for (Pair pair : pairs) {
             Integer x = (Integer) pair.getKey();
@@ -260,13 +266,13 @@ public class GuiTest extends MainApp {
     }
 
     @Test
-    void testEmptySelection() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
-       TableView<List<Content>> solutionTable = (TableView<List<Content>>) reflectiveGet(controller, "solutiontable");
-       TableColumn<List<Content>, ?> aTableColumn = solutionTable.getColumns().get(1);
-       solutionTable.getSelectionModel().select(2, aTableColumn);
-       solutionTable.getSelectionModel().clearSelection();
-        
-        
+    void testEmptySelection()
+            throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+        TableView<List<Content>> solutionTable = (TableView<List<Content>>) reflectiveGet(controller, "solutiontable");
+        TableColumn<List<Content>, ?> aTableColumn = solutionTable.getColumns().get(1);
+        solutionTable.getSelectionModel().select(2, aTableColumn);
+        solutionTable.getSelectionModel().clearSelection();
+
     }
-    
+
 }
