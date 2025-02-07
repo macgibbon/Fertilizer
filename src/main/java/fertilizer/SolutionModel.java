@@ -35,7 +35,7 @@ public class SolutionModel {
     private String solutionPrice;
     private double[] solutionNutrientAmounts;
     private String solutionTotal;
-    private ArrayList<String> solutionHeaders;
+    ArrayList<String> solutionHeaders;
   
     public SolutionModel( LinkedHashMap<String,Double> nutrientMap, LinkedHashMap<String,Double> ingredientMap, ArrayList<ArrayList<Double>> coefficients) {
         this.ingredientMap = ingredientMap;

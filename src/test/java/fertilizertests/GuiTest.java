@@ -1,8 +1,6 @@
 package fertilizertests;
 
-import static fertilizertests.Util.delay;
-import static fertilizertests.Util.reflectiveGet;
-import static fertilizertests.Util.reflectiveSet;
+import static fertilizertests.Util.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.FileOutputStream;
@@ -105,10 +103,11 @@ public class GuiTest extends MainApp {
     }
 
     @Test
-    void testSolve(FxRobot robot) throws Exception {
+    void testPrint(FxRobot robot) throws Exception {
         robot.clickOn("Action");
-        robot.clickOn("Calculate least cost solution");
-        robot.clickOn("Solution");
+        robot.clickOn("Print least cost solution");
+        delay(5);
+        pressGlobalExitKey(); 
 
     }
 

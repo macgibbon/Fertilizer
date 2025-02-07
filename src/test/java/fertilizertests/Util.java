@@ -34,4 +34,12 @@ public class Util {
         awtRobot.keyRelease(KeyEvent.VK_ESCAPE);
     }
     
+    public static  void pressGlobalEnterKey() throws AWTException {
+        java.awt.Robot awtRobot = new java.awt.Robot();
+        awtRobot.keyPress(KeyEvent.VK_ENTER);
+        awtRobot.keyRelease(KeyEvent.VK_ENTER);
+    }
+    
+    
+    
 }

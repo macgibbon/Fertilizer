@@ -1,8 +1,8 @@
 package fertilizer;
 
 public class Content {
-    double value = 0.0;
-    String name = null;
+    public double value = 0.0;
+    public String name = null;
 
     public Content(String name) {
         super();

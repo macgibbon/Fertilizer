@@ -8,7 +8,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/18.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fertilizer.MainController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fertilizer.MainController">
 	<center>
 		<TabPane fx:id="tabpane" prefHeight="200.0" prefWidth="200.0" side="BOTTOM" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
 			<tabs>
@@ -55,7 +55,8 @@
 				</Menu>
 				<Menu mnemonicParsing="false" text="Action">
 					<items>
-						<MenuItem mnemonicParsing="false" fx:id="solveaction" onAction="#solve" text="Calculate least cost solution" />
+						<MenuItem fx:id="solveaction" mnemonicParsing="false" onAction="#solve" text="Calculate least cost solution" />
+                  		<MenuItem fx:id="printAction" mnemonicParsing="false" onAction="#print" text="Print least cost solution" />
 					</items>
 				</Menu>
 				<Menu mnemonicParsing="false" text="Help">

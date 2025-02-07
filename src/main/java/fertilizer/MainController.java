@@ -1,15 +1,22 @@
 package fertilizer;
 
+
+import java.awt.print.PrinterJob;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.commons.math4.legacy.optim.PointValuePair;
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.printing.PDFPageable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -221,6 +228,29 @@ public class MainController implements Initializable {
             loadSolutionsFromModel(solution);
             tabpane.getSelectionModel().select(3);
         }
+    }
+    
+    public void print() throws Exception {
+        solve();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        String filename = String.format("Fertilizer%s.pdf" ,formatter.format(LocalDateTime.now()));
+        File outFile = new File(model.appDir,filename);
+        var items = solutiontable.getItems();
+        String[] headers= solutiontable.getColumns().stream()
+                .map(column -> column.getText())
+                .toArray(String[]::new);
+        TablePdf pdf = new TablePdf(items, headers);
+        pdf.write(outFile);
+        
+        PDDocument document = Loader.loadPDF(outFile);
+
+        // Create a PrinterJob
+        PrinterJob job = PrinterJob.getPrinterJob();
+        // Set the PDF document as the printable object
+        job.setPageable(new PDFPageable(document));
+        job.print();
+        // Close the document
+        document.close();
     }
 	
 

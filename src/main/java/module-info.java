@@ -13,5 +13,7 @@ module stamfordcoop {
     requires com.google.gson;
     requires java.logging;
     requires transitive java.prefs;
+    requires com.github.librepdf.openpdf;
+    requires org.apache.pdfbox;
 	opens fertilizer;
 }
