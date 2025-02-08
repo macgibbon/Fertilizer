@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.apache.commons.math4.legacy.optim.linear.Relationship;
 
 public class MatrixBuilder {
 
@@ -13,6 +16,7 @@ public class MatrixBuilder {
     private double[][] analysisMatrix;
 
     private LinkedHashMap<String,Double> ingredientMap, nutrientMap;
+    LinkedHashMap<String,Relationship> constraintMap; 
 
     private HashMap<String, Integer> analysisIngredientMap,analysisNutrientMap;
     private String[] nutrientNames, ingredientNames;
@@ -25,7 +29,14 @@ public class MatrixBuilder {
 
         nutrientMap = requirementRows.stream()
                // .skip(1) // skip headers
-                .collect(Collectors.toMap(row -> row.get(0), row -> convertDouble(row.get(1)), (x, y) -> y, LinkedHashMap::new));        
+                .collect(Collectors.toMap(row -> row.get(0), row -> convertDouble(row.get(2)), (x, y) -> y, LinkedHashMap::new)); 
+        
+       HashMap<String,Relationship> lookupMap = Stream.of(Relationship.values())
+                .collect(Collectors.toMap(r-> r.toString(), r->r, (x, y) -> y, LinkedHashMap::new)); 
+        
+        constraintMap = requirementRows.stream()
+                // .skip(1) // skip headers
+                 .collect(Collectors.toMap(row -> row.get(0), row -> lookupMap.get(row.get(1)), (x, y) -> y, LinkedHashMap::new)); 
         
         analysisIngredientMap = new HashMap<String, Integer>();
         for (int i = 0; i < ingredientRows.size(); i++) {
@@ -77,5 +88,10 @@ public class MatrixBuilder {
        }
        return matrixList;
     }
+    
+    public LinkedHashMap<String, Relationship> getConstraintMap() {
+        return constraintMap;
+    }
+
 
 }

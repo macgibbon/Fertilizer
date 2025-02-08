@@ -1,8 +1,8 @@
-Ingredient,Requirements (lb)
-N,360
-P,360
-K,360
-S,20
-CA,40
-MG,60
-WT,2000
+Ingredient,Constraint,Requirements (lb)
+N,>=,360
+P,>=,360
+K,>=,360
+S,>=,20
+CA,>=,40
+MG,>=,60
+WT,=,2000

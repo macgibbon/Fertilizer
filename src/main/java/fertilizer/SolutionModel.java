@@ -29,18 +29,20 @@ public class SolutionModel {
     private LinkedHashMap<String, Double> ingredientMap;
     private LinkedHashMap<String, Double> nutrientMap;
     private ArrayList<ArrayList<Double>> coefficients;
+    private LinkedHashMap<String, Relationship> constraintMap;
 
     // Output as arrays for simplicity and easier interface with LP optimization library
     private double[] solutionIngredientAmounts;
     private String solutionPrice;
     private double[] solutionNutrientAmounts;
     private String solutionTotal;
-    ArrayList<String> solutionHeaders;
+    ArrayList<String> solutionHeaders;   
   
-    public SolutionModel( LinkedHashMap<String,Double> nutrientMap, LinkedHashMap<String,Double> ingredientMap, ArrayList<ArrayList<Double>> coefficients) {
+    public SolutionModel( LinkedHashMap<String,Double> nutrientMap, LinkedHashMap<String, Relationship> constraintMap, LinkedHashMap<String,Double> ingredientMap, ArrayList<ArrayList<Double>> coefficients) {
         this.ingredientMap = ingredientMap;
         this.nutrientMap = nutrientMap;
         this.coefficients = coefficients;
+        this.constraintMap = constraintMap;
         this.solutionHeaders = new ArrayList<String>();
         solutionIngredientAmounts = new double[ingredientMap.size()];
         solutionPrice="";
@@ -52,8 +54,8 @@ public class SolutionModel {
 
     public PointValuePair calculateSolution() {   
         int numberOfNutrientContraints = nutrientMap.size();
-        Relationship[] constraintRelationsShips = new Relationship[numberOfNutrientContraints];
-        Arrays.fill(constraintRelationsShips,Relationship.GEQ);
+        Relationship[] constraintRelationsShips = constraintMap.values().toArray(new Relationship[numberOfNutrientContraints]);
+        
         double[] nutrientAmounts = nutrientMap.values().stream().mapToDouble( D -> D.doubleValue()).toArray();
 
         Collection<LinearConstraint> constraints = new ArrayList<>();

@@ -115,7 +115,7 @@ public class MainController implements Initializable {
 		createColumns(requirementHeaders, requirementstable);
 		
 	    MatrixBuilder matrix = new MatrixBuilder(prices, requirements, ingredients);
-	    solution = new SolutionModel(matrix.getNutrientMap(), matrix.getIngredientMap(), matrix.getAnalysisMatrixs());
+	    solution = new SolutionModel(matrix.getNutrientMap(),matrix.getConstraintMap(), matrix.getIngredientMap(), matrix.getAnalysisMatrixs());
 	    loadSolutionsFromModel(solution);
 	}
 
