@@ -1,13 +1,6 @@
 package fertilizertests;
 
-<<<<<<< HEAD
 import static fertilizertests.Util.*;
-=======
-import static fertilizertests.Util.delDirTree;
-import static fertilizertests.Util.delay;
-import static fertilizertests.Util.reflectiveGet;
-import static fertilizertests.Util.reflectiveSet;
->>>>>>> refs/heads/functionalTests
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.FileOutputStream;
@@ -107,19 +100,12 @@ public class GuiTest extends MainApp {
     @Test
     void testPrint(FxRobot robot) throws Exception {
         robot.clickOn("Action");
-<<<<<<< HEAD
         robot.clickOn("Print least cost solution");
         delay(5);
         pressGlobalExitKey(); 
         SolutionModel solutionModel = (SolutionModel) reflectiveGet(controller, "solution");
         String price = (String) reflectiveGet(solutionModel, "solutionPrice");
         assert(price.equals("$770.63"));
-=======
-        robot.clickOn("Calculate least cost solution");
-        robot.clickOn("Solution");
-        // assert solution price is correct
-
->>>>>>> refs/heads/functionalTests
     }
 
     @Test
