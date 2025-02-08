@@ -16,6 +16,7 @@ import org.apache.commons.math4.legacy.optim.linear.SimplexSolver;
 import org.apache.commons.math4.legacy.optim.nonlinear.scalar.GoalType;
 
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.event.Event;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.converter.DefaultStringConverter;
@@ -212,12 +213,13 @@ public class SolutionModel {
             final String value = event.getNewValue();
             int row = event.getTablePosition().getRow();
             try {
-                double d = Double.valueOf(value.trim());  
+                double d = Double.valueOf(value.trim());
                 event.getTableView().getItems().get(row).set(col, new Content(d));
+                Event.fireEvent(event.getTableView(), new SolveItEvent());
             } catch (NumberFormatException nfe) {
                 event.getTableView().getItems().get(row).set(col, new Content(value));
             }
-         });     
+        });    
         return aTableColumn;
     }
 

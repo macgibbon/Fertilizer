@@ -170,7 +170,7 @@ public class MainController implements Initializable {
 		return aTableColumn;
 	}
 
-	public void solve() throws IOException {
+	public void solve()  {
 		PointValuePair result =  solution.calculateSolution();
 		System.out.println(result.getValue());
 	//	updateTable(result);
