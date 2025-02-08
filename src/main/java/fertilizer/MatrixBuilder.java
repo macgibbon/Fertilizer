@@ -20,19 +20,20 @@ public class MatrixBuilder {
   
     public MatrixBuilder(ArrayList<ArrayList<String>> priceRows, ArrayList<ArrayList<String>> requirementRows, ArrayList<ArrayList<String>> ingredientRows) {
         ingredientMap = priceRows.stream()
-                .skip(1) // skip headers
+                //.skip(1) // skip headers
                 .collect(Collectors.toMap(row -> row.get(0), row -> convertDouble(row.get(1)), (x, y) -> y, LinkedHashMap::new));
 
-        nutrientMap = requirementRows.stream().skip(1) // skip headers
+        nutrientMap = requirementRows.stream()
+               // .skip(1) // skip headers
                 .collect(Collectors.toMap(row -> row.get(0), row -> convertDouble(row.get(1)), (x, y) -> y, LinkedHashMap::new));        
         
         analysisIngredientMap = new HashMap<String, Integer>();
-        for (int i = 1; i < ingredientRows.size(); i++) {
+        for (int i = 0; i < ingredientRows.size(); i++) {
             analysisIngredientMap.put(ingredientRows.get(i).get(0), i);
         }
 
         analysisNutrientMap = new HashMap<String, Integer>();
-        for (int i = 1; i < requirementRows.size(); i++) {
+        for (int i = 0; i < requirementRows.size(); i++) {
             analysisNutrientMap.put(requirementRows.get(i).get(0).replace('%', ' ').trim(), i);
         }
         int lprows = nutrientMap.size();
@@ -48,7 +49,7 @@ public class MatrixBuilder {
                     String ingredientName = ingredientNames[j];
                     int rowPosition = analysisIngredientMap.get(ingredientName);
                     int colPosition = analysisNutrientMap.get(nutrient);
-                    String valString = ingredientRows.get(rowPosition).get(colPosition);
+                    String valString = ingredientRows.get(rowPosition).get(colPosition+1);
                     val = convertDouble(valString);
                 } catch (Throwable t) {
                 }

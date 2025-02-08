@@ -26,8 +26,7 @@ public class Content {
         double value = 0.0;
         try {
             value = Double.valueOf(str);
-        } catch (Throwable t) {
-           System.out.println(t);
+        } catch (Throwable t) {          
         }
         return value;
     }

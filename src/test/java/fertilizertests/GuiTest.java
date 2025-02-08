@@ -108,7 +108,9 @@ public class GuiTest extends MainApp {
         robot.clickOn("Print least cost solution");
         delay(5);
         pressGlobalExitKey(); 
-
+        SolutionModel solutionModel = (SolutionModel) reflectiveGet(controller, "solution");
+        String price = (String) reflectiveGet(solutionModel, "solutionPrice");
+        assert(price.equals("$770.63"));
     }
 
     @Test

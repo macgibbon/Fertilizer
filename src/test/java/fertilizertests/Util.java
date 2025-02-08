@@ -15,7 +15,7 @@ public class Util {
         field.set(controller, badModel);        
     }
     
-    public static Object reflectiveGet( MainController controller, String name) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+    public static Object reflectiveGet( Object controller, String name) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
         Field field = controller.getClass().getDeclaredField(name);
         field.setAccessible(true);
        return  field.get(controller);        
