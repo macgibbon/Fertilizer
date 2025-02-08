@@ -1,6 +1,10 @@
 package fertilizertests;
 
-import static fertilizertests.Util.*;
+import static fertilizertests.Util.delDirTree;
+import static fertilizertests.Util.delay;
+import static fertilizertests.Util.pressGlobalExitKey;
+import static fertilizertests.Util.reflectiveGet;
+import static fertilizertests.Util.reflectiveSet;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.FileOutputStream;
@@ -35,9 +39,10 @@ import javafx.util.Pair;
 public class GuiTest extends MainApp {
 
     @Start
-    void onStart(Stage primaryStage) throws Exception {
+    public void onStart(Stage primaryStage) throws Exception {
         // setup test folder and clear it out
-        String testFolder = "C:/Users/Public/.test";
+    
+        String testFolder = "C:/Users/david/.test";
         System.setProperty("user.home", testFolder);
         delDirTree(testFolder);
         super.start(primaryStage);
@@ -56,8 +61,10 @@ public class GuiTest extends MainApp {
 
     @Test
     void testSaveAndLoad(FxRobot robot) throws Exception {
+        delay(2);
         robot.clickOn("File");
         robot.clickOn("Save Formulation");
+        delay(2);
         robot.push(KeyCode.F);
         robot.push(KeyCode.E);
         robot.push(KeyCode.R);
@@ -74,6 +81,7 @@ public class GuiTest extends MainApp {
         delay(3);
         robot.clickOn("File");
         robot.clickOn("Load Formulation");
+        delay(2);
         robot.push(KeyCode.F);
         robot.push(KeyCode.E);
         robot.push(KeyCode.R);

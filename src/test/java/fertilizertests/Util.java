@@ -2,6 +2,7 @@ package fertilizertests;
 
 import java.awt.AWTException;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
@@ -44,13 +45,21 @@ public class Util {
     }
     
     public static void delDirTree(String testFolder) throws IOException {
-        Files.walk(Path.of(testFolder))
+        Path testPath =Path.of(testFolder);
+        if (!(testPath.toFile().exists()))
+            testPath.toFile().mkdirs();
+        Files.walk(testPath)
             .filter( path -> path.toFile().isFile())
             .map(path -> path.toFile())
-            .forEach(file -> file.delete());
+            .forEach(file -> deleteFile(file));
         Files.walk(Path.of(testFolder))
             .map(path -> path.toFile())
-            .forEach(file -> file.delete());
+            .forEach(file -> deleteFile(file));
+     }
+
+    private static void deleteFile(File file) {
+        System.out.println(file.getAbsolutePath());
+        file.delete();
     }
     
 }
