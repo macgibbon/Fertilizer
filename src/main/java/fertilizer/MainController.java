@@ -42,6 +42,8 @@ import javafx.util.converter.DoubleStringConverter;
 
 public class MainController implements Initializable {
     
+    private static final int SOLUTIONTAB = 0;
+
     private static final String LAST_USED_FOLDER = "lastUsedFolder";
 
 	@FXML
@@ -98,21 +100,21 @@ public class MainController implements Initializable {
 		pricestable.setItems(FXCollections.observableArrayList(prices));
 		pricestable.getSelectionModel().setCellSelectionEnabled(true);
 		pricestable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-		createColumns(priceHeaders, pricestable);
+		createColumns(priceHeaders, pricestable,1);
 
 		var ingredients = model.ingredientRows;
 		var ingredientHeaders = new ArrayList<String>(ingredients.remove(0));
 		ingredientstable.setItems(FXCollections.observableArrayList(ingredients));
 		ingredientstable.getSelectionModel().setCellSelectionEnabled(true);
 		ingredientstable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-		createColumns(ingredientHeaders, ingredientstable);
+		createColumns(ingredientHeaders, ingredientstable,1);
 
 		var requirements = model.requirementRows;
 		var requirementHeaders = new ArrayList<String>(requirements.remove(0));
 		requirementstable.setItems(FXCollections.observableArrayList(requirements));
 		requirementstable.getSelectionModel().setCellSelectionEnabled(true);
 		requirementstable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-		createColumns(requirementHeaders, requirementstable);
+		createColumns(requirementHeaders, requirementstable,2);
 		
 	    MatrixBuilder matrix = new MatrixBuilder(prices, requirements, ingredients);
 	    solution = new SolutionModel(matrix.getNutrientMap(),matrix.getConstraintMap(), matrix.getIngredientMap(), matrix.getAnalysisMatrixs());
@@ -126,18 +128,18 @@ public class MainController implements Initializable {
         solutiontable.getColumns().addAll(model.getTableColumns());
     }	
 
-	private void createColumns(ArrayList<String> displayHeaders, TableView<List<String>> tableView) {
-		tableView.getColumns().clear();
-		int nCols = displayHeaders.size();
-		int ingredientNameColumn = 0;
-		TableColumn<List<String>, String> aTableColumn = createStringColumn(displayHeaders, ingredientNameColumn);
-		tableView.getColumns().add(aTableColumn);
-		for (int i = 1; i < nCols; i++) {
-			TableColumn<List<String>, Double> dTableColumn = createDoubleColumn(displayHeaders, i);
-			dTableColumn.setEditable(true);
-			tableView.getColumns().add(dTableColumn);
-		}
-	}
+    private void createColumns(ArrayList<String> displayHeaders, TableView<List<String>> tableView, int strcolcount) {
+        tableView.getColumns().clear();
+        int nCols = displayHeaders.size();
+        for (int i = 0; i < strcolcount; i++) {
+            TableColumn<List<String>, String> sTableColumn = createStringColumn(displayHeaders, i);
+            tableView.getColumns().add(sTableColumn);
+        }
+        for (int i = strcolcount; i < nCols; i++) {
+            TableColumn<List<String>, Double> dTableColumn = createDoubleColumn(displayHeaders, i);
+            tableView.getColumns().add(dTableColumn);
+        }
+    }
 
     private TableColumn<List<String>, String> createStringColumn(ArrayList<String> displayHeaders, int column) {
         final int col = column;
@@ -172,7 +174,7 @@ public class MainController implements Initializable {
 		PointValuePair result =  solution.calculateSolution();
 		System.out.println(result.getValue());
 	//	updateTable(result);
-		tabpane.getSelectionModel().select(3);
+		tabpane.getSelectionModel().select(SOLUTIONTAB);
 		solutiontable.setItems(FXCollections.observableArrayList(solution.getItems()));
         solutiontable.getColumns().clear();
         solutiontable.getColumns().addAll(solution.getTableColumns());
@@ -226,7 +228,7 @@ public class MainController implements Initializable {
             solutiontable.setItems(FXCollections.emptyObservableList());
             solutiontable.getColumns().clear();
             loadSolutionsFromModel(solution);
-            tabpane.getSelectionModel().select(3);
+            tabpane.getSelectionModel().select(SOLUTIONTAB);
         }
     }
     

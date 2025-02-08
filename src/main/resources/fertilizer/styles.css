@@ -7,11 +7,11 @@
 	-fx-background-color: lightgrey;
 }
 
-.text-field-table-cell.pricecolumn {
+.text-field-table-cell.readonly {
 	-fx-background-color: honeydew;
 }
 
-.text-field-table-cell.pricecolumn:selected {
+.text-field-table-cell.readonly:selected {
 	-fx-background-color: deepskyblue;
 }
 
@@ -25,7 +25,7 @@
 	-fx-text-fill : black;
 }
 
-.text-field-table-cell.pricecolumn:empty {
+.text-field-table-cell.readonly:empty {
 	-fx-background-color: white;
 }
 

@@ -1,5 +1,5 @@
 Ingredient,Constraint,Requirements (lb)
-N,>=,360
+N,>=,180
 P,>=,360
 K,>=,360
 S,>=,20

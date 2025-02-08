@@ -110,7 +110,7 @@ public class GuiTest extends MainApp {
         pressGlobalExitKey(); 
         SolutionModel solutionModel = (SolutionModel) reflectiveGet(controller, "solution");
         String price = (String) reflectiveGet(solutionModel, "solutionPrice");
-        assert(price.equals("$770.63"));
+        assert(price.equals("$655.79"));
     }
 
     @Test
