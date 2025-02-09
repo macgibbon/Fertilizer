@@ -76,7 +76,7 @@ public class MainApp extends Application {
 	}
 
 	protected void showError(Thread t, Throwable e) {
-	    e.printStackTrace();
+	    getCause(e).printStackTrace();
 	    Platform.runLater(() -> {
 	        showErrorDialog(t, e);
 	    });
@@ -127,7 +127,7 @@ public class MainApp extends Application {
         }
     }
    
-    private static Throwable getCause(Throwable x) {
+    public static Throwable getCause(Throwable x) {
         Throwable t = x;
         while (t.getCause() != null) {
             t = t.getCause();

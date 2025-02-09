@@ -114,7 +114,7 @@ public class SolutionModel {
                 return new AbstractList<Content>() {
                      @Override
                     public int size() {
-                        return numberOfNutrientContraints + 3;
+                        return numberOfNutrientContraints + 2;
                     }
 
                     @Override
@@ -146,7 +146,8 @@ public class SolutionModel {
 
                     @Override
                     public Content set(int column, Content cell) {
-                        if ((column == priceColumn) && (row == numberOfIngredients))
+                        System.out.println("set row " + row + " column " + column);
+                        if ((column == amountColumn) && (row == solveAmountRow))
                             throw new RuntimeException("Cell can't be set!");
                         if (row == solveAmountRow)
                             throw new RuntimeException("Cell can't be set!");

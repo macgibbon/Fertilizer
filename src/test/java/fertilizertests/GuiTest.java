@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.math4.legacy.optim.PointValuePair;
+import org.apache.commons.math4.legacy.optim.linear.Relationship;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -290,17 +291,28 @@ public class GuiTest extends MainApp {
         int priceColumn = columns - 2;
         int solutionAmountRow = rows - 1;
         int requirementRow = rows - 2;
+        int relationshipRow = rows -3;
         int nameColumn = 0;
 
         var pairs = List.of(new Pair(0, nameColumn), // test name column
                 new Pair(0, solutionAmountColumn), // test solution nutrient amount column
                 new Pair(solutionAmountRow, 1), // test solution ingredient amount column
-                new Pair(requirementRow, priceColumn) // test price in requirement row
+                new Pair(12, 9), 
+                new Pair(11, 9), 
+                new Pair(9, 12), 
+                new Pair(9, 11), 
+                new Pair(9, 10), 
+                new Pair(10, 9), 
+                new Pair(8, 11), 
+                new Pair(12, 1), 
+                new Pair(1, 12), 
+                new Pair(requirementRow, priceColumn)); // test price in requirement row
+                
         // new Pair(0, columns - 2),
         // new Pair(rows - 2, 3),
         // new Pair(3, columns - 1),
         // new Pair(11, 7)
-        );
+
         for (Pair pair : pairs) {
             Integer x = (Integer) pair.getKey();
             Integer y = (Integer) pair.getValue();
@@ -309,7 +321,14 @@ public class GuiTest extends MainApp {
             } catch (RuntimeException e) {
             }
         }
-        delay(2);
+        
+        Integer x = relationshipRow;
+        Integer y =1;
+        try {
+            items.get(x).set(y, new Content(Relationship.GEQ));
+        } catch (RuntimeException e) {
+        }
+        delay(4);
     }
 
     @SuppressWarnings("unchecked")
@@ -323,5 +342,13 @@ public class GuiTest extends MainApp {
             solutionTable.getSelectionModel().clearSelection();
         });
     }
+    
+    @Test
+    void testGetCause() {
+        Throwable t = new RuntimeException(new NullPointerException());
+        Throwable nestedException = MainApp.getCause(t);
+        assertTrue(nestedException instanceof NullPointerException);
+    }
+
 
 }
