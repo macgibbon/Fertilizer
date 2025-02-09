@@ -5,6 +5,7 @@ import static fertilizer.Content.convertDouble;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -28,14 +29,14 @@ public class MatrixBuilder {
                 .collect(Collectors.toMap(row -> row.get(0), row -> convertDouble(row.get(1)), (x, y) -> y, LinkedHashMap::new));
 
         nutrientMap = requirementRows.stream()
-               // .skip(1) // skip headers
+                // .skip(1) // skip headers
                 .collect(Collectors.toMap(row -> row.get(0), row -> convertDouble(row.get(2)), (x, y) -> y, LinkedHashMap::new)); 
         
-       HashMap<String,Relationship> lookupMap = Stream.of(Relationship.values())
-                .collect(Collectors.toMap(r-> r.toString(), r->r, (x, y) -> y, LinkedHashMap::new)); 
-        
+        Map<String, Relationship> lookupMap = Stream.of(Relationship.values())
+                .collect(Collectors.toMap( r->r.toString(), r->r));
+
         constraintMap = requirementRows.stream()
-                // .skip(1) // skip headers
+                 // .skip(1) // skip headers
                  .collect(Collectors.toMap(row -> row.get(0), row -> lookupMap.get(row.get(1)), (x, y) -> y, LinkedHashMap::new)); 
         
         analysisIngredientMap = new HashMap<String, Integer>();

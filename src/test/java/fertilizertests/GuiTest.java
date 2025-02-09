@@ -1,15 +1,20 @@
 package fertilizertests;
 
-import static fertilizertests.Util.*;
+import static fertilizertests.Util.delDirTree;
+import static fertilizertests.Util.delay;
+import static fertilizertests.Util.reflectiveGet;
+import static fertilizertests.Util.reflectiveSet;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.awt.event.KeyEvent;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -25,7 +30,9 @@ import org.testfx.framework.junit5.Stop;
 import fertilizer.Content;
 import fertilizer.MainApp;
 import fertilizer.MatrixBuilder;
+import fertilizer.Model;
 import fertilizer.SolutionModel;
+import javafx.application.Platform;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.KeyCode;
@@ -42,6 +49,9 @@ public class GuiTest extends MainApp {
         String testFolder = "C:/Users/david/.test";
         System.setProperty("user.home", testFolder);
         delDirTree(testFolder);
+        String registryFolder =  Preferences.userNodeForPackage(Model.class).get("LAST_USED_FOLDER", testFolder);
+        delDirTree(registryFolder);
+         
         super.start(primaryStage);
         // assert folder doesn't exist
     }
@@ -101,16 +111,36 @@ public class GuiTest extends MainApp {
         robot.clickOn("Load Formulation");
         robot.push(KeyCode.ESCAPE);
     }
-
+    
+    
+    // testing print requires using Windows print to PDF virtual driver
     @Test
     void testPrint(FxRobot robot) throws Exception {
+        String uh = System.getProperty("user.home");
+        String path = uh + "/.fertilizer/TEST2.pdf";
+        File testPrintFile = new File(path);
+        if (testPrintFile.exists())
+            testPrintFile.delete();
         robot.clickOn("Action");
         robot.clickOn("Print least cost solution");
         delay(5);
-        pressGlobalExitKey(); 
+        java.awt.Robot awtRobot = new java.awt.Robot();
+        awtRobot.keyPress(KeyEvent.VK_T);
+        awtRobot.keyRelease(KeyEvent.VK_T);
+        awtRobot.keyPress(KeyEvent.VK_E);
+        awtRobot.keyRelease(KeyEvent.VK_E);
+        awtRobot.keyPress(KeyEvent.VK_S);
+        awtRobot.keyRelease(KeyEvent.VK_S);
+        awtRobot.keyPress(KeyEvent.VK_T);
+        awtRobot.keyRelease(KeyEvent.VK_T);
+        awtRobot.keyPress(KeyEvent.VK_2);
+        awtRobot.keyRelease(KeyEvent.VK_2);
+        awtRobot.keyPress(KeyEvent.VK_ENTER);
+        awtRobot.keyRelease(KeyEvent.VK_ENTER);
         SolutionModel solutionModel = (SolutionModel) reflectiveGet(controller, "solution");
         String price = (String) reflectiveGet(solutionModel, "solutionPrice");
         assert(price.equals("$655.79"));
+        delay(3);
     }
 
     @Test
@@ -145,6 +175,17 @@ public class GuiTest extends MainApp {
         robot.push(KeyCode.ENTER);
      // solve assert solution changed
     }
+    
+    @Test
+    void testRelationshipEntry(FxRobot robot) {
+        robot.clickOn("Solution");
+        delay(1);
+        robot.doubleClickOn("=");
+        delay(1);
+        robot.push(KeyCode.EQUALS);
+         robot.push(KeyCode.ENTER);
+     // solve assert solution changed
+    }
 
     
     // tests for code coverage
@@ -161,20 +202,23 @@ public class GuiTest extends MainApp {
     void testUncaughtExceptionHandler(FxRobot robot) {
         Throwable error = null;
         try {
+            Platform.runLater(() -> {
 
-            ArrayList<ArrayList<String>> priceRows = model.readCsvfile(Path.of("defaultPrices.csv"));
-            ArrayList<ArrayList<String>> ingredientRows = model.readCsvfile(Path.of("defaultIngredients.csv"));
-            ArrayList<ArrayList<String>> requirementRows = model.readCsvfile(Path.of("defaultRequirements.csv"));
-            MatrixBuilder matrix = new MatrixBuilder(priceRows, requirementRows, ingredientRows);
-            SolutionModel model = new SolutionModel(matrix.getNutrientMap(),matrix.getConstraintMap(), matrix.getIngredientMap(), matrix.getAnalysisMatrixs()) {
+                ArrayList<ArrayList<String>> priceRows = model.readCsvfile(Path.of("defaultPrices.csv"));
+                ArrayList<ArrayList<String>> ingredientRows = model.readCsvfile(Path.of("defaultIngredients.csv"));
+                ArrayList<ArrayList<String>> requirementRows = model.readCsvfile(Path.of("defaultRequirements.csv"));
+                MatrixBuilder matrix = new MatrixBuilder(priceRows, requirementRows, ingredientRows);
+                SolutionModel model = new SolutionModel(matrix.getNutrientMap(), matrix.getConstraintMap(),
+                        matrix.getIngredientMap(), matrix.getAnalysisMatrixs()) {
+                    @Override
+                    public PointValuePair calculateSolution() {
+                        throw new RuntimeException("Deliberate exception to test exception handling");
+                    }
 
-                @Override
-                public PointValuePair calculateSolution() {
-                    throw new RuntimeException("Deliberate exception to test exception handling");
-                }
-
-            };
-            reflectiveSet(model, controller, "solution");
+                };
+                reflectiveSet(model, controller, "solution");
+            });
+           
             robot.clickOn("Action");
             robot.clickOn("Calculate least cost solution");
             delay(2);
@@ -268,14 +312,16 @@ public class GuiTest extends MainApp {
         delay(2);
     }
 
+    @SuppressWarnings("unchecked")
     @Test
-    void testEmptySelection()
-            throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
-        TableView<List<Content>> solutionTable = (TableView<List<Content>>) reflectiveGet(controller, "solutiontable");
-        TableColumn<List<Content>, ?> aTableColumn = solutionTable.getColumns().get(1);
-        solutionTable.getSelectionModel().select(2, aTableColumn);
-        solutionTable.getSelectionModel().clearSelection();
-
+    void testEmptySelection() {
+        final TableView<List<Content>> solutionTable = (TableView<List<Content>>) reflectiveGet(controller,
+                "solutiontable");
+        final TableColumn<List<Content>, ?> aTableColumn = solutionTable.getColumns().get(1);
+        Platform.runLater(() -> {
+            solutionTable.getSelectionModel().select(2, aTableColumn);
+            solutionTable.getSelectionModel().clearSelection();
+        });
     }
 
 }

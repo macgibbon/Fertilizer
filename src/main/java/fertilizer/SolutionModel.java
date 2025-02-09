@@ -19,6 +19,7 @@ import org.apache.commons.math4.legacy.optim.nonlinear.scalar.GoalType;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.event.Event;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.converter.DefaultStringConverter;
 
@@ -189,15 +190,15 @@ public class SolutionModel {
                 @Override
                 public void updateItem(String item, boolean empty) {
                     super.updateItem(item, empty);
-                    try {
+                    var tableRow = getTableRow();
+                    if (tableRow != null) {
                     int row = getTableRow().getIndex();
                     if ((row == solveAmountRow) || ((row == solveAmountRow-1) && (col == numberOfNutrientContraints+1))  || ((row == solveAmountRow-2) && (col == numberOfNutrientContraints+1))) {
                         this.getStyleClass().add("readonly");
                         setEditable(false);
                     }
-                    } catch (Throwable t) {
                     }
-                }                
+                }
             };
             return cell;
         });
