@@ -2,7 +2,6 @@ package fertilizer;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -17,6 +16,7 @@ import org.apache.commons.math4.legacy.optim.linear.SimplexSolver;
 import org.apache.commons.math4.legacy.optim.nonlinear.scalar.GoalType;
 
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.event.Event;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.converter.DefaultStringConverter;
@@ -36,34 +36,35 @@ public class SolutionModel {
     private double[] solutionNutrientAmounts;
     private String solutionTotal;
     ArrayList<String> solutionHeaders;
+    private Relationship[] constraintRelationsShips;
+    private LinkedHashMap<String, Relationship> constraintMap;   
   
-    public SolutionModel( LinkedHashMap<String,Double> nutrientMap, LinkedHashMap<String,Double> ingredientMap, ArrayList<ArrayList<Double>> coefficients) {
+    public SolutionModel( LinkedHashMap<String,Double> nutrientMap, LinkedHashMap<String, Relationship> constraintMap, LinkedHashMap<String,Double> ingredientMap, ArrayList<ArrayList<Double>> coefficients) {
         this.ingredientMap = ingredientMap;
         this.nutrientMap = nutrientMap;
         this.coefficients = coefficients;
-        this.solutionHeaders = new ArrayList<String>();
+        this.constraintMap = constraintMap;
+        this.constraintRelationsShips = constraintMap.values().toArray(new Relationship[constraintMap.size()]);
+        this.solutionHeaders = new ArrayList<String>();       
         solutionIngredientAmounts = new double[ingredientMap.size()];
         solutionPrice="";
         solutionNutrientAmounts = new double[ingredientMap.size()+2];
         solutionHeaders.addAll(ingredientMap.keySet());
+        solutionHeaders.add("Relationship");
         solutionHeaders.add("Constraint lbs");
         solutionHeaders.add("Actual lbs");
     }
 
     public PointValuePair calculateSolution() {   
-        int numberOfNutrientContraints = nutrientMap.size();
-        Relationship[] constraintRelationsShips = new Relationship[numberOfNutrientContraints];
-        Arrays.fill(constraintRelationsShips,Relationship.GEQ);
+        int numberOfNutrientContraints = nutrientMap.size(); 
         double[] nutrientAmounts = nutrientMap.values().stream().mapToDouble( D -> D.doubleValue()).toArray();
-
         Collection<LinearConstraint> constraints = new ArrayList<>();
         for (int i = 0; i < numberOfNutrientContraints; i++) {
             double[] constraintCoefficients = coefficients.get(i).stream().mapToDouble(D -> D.doubleValue()).toArray();
             double constraint = nutrientAmounts[i];
             Relationship r = constraintRelationsShips[i];
             constraints.add(new LinearConstraint(constraintCoefficients, r, constraint));
-        }
-        
+        }        
         int numberOfIngredients = ingredientMap.size();
         double[] ingredientPrices = ingredientMap.values().stream().mapToDouble(D -> D.doubleValue()/2000.0).toArray();
         LinearObjectiveFunction objectiveFunction = new LinearObjectiveFunction(ingredientPrices,
@@ -90,19 +91,19 @@ public class SolutionModel {
         return solution;
     }
 
-    public List<List<Content>> getItems() {
-        
+    public List<List<Content>> getItems() {        
          final int numberOfNutrientContraints = nutrientMap.size();  
          final int priceColumn = numberOfNutrientContraints + 1;
-         final int amountColumn = numberOfNutrientContraints + 2;
-         
+         final int amountColumn = numberOfNutrientContraints + 2;         
          final int numberOfIngredients = ingredientMap.size();
-         final int amountRow = numberOfIngredients+1;
+         final int relationshipRow = numberOfIngredients;
+         final int constraintAmountRow = numberOfIngredients+1;
+         final int solveAmountRow = numberOfIngredients+2;
          var list = new AbstractList<List<Content>>() {
 
             @Override
             public int size() {
-                return numberOfIngredients + 2;
+                return numberOfIngredients + 3;
             }
 
             @Override
@@ -116,23 +117,27 @@ public class SolutionModel {
 
                     @Override
                     public Content get(int column) {
-                        if ((column == priceColumn) && (row == numberOfIngredients+1))
+                        if ((column == priceColumn) && (row == solveAmountRow))
                             return new Content(solutionPrice); 
-                        if ((column == amountColumn) && (row == numberOfIngredients+1))
+                        if ((column == amountColumn) && (row == solveAmountRow))
                             return new Content(solutionTotal);     
                         if (column == 0)
                             return new Content(solutionHeaders.get(row));
-                        if (row == numberOfIngredients) {
+                        if (row == constraintAmountRow) {
                             String nutrient = (String) nutrientMap.keySet().toArray()[column-1];
                             return  new Content(nutrientMap.get(nutrient));                           
                         }
-                         if (row == numberOfIngredients+1)
+                         if (row == solveAmountRow)
                             return new Content(solutionNutrientAmounts[column-1]); 
                         if (column == amountColumn)
                             return new Content(solutionIngredientAmounts[row]);
                         if (column == priceColumn) {
                             String ingredient = (String) ingredientMap.keySet().toArray()[row]; 
                             return new Content(ingredientMap.get(ingredient)); 
+                        }
+                        if (row == relationshipRow) {
+                            String nutrient = (String) nutrientMap.keySet().toArray()[column-1];
+                            return new Content(constraintMap.get(nutrient));   
                         }
                          return new Content(coefficients.get(column-1).get(row));
                     }
@@ -141,11 +146,11 @@ public class SolutionModel {
                     public Content set(int column, Content cell) {
                         if ((column == priceColumn) && (row == numberOfIngredients))
                             throw new RuntimeException("Cell can't be set!");
-                        if (row == amountRow)
+                        if (row == solveAmountRow)
                             throw new RuntimeException("Cell can't be set!");
                         else if (column == 0)
                             throw new RuntimeException("Cell can't be set!");
-                        else if (row == numberOfIngredients) {
+                        else if (row == constraintAmountRow) {
                             String nutrient = (String) nutrientMap.keySet().toArray()[column-1];
                             nutrientMap.put(nutrient,cell.value);
                         }
@@ -154,6 +159,10 @@ public class SolutionModel {
                         else if (column == priceColumn) {
                             String ingredient = (String) ingredientMap.keySet().toArray()[row]; 
                             ingredientMap.put(ingredient, cell.value);
+                        }  
+                        else if (row == relationshipRow) {
+                            String nutrient = (String) nutrientMap.keySet().toArray()[column-1];
+                            constraintMap.put(nutrient,Relationship.valueOf(cell.name));
                         }
                         else 
                             coefficients.get(column-1).set(row, cell.value); 
@@ -168,6 +177,7 @@ public class SolutionModel {
     private TableColumn<List<Content>, String> createStringColumn(ArrayList<String> displayHeaders, int column) {
         final int col = column;
         final int numberOfIngredients = ingredientMap.size();
+        final int solveAmountRow = numberOfIngredients+2;
         final int numberOfNutrientContraints = nutrientMap.size();
         TableColumn<List<Content>, String> aTableColumn = new TableColumn<>(displayHeaders.get(column));
         aTableColumn.setCellFactory(list -> {
@@ -177,8 +187,8 @@ public class SolutionModel {
                     super.updateItem(item, empty);
                     try {
                     int row = getTableRow().getIndex();
-                    if (row == numberOfIngredients+1) {
-                        this.getStyleClass().add("pricecolumn");
+                    if (row == solveAmountRow) {
+                        this.getStyleClass().add("readonly");
                         setEditable(false);
                     }
                     } catch (Throwable t) {
@@ -203,12 +213,13 @@ public class SolutionModel {
             final String value = event.getNewValue();
             int row = event.getTablePosition().getRow();
             try {
-                double d = Double.valueOf(value.trim());  
+                double d = Double.valueOf(value.trim());
                 event.getTableView().getItems().get(row).set(col, new Content(d));
+                Event.fireEvent(event.getTableView(), new SolveItEvent());
             } catch (NumberFormatException nfe) {
                 event.getTableView().getItems().get(row).set(col, new Content(value));
             }
-         });     
+        });    
         return aTableColumn;
     }
 
@@ -225,8 +236,8 @@ public class SolutionModel {
             columns.add(stringColumn);
         }
         final int priceColumn = nutrientMap.size() + 1;
-        columns.get(priceColumn).getStyleClass().add("pricecolumn");
-        columns.get(priceColumn+1).getStyleClass().add("pricecolumn");
+        columns.get(priceColumn).getStyleClass().add("readonly");
+        columns.get(priceColumn+1).getStyleClass().add("readonly");
         return columns;
     }
 }

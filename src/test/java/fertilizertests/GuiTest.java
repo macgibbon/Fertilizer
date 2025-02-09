@@ -1,14 +1,11 @@
 package fertilizertests;
 
-import static fertilizertests.Util.delDirTree;
-import static fertilizertests.Util.delay;
-import static fertilizertests.Util.pressGlobalExitKey;
-import static fertilizertests.Util.reflectiveGet;
-import static fertilizertests.Util.reflectiveSet;
+import static fertilizertests.Util.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -113,7 +110,7 @@ public class GuiTest extends MainApp {
         pressGlobalExitKey(); 
         SolutionModel solutionModel = (SolutionModel) reflectiveGet(controller, "solution");
         String price = (String) reflectiveGet(solutionModel, "solutionPrice");
-        assert(price.equals("$770.63"));
+        assert(price.equals("$655.79"));
     }
 
     @Test
@@ -169,8 +166,7 @@ public class GuiTest extends MainApp {
             ArrayList<ArrayList<String>> ingredientRows = model.readCsvfile(Path.of("defaultIngredients.csv"));
             ArrayList<ArrayList<String>> requirementRows = model.readCsvfile(Path.of("defaultRequirements.csv"));
             MatrixBuilder matrix = new MatrixBuilder(priceRows, requirementRows, ingredientRows);
-            SolutionModel model = new SolutionModel(matrix.getNutrientMap(), matrix.getIngredientMap(),
-                    matrix.getAnalysisMatrixs()) {
+            SolutionModel model = new SolutionModel(matrix.getNutrientMap(),matrix.getConstraintMap(), matrix.getIngredientMap(), matrix.getAnalysisMatrixs()) {
 
                 @Override
                 public PointValuePair calculateSolution() {

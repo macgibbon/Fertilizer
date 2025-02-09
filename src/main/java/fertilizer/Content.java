@@ -1,5 +1,7 @@
 package fertilizer;
 
+import org.apache.commons.math4.legacy.optim.linear.Relationship;
+
 public class Content {
     public double value = 0.0;
     public String name = null;
@@ -12,6 +14,10 @@ public class Content {
     public Content(double value) {
         super();
         this.value = value;
+    }
+
+    public Content(Relationship relationship) {
+        this.name = relationship.toString();
     }
 
     @Override

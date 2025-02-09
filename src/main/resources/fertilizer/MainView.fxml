@@ -8,30 +8,23 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fertilizer.MainController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity"
+	minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
+	prefWidth="600.0" xmlns="http://javafx.com/javafx/22"
+	xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="fertilizer.MainController">
 	<center>
-		<TabPane fx:id="tabpane" prefHeight="200.0" prefWidth="200.0" side="BOTTOM" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+		<TabPane fx:id="tabpane" prefHeight="200.0" prefWidth="200.0"
+			side="BOTTOM" tabClosingPolicy="UNAVAILABLE"
+			BorderPane.alignment="CENTER">
 			<tabs>
-				<Tab text="Prices">
-					<content>
-						<TableView fx:id="pricestable" />
-					</content>
-				</Tab>
-				<Tab text="Requirements">
-					<content>
-						<TableView fx:id="requirementstable" />
-					</content>
-				</Tab>
-				<Tab text="Ingredients">
-					<content>
-						<TableView fx:id="ingredientstable" />
-					</content>
-				</Tab>
+
 				<Tab fx:id="tabsolution" text="Solution">
 					<content>
 						<BorderPane prefHeight="200.0" prefWidth="200.0">
 							<center>
-								<TableView fx:id="solutiontable" BorderPane.alignment="CENTER" />
+								<TableView fx:id="solutiontable"
+									BorderPane.alignment="CENTER" />
 							</center>
 						</BorderPane>
 					</content>
@@ -39,6 +32,21 @@
 				<Tab text="Work Order">
 					<content>
 						<TableView fx:id="worktable" />
+					</content>
+				</Tab>
+				<Tab text="Default Prices">
+					<content>
+						<TableView fx:id="pricestable" />
+					</content>
+				</Tab>
+				<Tab text="Default Requirements">
+					<content>
+						<TableView fx:id="requirementstable" />
+					</content>
+				</Tab>
+				<Tab text="Default Ingredients">
+					<content>
+						<TableView fx:id="ingredientstable" />
 					</content>
 				</Tab>
 			</tabs>
@@ -49,14 +57,18 @@
 			<menus>
 				<Menu mnemonicParsing="false" text="File">
 					<items>
-						<MenuItem mnemonicParsing="false" onAction="#load" text="Load Formulation" />
-						<MenuItem mnemonicParsing="false" onAction="#save" text="Save Formulation" />
+						<MenuItem mnemonicParsing="false" onAction="#load"
+							text="Load Formulation" />
+						<MenuItem mnemonicParsing="false" onAction="#save"
+							text="Save Formulation" />
 					</items>
 				</Menu>
 				<Menu mnemonicParsing="false" text="Action">
 					<items>
-						<MenuItem fx:id="solveaction" mnemonicParsing="false" onAction="#solve" text="Calculate least cost solution" />
-                  		<MenuItem fx:id="printAction" mnemonicParsing="false" onAction="#print" text="Print least cost solution" />
+						<MenuItem fx:id="solveaction" mnemonicParsing="false"
+							onAction="#solve" text="Calculate least cost solution" />
+						<MenuItem fx:id="printAction" mnemonicParsing="false"
+							onAction="#print" text="Print least cost solution" />
 					</items>
 				</Menu>
 				<Menu mnemonicParsing="false" text="Help">
