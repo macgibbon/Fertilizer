@@ -192,10 +192,10 @@ public class GuiTest extends MainApp {
     void testRedundantRows()
             throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
         String prices = """
-                Urea,640
-                Ammonium Nitrate,700
-                Ammonium Nitrate,790
-                Diammonium Phosphate (DAP),710
+                Urea,>=,640
+                Ammonium Nitrate,>=,700
+                Ammonium Nitrate,>=,790
+                Diammonium Phosphate (DAP),>=,710
                 """;
 
         ArrayList<ArrayList<String>> rows = Stream.of(prices.split("\n"))

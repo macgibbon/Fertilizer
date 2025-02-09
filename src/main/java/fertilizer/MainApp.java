@@ -64,7 +64,7 @@ public class MainApp extends Application {
 	}
     
 	@Override
-    public void stop() throws Exception {
+    public void stop() throws Exception {          
         logger.removeHandler(fh);
         fh.close();
         Model.reset();
@@ -76,6 +76,7 @@ public class MainApp extends Application {
 	}
 
 	protected void showError(Thread t, Throwable e) {
+	    e.printStackTrace();
 	    Platform.runLater(() -> {
 	        showErrorDialog(t, e);
 	    });
