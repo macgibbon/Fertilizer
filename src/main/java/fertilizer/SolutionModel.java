@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.apache.commons.math4.legacy.optim.PointValuePair;
 import org.apache.commons.math4.legacy.optim.linear.LinearConstraint;
@@ -162,7 +163,10 @@ public class SolutionModel {
                         }  
                         else if (row == relationshipRow) {
                             String nutrient = (String) nutrientMap.keySet().toArray()[column-1];
-                            constraintMap.put(nutrient,Relationship.valueOf(cell.name));
+                            Relationship rMatch = Stream.of(Relationship.values())
+                                    .filter(r -> r.toString().equals(cell.name))
+                                    .findFirst().get();
+                            constraintMap.put(nutrient,rMatch);
                         }
                         else 
                             coefficients.get(column-1).set(row, cell.value); 
@@ -187,7 +191,7 @@ public class SolutionModel {
                     super.updateItem(item, empty);
                     try {
                     int row = getTableRow().getIndex();
-                    if (row == solveAmountRow) {
+                    if ((row == solveAmountRow) || ((row == solveAmountRow-1) && (col == numberOfNutrientContraints+1))  || ((row == solveAmountRow-2) && (col == numberOfNutrientContraints+1))) {
                         this.getStyleClass().add("readonly");
                         setEditable(false);
                     }
@@ -236,7 +240,7 @@ public class SolutionModel {
             columns.add(stringColumn);
         }
         final int priceColumn = nutrientMap.size() + 1;
-        columns.get(priceColumn).getStyleClass().add("readonly");
+      //  columns.get(priceColumn).getStyleClass().add("readonly");
         columns.get(priceColumn+1).getStyleClass().add("readonly");
         return columns;
     }

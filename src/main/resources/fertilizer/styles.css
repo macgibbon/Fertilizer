@@ -12,7 +12,7 @@
 }
 
 .text-field-table-cell.readonly:selected {
-	-fx-background-color: deepskyblue;
+	-fx-background-color: orange;
 }
 
 .text-field-table-cell:empty {
