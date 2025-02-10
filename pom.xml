@@ -212,6 +212,18 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<plugin>
+				<groupId>com.github.wix-maven</groupId>
+				<artifactId>wix-maven-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<platforms>
+						<arch>x86</arch>
+						<arch>x64</arch>
+					</platforms>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 

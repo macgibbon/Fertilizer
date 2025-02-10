@@ -49,8 +49,8 @@ public class Util {
         awtRobot.keyRelease(KeyEvent.VK_ENTER);
     }
 
-    public static void delDirTree(String testFolder) throws IOException {
-        Path testPath = Path.of(testFolder);
+    public static void delDirTree(File testFolder) throws IOException {
+        Path testPath = testFolder.toPath();
         if (!(testPath.toFile().exists()))
             testPath.toFile().mkdirs();
         Files.walk(testPath).filter(path -> path.toFile().isFile())

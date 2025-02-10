@@ -46,11 +46,10 @@ public class GuiTest extends MainApp {
     @Start
     public void onStart(Stage primaryStage) throws Exception {
         // setup test folder and clear it out
-    
-        String testFolder = "C:/Users/david/.test";
-        System.setProperty("user.home", testFolder);
+        File testFolder = new File(System.getProperty("user.home"), ".fertilizer");
+  
         delDirTree(testFolder);
-        String registryFolder =  Preferences.userNodeForPackage(Model.class).get("LAST_USED_FOLDER", testFolder);
+        File registryFolder =  new File(Preferences.userNodeForPackage(Model.class).get("LAST_USED_FOLDER", testFolder.toString()));
         delDirTree(registryFolder);
          
         super.start(primaryStage);
