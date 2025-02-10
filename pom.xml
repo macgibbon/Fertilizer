@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>fertilizer</groupId>
 	<artifactId>fertilizerapp</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.2</version>
 	<name>FertilizerApp</name>
 	<description>App to optimize component selection for customizing field
 		fertilizer mixes.</description>
@@ -139,13 +139,19 @@
 				<configuration>
 					<verbose>false</verbose>
 					<target>${gluonfx.target}</target>
+					
 					<attachList>
 					</attachList>
 					<runtimeArgs>-Dglass.accessible.force=false</runtimeArgs>
 					<mainClass>${main.class}</mainClass>
 
 					<appIdentifier>${app.identifier}</appIdentifier>
-
+					<releaseConfiguration>
+						<description>${app.description}</description>
+						<vendor>Stamford Farmers Cooperative</vendor>
+						<version>${version}</version>
+					</releaseConfiguration>
+					
 				</configuration>
 			</plugin>
 			<plugin>
@@ -211,18 +217,6 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>com.github.wix-maven</groupId>
-				<artifactId>wix-maven-plugin</artifactId>
-				<extensions>true</extensions>
-				<configuration>
-					<platforms>
-						<arch>x86</arch>
-						<arch>x64</arch>
-					</platforms>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>

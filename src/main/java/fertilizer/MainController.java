@@ -91,7 +91,8 @@ public class MainController implements Initializable {
             }
         });
        fileChooser = new FileChooser();
-       fileChooser.getExtensionFilters().add(new ExtensionFilter("Json Files", "*.json"));      
+       fileChooser.getExtensionFilters().add(new ExtensionFilter("Json Files", "*.json")); 
+       solve();
     }
 
 	private void loadDefaultData() {
