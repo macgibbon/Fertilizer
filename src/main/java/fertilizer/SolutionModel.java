@@ -62,7 +62,7 @@ public class SolutionModel {
     final int enableColumn =1;
     final int priceColumn ;
     final int amountColumn;   
-    final int constraintAmountRow;
+  
   
     public SolutionModel(MatrixBuilder matrix) {
         this.ingredientMap = matrix.getIngredientMap();
@@ -79,6 +79,7 @@ public class SolutionModel {
         solutionHeaders.add("Relationship");
         solutionHeaders.add("Constraint lbs");
         solutionHeaders.add("Actual lbs");
+        
         numberOfIngredients = ingredientMap.size();
         solveAmountRow = numberOfIngredients+2;
         relationshipRow = numberOfIngredients;
@@ -86,13 +87,13 @@ public class SolutionModel {
         numberOfNutrientContraints = nutrientMap.size();
         priceColumn = numberOfNutrientContraints + 2;
         amountColumn = numberOfNutrientContraints + 3;
-        constraintAmountRow = numberOfNutrientContraints + 1;
+      
         
     }
 
     public void calculateSolution() {  
         infeasible = false;
-        int numberOfNutrientContraints = nutrientMap.size(); 
+        
         double[] nutrientAmounts = nutrientMap.values().stream().mapToDouble( D -> D.doubleValue()).toArray();
         Collection<LinearConstraint> constraints = new ArrayList<>();
         for (int i = 0; i < numberOfNutrientContraints; i++) {
@@ -168,9 +169,11 @@ public class SolutionModel {
                             return new Content(solutionHeaders.get(row));
                         if (column == enableColumn)
                             return new Content(enableArray[row]);
-                        if (row == constraintAmountRow) {
+                        if (row == constraintRow) {
                             String nutrient = (String) nutrientMap.keySet().toArray()[column-2];
-                            return  new Content(nutrientMap.get(nutrient));                           
+                            Double value = nutrientMap.get(nutrient);
+                            System.out.println( row + " " + column + " " + value);
+                            return  new Content(value);                           
                         }
                          if (row == solveAmountRow)
                             return new Content(solutionNutrientAmounts[column-2]); 
@@ -198,7 +201,7 @@ public class SolutionModel {
                             throw new RuntimeException("Cell can't be set!");
                         else if (column == 0)
                             throw new RuntimeException("Cell can't be set!");
-                        else if (row == constraintAmountRow) {
+                        else if (row == constraintRow) {
                             String nutrient = (String) nutrientMap.keySet().toArray()[column-2];
                             nutrientMap.put(nutrient,cell.value);
                         }
@@ -267,7 +270,8 @@ public class SolutionModel {
                 if (tableRow != null) {
                 int row = getTableRow().getIndex();
                 // bottom row
-                if ((row == solveAmountRow) || 
+                if ((col == 0) ||
+                   (row == solveAmountRow) || 
                    // right bottom color   
                    ((row >= relationshipRow) && (col <=1)) || 
                    // rightmost column
