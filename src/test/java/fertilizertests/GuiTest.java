@@ -188,6 +188,18 @@ public class GuiTest extends MainApp {
     }
 
     
+    @Test
+    void testInfeasibleEntry(FxRobot robot) {
+        robot.clickOn("Solution");
+        robot.doubleClickOn("360.00");
+        robot.push(KeyCode.DIGIT9);
+        robot.push(KeyCode.DIGIT6);
+        robot.push(KeyCode.DIGIT1);
+        robot.push(KeyCode.ENTER);
+        delay(1);
+     // solve assert solution changed
+    }
+    
     // tests for code coverage
     @Test
     void testBadEntry(FxRobot robot) {
@@ -219,16 +231,10 @@ public class GuiTest extends MainApp {
                     }
 
                 };
-                reflectiveSet(model, controller, "solution");
+                model.calculateSolution();
             });
            
-           // robot.clickOn("Action");
-           // robot.clickOn("Calculate least cost solution");
-           // delay(2);
-            // assert log file created
-            // PointValuePair solution = model.calculateSolution();
-            // System.out.println(solution.getValue());
-        } catch (Throwable t) {
+       } catch (Throwable t) {
             error = t;
             t.printStackTrace();
         }
