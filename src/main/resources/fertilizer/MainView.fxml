@@ -64,9 +64,7 @@
 					</items>
 				</Menu>
 				<Menu mnemonicParsing="false" text="Action">
-					<items>
-						<MenuItem fx:id="solveaction" mnemonicParsing="false"
-							onAction="#solve" text="Calculate least cost solution" />
+					<items>						
 						<MenuItem fx:id="printAction" mnemonicParsing="false"
 							onAction="#print" text="Print least cost solution" />
 					</items>

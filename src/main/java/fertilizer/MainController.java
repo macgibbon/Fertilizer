@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import org.apache.commons.math4.legacy.optim.PointValuePair;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.printing.PDFPageable;
@@ -44,7 +43,7 @@ public class MainController implements Initializable {
     
     private static final int SOLUTIONTAB = 0;
 
-    private static final String LAST_USED_FOLDER = "lastUsedFolder";
+    public static final String LAST_USED_FOLDER = "lastUsedFolder";
 
 	@FXML
 	TableView<List<Content>> solutiontable;
@@ -172,9 +171,7 @@ public class MainController implements Initializable {
 	}
 
 	public void solve()  {
-		PointValuePair result =  solution.calculateSolution();
-		System.out.println(result.getValue());
-	//	updateTable(result);
+		solution.calculateSolution();
 		tabpane.getSelectionModel().select(SOLUTIONTAB);
 		solutiontable.setItems(FXCollections.observableArrayList(solution.getItems()));
         solutiontable.getColumns().clear();
@@ -185,12 +182,10 @@ public class MainController implements Initializable {
 
 	
     public void save() throws JsonIOException, IOException {
-        File userDir = new File(System.getProperty("user.home"));
-        File appDir = new File(userDir, ".fertilizer");
-
         // Load the last used directory
-        String lastUsedDirectory = model.preferences.get(LAST_USED_FOLDER, appDir.getAbsolutePath());
-        fileChooser.setInitialDirectory(new File(lastUsedDirectory)); 
+        File lastUsedDirectory = new File(model.preferences.get(LAST_USED_FOLDER, model.appDir.getAbsolutePath()));
+        lastUsedDirectory.mkdirs();
+        fileChooser.setInitialDirectory(lastUsedDirectory); 
 
         // Show the save file dialog
         File file = fileChooser.showSaveDialog((Stage) solutiontable.getScene().getWindow()); 
@@ -209,12 +204,10 @@ public class MainController implements Initializable {
     }
 	
     public void load() throws JsonSyntaxException, JsonIOException, IOException {
-        File userDir = new File(System.getProperty("user.home"));
-        File appDir = new File(userDir, ".fertilizer");
-
         // Load the last used directory
-        String lastUsedDirectory = model.preferences.get(LAST_USED_FOLDER, appDir.getAbsolutePath());
-        fileChooser.setInitialDirectory(new File(lastUsedDirectory)); 
+        File lastUsedDirectory = new File(model.preferences.get(LAST_USED_FOLDER, model.appDir.getAbsolutePath()));
+        lastUsedDirectory.mkdirs();
+        fileChooser.setInitialDirectory(lastUsedDirectory); 
 
         // Show the save file dialog
         File file = fileChooser.showOpenDialog((Stage) solutiontable.getScene().getWindow());

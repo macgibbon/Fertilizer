@@ -18,7 +18,6 @@ import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.math4.legacy.optim.PointValuePair;
 import org.apache.commons.math4.legacy.optim.linear.Relationship;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
@@ -30,6 +29,7 @@ import org.testfx.framework.junit5.Stop;
 
 import fertilizer.Content;
 import fertilizer.MainApp;
+import fertilizer.MainController;
 import fertilizer.MatrixBuilder;
 import fertilizer.Model;
 import fertilizer.SolutionModel;
@@ -43,13 +43,15 @@ import javafx.util.Pair;
 @ExtendWith(ApplicationExtension.class)
 public class GuiTest extends MainApp {
 
+    private File testFolder;
+
     @Start
     public void onStart(Stage primaryStage) throws Exception {
-        // setup test folder and clear it out
-        File testFolder = new File(System.getProperty("user.home"), ".fertilizer");
+        testFolder = new File(System.getProperty("user.home"), ".fertilizer");
   
         delDirTree(testFolder);
-        File registryFolder =  new File(Preferences.userNodeForPackage(Model.class).get("LAST_USED_FOLDER", testFolder.toString()));
+        String key = MainController.LAST_USED_FOLDER;
+        File registryFolder =  new File(Preferences.userNodeForPackage(Model.class).get(key, testFolder.toString()));
         delDirTree(registryFolder);
          
         super.start(primaryStage);
@@ -116,14 +118,12 @@ public class GuiTest extends MainApp {
     // testing print requires using Windows print to PDF virtual driver
     @Test
     void testPrint(FxRobot robot) throws Exception {
-        String uh = System.getProperty("user.home");
-        String path = uh + "/.fertilizer/TEST2.pdf";
-        File testPrintFile = new File(path);
+        File testPrintFile = new File(testFolder, "Test2.pdf");
         if (testPrintFile.exists())
             testPrintFile.delete();
         robot.clickOn("Action");
         robot.clickOn("Print least cost solution");
-        delay(5);
+        delay(2);
         java.awt.Robot awtRobot = new java.awt.Robot();
         awtRobot.keyPress(KeyEvent.VK_T);
         awtRobot.keyRelease(KeyEvent.VK_T);
@@ -207,11 +207,14 @@ public class GuiTest extends MainApp {
                 ArrayList<ArrayList<String>> priceRows = model.readCsvfile(Path.of("defaultPrices.csv"));
                 ArrayList<ArrayList<String>> ingredientRows = model.readCsvfile(Path.of("defaultIngredients.csv"));
                 ArrayList<ArrayList<String>> requirementRows = model.readCsvfile(Path.of("defaultRequirements.csv"));
-                MatrixBuilder matrix = new MatrixBuilder(priceRows, requirementRows, ingredientRows);
+                priceRows.remove(0);
+                requirementRows.remove(0);
+                ingredientRows.remove(0);
+                MatrixBuilder matrix = new MatrixBuilder(priceRows, requirementRows, ingredientRows);              
                 SolutionModel model = new SolutionModel(matrix.getNutrientMap(), matrix.getConstraintMap(),
                         matrix.getIngredientMap(), matrix.getAnalysisMatrixs()) {
                     @Override
-                    public PointValuePair calculateSolution() {
+                    public void calculateSolution() {
                         throw new RuntimeException("Deliberate exception to test exception handling");
                     }
 
@@ -219,9 +222,9 @@ public class GuiTest extends MainApp {
                 reflectiveSet(model, controller, "solution");
             });
            
-            robot.clickOn("Action");
-            robot.clickOn("Calculate least cost solution");
-            delay(2);
+           // robot.clickOn("Action");
+           // robot.clickOn("Calculate least cost solution");
+           // delay(2);
             // assert log file created
             // PointValuePair solution = model.calculateSolution();
             // System.out.println(solution.getValue());

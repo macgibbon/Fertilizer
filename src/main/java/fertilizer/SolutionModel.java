@@ -11,6 +11,7 @@ import org.apache.commons.math4.legacy.optim.PointValuePair;
 import org.apache.commons.math4.legacy.optim.linear.LinearConstraint;
 import org.apache.commons.math4.legacy.optim.linear.LinearConstraintSet;
 import org.apache.commons.math4.legacy.optim.linear.LinearObjectiveFunction;
+import org.apache.commons.math4.legacy.optim.linear.NoFeasibleSolutionException;
 import org.apache.commons.math4.legacy.optim.linear.NonNegativeConstraint;
 import org.apache.commons.math4.legacy.optim.linear.Relationship;
 import org.apache.commons.math4.legacy.optim.linear.SimplexSolver;
@@ -57,7 +58,7 @@ public class SolutionModel {
         solutionHeaders.add("Actual lbs");
     }
 
-    public PointValuePair calculateSolution() {   
+    public void calculateSolution() {   
         int numberOfNutrientContraints = nutrientMap.size(); 
         double[] nutrientAmounts = nutrientMap.values().stream().mapToDouble( D -> D.doubleValue()).toArray();
         Collection<LinearConstraint> constraints = new ArrayList<>();
@@ -73,6 +74,7 @@ public class SolutionModel {
                 objectiveConstant);
 
         SimplexSolver solver = new SimplexSolver();
+        try {
         PointValuePair solution = solver.optimize(objectiveFunction, new LinearConstraintSet(constraints),
                 GoalType.MINIMIZE, new NonNegativeConstraint(true));
         double[] points = solution.getPoint();
@@ -90,7 +92,16 @@ public class SolutionModel {
             }
         }
         solutionTotal = String.format("%.0f lbs", total);
-        return solution;
+        } catch (NoFeasibleSolutionException n) {
+            solutionPrice = "!$!!!!!";
+            solutionTotal = "!!!!! lbs";
+            for (int i = 0; i < numberOfIngredients; i++) {
+                solutionIngredientAmounts[i] = 0;
+            }
+            for (int j = 0; j < numberOfNutrientContraints; j++) {
+                solutionNutrientAmounts[j] =0;
+            }
+        }
     }
 
     public List<List<Content>> getItems() {        
@@ -145,8 +156,7 @@ public class SolutionModel {
                     }
 
                     @Override
-                    public Content set(int column, Content cell) {
-                        System.out.println("set row " + row + " column " + column);
+                    public Content set(int column, Content cell) {                       
                         if ((column == amountColumn) && (row == solveAmountRow))
                             throw new RuntimeException("Cell can't be set!");
                         if (row == solveAmountRow)

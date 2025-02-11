@@ -7,7 +7,6 @@
     <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
         <listEntry value="1"/>
     </listAttribute>
-    <mapAttribute key="org.eclipse.debug.core.environmentVariables"/>
     <listAttribute key="org.eclipse.eclemma.core.SCOPE_IDS">
         <listEntry value="=Fertilizer/src\/main\/resources=/maven.pomderived=/true=/=/optional=/true=/"/>
         <listEntry value="=Fertilizer/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/"/>
@@ -24,5 +23,5 @@
     <stringAttribute key="org.eclipse.jdt.launching.MODULE_NAME" value="stamfordcoop"/>
     <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="Fertilizer"/>
     <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.m2e.launchconfig.sourcepathProvider"/>
-    <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-ea&#10;@{argLine} --add-exports&#10;&#9;&#9;&#9;&#9;&#9;&#9;javafx.graphics/com.sun.javafx.application=ALL-UNNAMED&#10;&#9;&#9;&#9;&#9;&#9;&#9;--add-opens&#10;&#9;&#9;&#9;&#9;&#9;&#9;javafx.graphics/com.sun.javafx.application=ALL-UNNAMED"/>
+    <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-ea&#13;&#10;--add-exports&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;javafx.graphics/com.sun.javafx.application=ALL-UNNAMED&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;--add-opens&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;javafx.graphics/com.sun.javafx.application=ALL-UNNAMED"/>
 </launchConfiguration>
