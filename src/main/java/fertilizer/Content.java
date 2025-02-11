@@ -15,6 +15,11 @@ public class Content {
         super();
         this.value = value;
     }
+    
+    public Content(Boolean b) {
+        super();
+        this.name = b.toString();
+    }
 
     public Content(Relationship relationship) {
         this.name = relationship.toString();

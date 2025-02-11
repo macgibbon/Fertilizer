@@ -19,8 +19,8 @@ import org.apache.commons.math4.legacy.optim.nonlinear.scalar.GoalType;
 
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.event.Event;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.converter.DefaultStringConverter;
 
@@ -42,14 +42,36 @@ public class SolutionModel {
     private Relationship[] constraintRelationsShips;
     private LinkedHashMap<String, Relationship> constraintMap;   
     private volatile boolean infeasible = false;
+
+    private Boolean[] enableArray;
+
+    private int col;
+
+    private int numberOfIngredients;
+
+    private int solveAmountRow;
+
+    private int relationshipRow;
+
+    private int constraintRow;
+
+    private int numberOfNutrientContraints;
+    
+
+    final int nameColumn = 0;
+    final int enableColumn =1;
+    final int priceColumn ;
+    final int amountColumn;   
+    final int constraintAmountRow;
   
-    public SolutionModel( LinkedHashMap<String,Double> nutrientMap, LinkedHashMap<String, Relationship> constraintMap, LinkedHashMap<String,Double> ingredientMap, ArrayList<ArrayList<Double>> coefficients) {
-        this.ingredientMap = ingredientMap;
-        this.nutrientMap = nutrientMap;
-        this.coefficients = coefficients;
-        this.constraintMap = constraintMap;
+    public SolutionModel(MatrixBuilder matrix) {
+        this.ingredientMap = matrix.getIngredientMap();
+        this.nutrientMap = matrix.getNutrientMap();
+        this.coefficients = matrix.getAnalysisMatrixs();
+        this.constraintMap = matrix.getConstraintMap();
         this.constraintRelationsShips = constraintMap.values().toArray(new Relationship[constraintMap.size()]);
-        this.solutionHeaders = new ArrayList<String>();       
+        this.solutionHeaders = new ArrayList<String>();  
+        this.enableArray = matrix.getEnableMap().values().stream().toArray(Boolean[]::new);
         solutionIngredientAmounts = new double[ingredientMap.size()];
         solutionPrice="";
         solutionNutrientAmounts = new double[ingredientMap.size()+2];
@@ -57,6 +79,15 @@ public class SolutionModel {
         solutionHeaders.add("Relationship");
         solutionHeaders.add("Constraint lbs");
         solutionHeaders.add("Actual lbs");
+        numberOfIngredients = ingredientMap.size();
+        solveAmountRow = numberOfIngredients+2;
+        relationshipRow = numberOfIngredients;
+        constraintRow = numberOfIngredients+1;
+        numberOfNutrientContraints = nutrientMap.size();
+        priceColumn = numberOfNutrientContraints + 2;
+        amountColumn = numberOfNutrientContraints + 3;
+        constraintAmountRow = numberOfNutrientContraints + 1;
+        
     }
 
     public void calculateSolution() {  
@@ -108,13 +139,7 @@ public class SolutionModel {
     }
 
     public List<List<Content>> getItems() {        
-         final int numberOfNutrientContraints = nutrientMap.size();  
-         final int priceColumn = numberOfNutrientContraints + 1;
-         final int amountColumn = numberOfNutrientContraints + 2;         
-         final int numberOfIngredients = ingredientMap.size();
-         final int relationshipRow = numberOfIngredients;
-         final int constraintAmountRow = numberOfIngredients+1;
-         final int solveAmountRow = numberOfIngredients+2;
+       
          var list = new AbstractList<List<Content>>() {
 
             @Override
@@ -128,23 +153,27 @@ public class SolutionModel {
                 return new AbstractList<Content>() {
                      @Override
                     public int size() {
+                         // +2 constraint amount and ingredient amount delivered in solution
                         return numberOfNutrientContraints + 2;
                     }
 
                     @Override
                     public Content get(int column) {
+                        try {
                         if ((column == priceColumn) && (row == solveAmountRow))
                             return new Content(solutionPrice); 
                         if ((column == amountColumn) && (row == solveAmountRow))
                             return new Content(solutionTotal);     
-                        if (column == 0)
+                        if (column == nameColumn)
                             return new Content(solutionHeaders.get(row));
+                        if (column == enableColumn)
+                            return new Content(enableArray[row]);
                         if (row == constraintAmountRow) {
-                            String nutrient = (String) nutrientMap.keySet().toArray()[column-1];
+                            String nutrient = (String) nutrientMap.keySet().toArray()[column-2];
                             return  new Content(nutrientMap.get(nutrient));                           
                         }
                          if (row == solveAmountRow)
-                            return new Content(solutionNutrientAmounts[column-1]); 
+                            return new Content(solutionNutrientAmounts[column-2]); 
                         if (column == amountColumn)
                             return new Content(solutionIngredientAmounts[row]);
                         if (column == priceColumn) {
@@ -152,10 +181,13 @@ public class SolutionModel {
                             return new Content(ingredientMap.get(ingredient)); 
                         }
                         if (row == relationshipRow) {
-                            String nutrient = (String) nutrientMap.keySet().toArray()[column-1];
+                            String nutrient = (String) nutrientMap.keySet().toArray()[column-2];
                             return new Content(constraintMap.get(nutrient));   
                         }
-                         return new Content(coefficients.get(column-1).get(row));
+                         return new Content(coefficients.get(column-2).get(row));
+                        } catch (Throwable t) {
+                            return new Content("");
+                        }
                     }
 
                     @Override
@@ -167,7 +199,7 @@ public class SolutionModel {
                         else if (column == 0)
                             throw new RuntimeException("Cell can't be set!");
                         else if (row == constraintAmountRow) {
-                            String nutrient = (String) nutrientMap.keySet().toArray()[column-1];
+                            String nutrient = (String) nutrientMap.keySet().toArray()[column-2];
                             nutrientMap.put(nutrient,cell.value);
                         }
                         else if (column == amountColumn)
@@ -177,14 +209,14 @@ public class SolutionModel {
                             ingredientMap.put(ingredient, cell.value);
                         }  
                         else if (row == relationshipRow) {
-                            String nutrient = (String) nutrientMap.keySet().toArray()[column-1];
+                            String nutrient = (String) nutrientMap.keySet().toArray()[column-2];
                             Relationship rMatch = Stream.of(Relationship.values())
                                     .filter(r -> r.toString().equals(cell.name))
                                     .findFirst().get();
                             constraintMap.put(nutrient,rMatch);
                         }
                         else 
-                            coefficients.get(column-1).set(row, cell.value); 
+                            coefficients.get(column-2).set(row, cell.value); 
                         return cell;
                     }
                 };
@@ -193,34 +225,11 @@ public class SolutionModel {
         return list;
     }
 
-    private TableColumn<List<Content>, String> createStringColumn(ArrayList<String> displayHeaders, int column) {
-        final int col = column;
-        final int numberOfIngredients = ingredientMap.size();
-        final int solveAmountRow = numberOfIngredients+2;
-        final int numberOfNutrientContraints = nutrientMap.size();
-        TableColumn<List<Content>, String> aTableColumn = new TableColumn<>(displayHeaders.get(column));
+    private TableColumn<List<Content>, String> createStringColumn(ArrayList<String> displayHeaders, int col) {
+
+        TableColumn<List<Content>, String> aTableColumn = new TableColumn<>(displayHeaders.get(col));
         aTableColumn.setCellFactory(list -> {
-            TextFieldTableCell<List<Content>,String>  cell= new TextFieldTableCell<List<Content>,String>(new DefaultStringConverter()) {
-                @Override
-                public void updateItem(String item, boolean empty) {
-                    super.updateItem(item, empty);
-                    var tableRow = getTableRow();
-                    if (tableRow != null) {
-                    int row = getTableRow().getIndex();
-                    if ((row == solveAmountRow) || ((row >= solveAmountRow-1) && (col == numberOfNutrientContraints+1)) || column == (numberOfNutrientContraints+2) ) {
-                         setEditable(false);
-                         this.getStyleClass().add("readonly");
-                         if (infeasible) {
-                             this.getStyleClass().add("infeasible");
-                         }
-                         else {
-                             this.getStyleClass().remove("infeasible");
-                         }                         
-                    }
-                    }
-                }
-            };
-            return cell;
+            return customCellFactory(col);
         });
         aTableColumn.setCellValueFactory(cellData -> {
             String cellValue = "";
@@ -248,9 +257,42 @@ public class SolutionModel {
         return aTableColumn;
     }
 
+    private TableCell<List<Content>, String> customCellFactory(int col) {        
+      
+        TextFieldTableCell<List<Content>,String>  cell= new TextFieldTableCell<List<Content>,String>(new DefaultStringConverter()) {
+            @Override
+            public void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                var tableRow = getTableRow();
+                if (tableRow != null) {
+                int row = getTableRow().getIndex();
+                // bottom row
+                if ((row == solveAmountRow) || 
+                   // right bottom color   
+                   ((row >= relationshipRow) && (col <=1)) || 
+                   // rightmost column
+                   (col == numberOfNutrientContraints+3) ||
+                   // left bottom corner
+                   ((row >= relationshipRow) && (col == priceColumn ))) {                   
+                     setEditable(false);
+                     this.getStyleClass().add("readonly");
+                     if (infeasible) {
+                         this.getStyleClass().add("infeasible");
+                     }
+                     else {
+                         this.getStyleClass().remove("infeasible");
+                     }                         
+                }
+                }
+            }
+        };
+        return cell;
+    }
+
     public List<TableColumn<List<Content>, String>> getTableColumns() {
         ArrayList<String> columnHeaders = new ArrayList<>();
         columnHeaders.add("Ingredients");
+        columnHeaders.add("Enable");
         columnHeaders.addAll(nutrientMap.keySet());
         columnHeaders.add("$/Ton");
         columnHeaders.add("Amount lbs");

@@ -14,10 +14,15 @@ import org.apache.commons.math4.legacy.optim.linear.Relationship;
 public class MatrixBuilder {
 
 
+    public LinkedHashMap<String, Boolean> getEnableMap() {
+        return enableMap;
+    }
+
     private double[][] analysisMatrix;
 
     private LinkedHashMap<String,Double> ingredientMap, nutrientMap;
     LinkedHashMap<String,Relationship> constraintMap; 
+    LinkedHashMap<String,Boolean> enableMap; 
 
     private HashMap<String, Integer> analysisIngredientMap,analysisNutrientMap;
     private String[] nutrientNames, ingredientNames;
@@ -38,6 +43,10 @@ public class MatrixBuilder {
         constraintMap = requirementRows.stream()
                  // .skip(1) // skip headers
                  .collect(Collectors.toMap(row -> row.get(0), row -> lookupMap.get(row.get(1)), (x, y) -> y, LinkedHashMap::new)); 
+        
+        enableMap = priceRows.stream()
+                // .skip(1) // skip headers
+                .collect(Collectors.toMap(row -> row.get(0), row -> true, (x, y) -> y, LinkedHashMap::new)); 
         
         analysisIngredientMap = new HashMap<String, Integer>();
         for (int i = 0; i < ingredientRows.size(); i++) {

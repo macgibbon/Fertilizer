@@ -1,14 +1,18 @@
 
 .text-field-table-cell:even {
-	-fx-background-color: honeydew ;
+	-fx-background-color: #CAF6CC ;
 }
 
 .text-field-table-cell:odd {
-	-fx-background-color: lightgrey;
+	-fx-background-color: #A5F3A7;
 }
 
-.text-field-table-cell.readonly {
-	-fx-background-color: lightgoldenrodyellow ;
+.text-field-table-cell.readonly:even {
+	-fx-background-color: E4EB8D ;
+}
+
+.text-field-table-cell.readonly:odd {
+	-fx-background-color: F7FCB2 ;
 }
 
 .text-field-table-cell.readonly:selected {

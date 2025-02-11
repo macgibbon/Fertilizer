@@ -223,8 +223,7 @@ public class GuiTest extends MainApp {
                 requirementRows.remove(0);
                 ingredientRows.remove(0);
                 MatrixBuilder matrix = new MatrixBuilder(priceRows, requirementRows, ingredientRows);              
-                SolutionModel model = new SolutionModel(matrix.getNutrientMap(), matrix.getConstraintMap(),
-                        matrix.getIngredientMap(), matrix.getAnalysisMatrixs()) {
+                SolutionModel model = new SolutionModel(matrix) {
                     @Override
                     public void calculateSolution() {
                         throw new RuntimeException("Deliberate exception to test exception handling");
