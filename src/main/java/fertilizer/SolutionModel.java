@@ -41,6 +41,7 @@ public class SolutionModel {
     ArrayList<String> solutionHeaders;
     private Relationship[] constraintRelationsShips;
     private LinkedHashMap<String, Relationship> constraintMap;   
+    private volatile boolean infeasible = false;
   
     public SolutionModel( LinkedHashMap<String,Double> nutrientMap, LinkedHashMap<String, Relationship> constraintMap, LinkedHashMap<String,Double> ingredientMap, ArrayList<ArrayList<Double>> coefficients) {
         this.ingredientMap = ingredientMap;
@@ -58,7 +59,8 @@ public class SolutionModel {
         solutionHeaders.add("Actual lbs");
     }
 
-    public void calculateSolution() {   
+    public void calculateSolution() {  
+        infeasible = false;
         int numberOfNutrientContraints = nutrientMap.size(); 
         double[] nutrientAmounts = nutrientMap.values().stream().mapToDouble( D -> D.doubleValue()).toArray();
         Collection<LinearConstraint> constraints = new ArrayList<>();
@@ -93,6 +95,7 @@ public class SolutionModel {
         }
         solutionTotal = String.format("%.0f lbs", total);
         } catch (NoFeasibleSolutionException n) {
+            infeasible =true;
             solutionPrice = "!$!!!!!";
             solutionTotal = "!!!!! lbs";
             for (int i = 0; i < numberOfIngredients; i++) {
@@ -204,9 +207,15 @@ public class SolutionModel {
                     var tableRow = getTableRow();
                     if (tableRow != null) {
                     int row = getTableRow().getIndex();
-                    if ((row == solveAmountRow) || ((row == solveAmountRow-1) && (col == numberOfNutrientContraints+1))  || ((row == solveAmountRow-2) && (col == numberOfNutrientContraints+1))) {
-                        this.getStyleClass().add("readonly");
-                        setEditable(false);
+                    if ((row == solveAmountRow) || ((row >= solveAmountRow-1) && (col == numberOfNutrientContraints+1)) || column == (numberOfNutrientContraints+2) ) {
+                         setEditable(false);
+                         this.getStyleClass().add("readonly");
+                         if (infeasible) {
+                             this.getStyleClass().add("infeasible");
+                         }
+                         else {
+                             this.getStyleClass().remove("infeasible");
+                         }                         
                     }
                     }
                 }
@@ -251,9 +260,9 @@ public class SolutionModel {
             TableColumn<List<Content>, String> stringColumn = createStringColumn(columnHeaders, i);
             columns.add(stringColumn);
         }
-        final int priceColumn = nutrientMap.size() + 1;
+       // final int priceColumn = nutrientMap.size() + 1;
       //  columns.get(priceColumn).getStyleClass().add("readonly");
-        columns.get(priceColumn+1).getStyleClass().add("readonly");
+       // columns.get(priceColumn+1).getStyleClass().add("readonly");
         return columns;
     }
 }

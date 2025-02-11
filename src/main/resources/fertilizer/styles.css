@@ -1,6 +1,6 @@
 
 .text-field-table-cell:even {
-	-fx-background-color:lightgoldenrodyellow ;
+	-fx-background-color: honeydew ;
 }
 
 .text-field-table-cell:odd {
@@ -8,7 +8,7 @@
 }
 
 .text-field-table-cell.readonly {
-	-fx-background-color: honeydew;
+	-fx-background-color: lightgoldenrodyellow ;
 }
 
 .text-field-table-cell.readonly:selected {
@@ -27,6 +27,10 @@
 
 .text-field-table-cell.readonly:empty {
 	-fx-background-color: white;
+}
+
+.text-field-table-cell.infeasible {
+	-fx-text-fill: red;
 }
 
 .text-field-table-cell .text-field {
