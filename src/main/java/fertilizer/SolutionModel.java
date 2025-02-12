@@ -172,7 +172,6 @@ public class SolutionModel {
                         if (row == constraintRow) {
                             String nutrient = (String) nutrientMap.keySet().toArray()[column-2];
                             Double value = nutrientMap.get(nutrient);
-                            System.out.println( row + " " + column + " " + value);
                             return  new Content(value);                           
                         }
                          if (row == solveAmountRow)
@@ -239,10 +238,11 @@ public class SolutionModel {
             try {
                 cellValue = cellData.getValue().get(col).toString();
             } catch (IndexOutOfBoundsException e) {
+                
             }
             return new ReadOnlyStringWrapper(cellValue);
         });
-        if ((col==0) || (col > numberOfNutrientContraints+1))
+        if ((col==0) || (col > numberOfNutrientContraints+2))
             aTableColumn.setEditable(false);
         else
             aTableColumn.setEditable(true); 

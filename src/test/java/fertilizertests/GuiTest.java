@@ -3,7 +3,6 @@ package fertilizertests;
 import static fertilizertests.Util.delDirTree;
 import static fertilizertests.Util.delay;
 import static fertilizertests.Util.reflectiveGet;
-import static fertilizertests.Util.reflectiveSet;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.event.KeyEvent;
@@ -60,6 +59,7 @@ public class GuiTest extends MainApp {
 
     @Stop
     void onStop() throws Exception {
+        delay(4);
         super.stop();
     }
 
@@ -162,6 +162,7 @@ public class GuiTest extends MainApp {
         robot.push(KeyCode.DIGIT0);
         robot.push(KeyCode.DIGIT1);
         robot.push(KeyCode.ENTER);
+        delay(5);
         // solve assert solution changed
     }
 
@@ -304,15 +305,18 @@ public class GuiTest extends MainApp {
         var pairs = List.of(new Pair(0, nameColumn), // test name column
                 new Pair(0, solutionAmountColumn), // test solution nutrient amount column
                 new Pair(solutionAmountRow, 1), // test solution ingredient amount column
-                new Pair(12, 9), 
-                new Pair(11, 9), 
+                new Pair(12, 10), 
+                new Pair(11, 10), 
+                new Pair(9, 13), 
                 new Pair(9, 12), 
                 new Pair(9, 11), 
-                new Pair(9, 10), 
-                new Pair(10, 9), 
-                new Pair(8, 11), 
-                new Pair(12, 1), 
-                new Pair(1, 12), 
+                new Pair(10, 10),
+      
+                new Pair(4, 5), 
+                new Pair(8, 12), 
+                new Pair(12, 2), 
+                new Pair(1, 13), 
+                new Pair(0, 15), 
                 new Pair(requirementRow, priceColumn)); // test price in requirement row
                 
         // new Pair(0, columns - 2),
@@ -330,7 +334,7 @@ public class GuiTest extends MainApp {
         }
         
         Integer x = relationshipRow;
-        Integer y =1;
+        Integer y =3;
         try {
             items.get(x).set(y, new Content(Relationship.GEQ));
         } catch (RuntimeException e) {
