@@ -234,12 +234,7 @@ public class SolutionModel {
             return customCellFactory(col);
         });
         aTableColumn.setCellValueFactory(cellData -> {
-            String cellValue = "";
-            try {
-                cellValue = cellData.getValue().get(col).toString();
-            } catch (IndexOutOfBoundsException e) {
-                
-            }
+            String cellValue = cellData.getValue().get(col).toString();
             return new ReadOnlyStringWrapper(cellValue);
         });
         if ((col==0) || (col > numberOfNutrientContraints+2))

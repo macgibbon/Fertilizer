@@ -61,12 +61,8 @@ public class TablePdf {
         for (int i = 0; i < rows; i++) {
             List<Content> row = tableItems.get(i);
             for (int j = 0; j < cols; j++) {
-               Content cellItem = new Content("");
-                try {
-                    cellItem = row.get(j);                   
-                } catch (Throwable t) {
-                }
-
+               Content cellItem = new Content("");      
+                    cellItem = row.get(j);
                 PdfPCell tableCell = new PdfPCell(
                         new Phrase(cellItem.toString(), FontFactory.getFont(FontFactory.HELVETICA, 10, Font.NORMAL)));
                 if (cellItem.name != null)
