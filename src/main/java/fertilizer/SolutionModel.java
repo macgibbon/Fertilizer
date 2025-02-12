@@ -1,12 +1,10 @@
 package fertilizer;
 
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.math4.legacy.optim.PointValuePair;
 import org.apache.commons.math4.legacy.optim.linear.LinearConstraint;
@@ -18,25 +16,8 @@ import org.apache.commons.math4.legacy.optim.linear.Relationship;
 import org.apache.commons.math4.legacy.optim.linear.SimplexSolver;
 import org.apache.commons.math4.legacy.optim.nonlinear.scalar.GoalType;
 
-import javafx.beans.binding.Binding;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.property.ReadOnlyStringProperty;
-import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.Event;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.CellDataFeatures;
-import javafx.scene.control.cell.CheckBoxTableCell;
-import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.util.Callback;
-import static fertilizer.Celltype.*;
 
 public class SolutionModel { 
     
@@ -60,15 +41,6 @@ public class SolutionModel {
 
     
     private List<String> rowHeaders;
-    private int col;
-
-    private int numberOfIngredients;
-    private int solveAmountRow;
-
-    private int relationshipRow;
-
-    private int constraintRow;
-
     private int numberOfNutrientContraints;
     
 
@@ -186,6 +158,8 @@ public class SolutionModel {
             double amt = solutionNutrientAmounts[j];
             cachedItems.get(actualRow).set(j+startAnalysisColumn, new Content(amt, Celltype.actualAmount));
         }
+        cachedItems.get(actualRow).set(priceColumn, new Content(solutionPrice,Celltype.solutionPrice));
+        cachedItems.get(actualRow).set(solutionColumn, new Content(solutionTotal,Celltype.totalAmount));
         
     }
     
