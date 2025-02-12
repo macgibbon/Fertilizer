@@ -5,6 +5,7 @@ import org.apache.commons.math4.legacy.optim.linear.Relationship;
 public class Content {
     public double value = 0.0;
     public String name = null;
+    public Boolean enabled;
 
     public Content(String name) {
         super();
@@ -18,7 +19,7 @@ public class Content {
     
     public Content(Boolean b) {
         super();
-        this.name = b.toString();
+        this.enabled = b;
     }
 
     public Content(Relationship relationship) {
@@ -29,6 +30,8 @@ public class Content {
     public String toString() {
         if (name != null)
             return name;
+        else if(enabled != null)
+            return enabled.toString();
         else
             return String.format("%.2f", value);
     }

@@ -17,12 +17,15 @@ import org.apache.commons.math4.legacy.optim.linear.Relationship;
 import org.apache.commons.math4.legacy.optim.linear.SimplexSolver;
 import org.apache.commons.math4.legacy.optim.nonlinear.scalar.GoalType;
 
-import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.util.converter.DefaultStringConverter;
+import javafx.util.Callback;
 
 public class SolutionModel { 
     
@@ -61,7 +64,8 @@ public class SolutionModel {
     final int nameColumn = 0;
     final int enableColumn =1;
     final int priceColumn ;
-    final int amountColumn;   
+    final int amountColumn;
+
   
   
     public SolutionModel(MatrixBuilder matrix) {
@@ -227,68 +231,80 @@ public class SolutionModel {
         return list;
     }
 
-    private TableColumn<List<Content>, String> createStringColumn(ArrayList<String> displayHeaders, int col) {
+    private TableColumn<List<Content>, Content> createStringColumn(ArrayList<String> displayHeaders, int col) {
 
-        TableColumn<List<Content>, String> aTableColumn = new TableColumn<>(displayHeaders.get(col));
+        TableColumn<List<Content>, Content> aTableColumn = new TableColumn<>(displayHeaders.get(col));
         aTableColumn.setCellFactory(list -> {
             return customCellFactory(col);
         });
         aTableColumn.setCellValueFactory(cellData -> {
-            String cellValue = cellData.getValue().get(col).toString();
-            return new ReadOnlyStringWrapper(cellValue);
+            Content cellValue = cellData.getValue().get(col);
+            return new ReadOnlyObjectWrapper<Content>(cellValue);
         });
         if ((col==0) || (col > numberOfNutrientContraints+2))
             aTableColumn.setEditable(false);
         else
             aTableColumn.setEditable(true); 
         aTableColumn.setOnEditCommit(event -> {
-            final String value = event.getNewValue();
+            final Content value = event.getNewValue();
             int row = event.getTablePosition().getRow();
             try {
-                double d = Double.valueOf(value.trim());
+                double d = value.value;
                 event.getTableView().getItems().get(row).set(col, new Content(d));
                 Event.fireEvent(event.getTableView(), new SolveItEvent());
             } catch (NumberFormatException nfe) {
-                event.getTableView().getItems().get(row).set(col, new Content(value));
+                event.getTableView().getItems().get(row).set(col, value);
             }
         });    
         return aTableColumn;
     }
 
-    private TableCell<List<Content>, String> customCellFactory(int col) {        
-      
-        TextFieldTableCell<List<Content>,String>  cell= new TextFieldTableCell<List<Content>,String>(new DefaultStringConverter()) {
-            @Override
-            public void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                var tableRow = getTableRow();
-                if (tableRow != null) {
-                int row = getTableRow().getIndex();
-                // bottom row
-                if ((col == 0) ||
-                   (row == solveAmountRow) || 
-                   // right bottom color   
-                   ((row >= relationshipRow) && (col <=1)) || 
-                   // rightmost column
-                   (col == numberOfNutrientContraints+3) ||
-                   // left bottom corner
-                   ((row >= relationshipRow) && (col == priceColumn ))) {                   
-                     setEditable(false);
-                     this.getStyleClass().add("readonly");
-                     if (infeasible) {
-                         this.getStyleClass().add("infeasible");
-                     }
-                     else {
-                         this.getStyleClass().remove("infeasible");
-                     }                         
+    private TableCell<List<Content>, Content> customCellFactory(int col) {
+        if (col == 1) {
+            CheckBoxTableCell tcell = new CheckBoxTableCell<List<Content>, Content>() {
+                @Override
+                public void updateItem(Content item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item != null) {
+                        CheckBox cb = (CheckBox) getGraphic();
+                        if (item.enabled != null)
+                            cb.setSelected(item.enabled);
+                    }
                 }
+            };
+            return tcell;
+        } else {
+            TextFieldTableCell<List<Content>, Content> cell = new TextFieldTableCell<List<Content>, Content>() {
+                @Override
+                public void updateItem(Content item, boolean empty) {
+                    super.updateItem(item, empty);
+                    var tableRow = getTableRow();
+                    if (tableRow != null) {
+                        int row = getTableRow().getIndex();
+                        // bottom row
+                        if ((col == 0) || (row == solveAmountRow) ||
+                        // right bottom color
+                                ((row >= relationshipRow) && (col <= 1)) ||
+                        // rightmost column
+                                (col == numberOfNutrientContraints + 3) ||
+                        // left bottom corner
+                                ((row >= relationshipRow) && (col == priceColumn))) {
+                            setEditable(false);
+                            this.getStyleClass().add("readonly");
+                            if (infeasible) {
+                                this.getStyleClass().add("infeasible");
+                            } else {
+                                this.getStyleClass().remove("infeasible");
+                            }
+                        }
+                    }
                 }
-            }
-        };
-        return cell;
+            };
+            return cell;
+        }
     }
 
-    public List<TableColumn<List<Content>, String>> getTableColumns() {
+    public List<TableColumn<List<Content>, Content>> getTableColumns() {
         ArrayList<String> columnHeaders = new ArrayList<>();
         columnHeaders.add("Ingredients");
         columnHeaders.add("Enable");
@@ -296,9 +312,9 @@ public class SolutionModel {
         columnHeaders.add("$/Ton");
         columnHeaders.add("Amount lbs");
 
-        List<TableColumn<List<Content>, String>> columns = new ArrayList<TableColumn<List<Content>, String>>();
+        List<TableColumn<List<Content>, Content>> columns = new ArrayList<TableColumn<List<Content>, Content>>();
         for (int i = 0; i < columnHeaders.size(); i++) {
-            TableColumn<List<Content>, String> stringColumn = createStringColumn(columnHeaders, i);
+            TableColumn<List<Content>, Content> stringColumn = createStringColumn(columnHeaders, i);
             columns.add(stringColumn);
         }
        // final int priceColumn = nutrientMap.size() + 1;
