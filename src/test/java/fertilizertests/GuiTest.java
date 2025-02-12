@@ -26,6 +26,7 @@ import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
 import org.testfx.framework.junit5.Stop;
 
+import fertilizer.Celltype;
 import fertilizer.Content;
 import fertilizer.MainApp;
 import fertilizer.MainController;
@@ -294,7 +295,7 @@ public class GuiTest extends MainApp {
         List<List<Content>> items = model.getItems();
         int rows = items.size();
         int columns = items.get(0).size();
-        Content testContent = new Content(1000.0);
+        Content testContent = new Content(1000.0, Celltype.ingredientAmount);
         int solutionAmountColumn = columns - 1;
         int priceColumn = columns - 2;
         int solutionAmountRow = rows - 1;

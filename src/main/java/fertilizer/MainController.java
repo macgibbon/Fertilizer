@@ -125,7 +125,11 @@ public class MainController implements Initializable {
         solutiontable.getColumns().clear();  
         solutiontable.setItems(FXCollections.emptyObservableList());
  		solutiontable.setItems(FXCollections.observableArrayList(model.getItems()));
-        solutiontable.getColumns().addAll(model.getTableColumns());
+ 		int columns = model.getItems().get(0).size();
+ 		for (int i = 0; i < columns; i++) {
+ 		   solutiontable.getColumns().add(model.getTableColumn(i));
+        }
+       
     }	
 
     private void createColumns(ArrayList<String> displayHeaders, TableView<List<String>> tableView, int strcolcount) {
@@ -171,15 +175,16 @@ public class MainController implements Initializable {
 	}
 
 	public void solve()  {
+	    solutiontable.getColumns().clear();  
 		solution.calculateSolution();
 		tabpane.getSelectionModel().select(SOLUTIONTAB);
+		solutiontable.setItems(FXCollections.emptyObservableList());
 		solutiontable.setItems(FXCollections.observableArrayList(solution.getItems()));
-        solutiontable.getColumns().clear();
-        solutiontable.getColumns().addAll(solution.getTableColumns());
+        int columns = solution.getItems().get(0).size();
+        for (int i = 0; i < columns; i++) {
+           solutiontable.getColumns().add(solution.getTableColumn(i));
+        }
 	}
-
-	
-
 	
     public void save() throws JsonIOException, IOException {
         // Load the last used directory
