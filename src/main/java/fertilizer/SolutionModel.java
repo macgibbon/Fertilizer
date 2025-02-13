@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Observable;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.math4.legacy.optim.PointValuePair;
 import org.apache.commons.math4.legacy.optim.linear.LinearConstraint;
@@ -17,6 +19,10 @@ import org.apache.commons.math4.legacy.optim.linear.SimplexSolver;
 import org.apache.commons.math4.legacy.optim.nonlinear.scalar.GoalType;
 
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.Node;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.TextFieldTableCell;
@@ -208,7 +214,11 @@ public class SolutionModel {
         }
         updateSolutionItems();
     }
-
+    
+    ObservableList<String> choices = FXCollections.observableArrayList(Stream.of(Relationship.values())
+            .map(r -> r.name())
+            .collect(Collectors.toList()));
+            
     public TableColumn<List<Content>, Content> getTableColumn(int column) {
         var aTableColumn = new TableColumn<List<Content>, Content>(columnHeaders.get(column));
         aTableColumn.setCellFactory(list ->  {
@@ -216,11 +226,15 @@ public class SolutionModel {
 
                 @Override
                 protected void updateItem(Content content, boolean empty) {
+                    if (content == null)
+                        return;
                     Celltype celltype = content.celltype;
                     switch (celltype) {
                     case relationship: 
                         super.updateItem(content, empty);
-                        setGraphic(getClip());
+                        ChoiceBox<String> cb = new ChoiceBox<>(choices);
+                       // cb.
+                        setGraphic(cb);
                         if (empty && isSelected()) {
                             updateSelected(false);
                         }
