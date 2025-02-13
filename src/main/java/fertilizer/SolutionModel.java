@@ -20,10 +20,12 @@ import org.apache.commons.math4.legacy.optim.nonlinear.scalar.GoalType;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.cell.TextFieldTableCell;
 
 public class SolutionModel {
 
@@ -220,10 +222,10 @@ public class SolutionModel {
     public TableColumn<List<Content>, Content> getTableColumn(int column) {
         var aTableColumn = new TableColumn<List<Content>, Content>(columnHeaders.get(column));
         aTableColumn.setCellFactory(list -> {
-            var cell = new TableCell<List<Content>, Content>() {
+            var cell = new TextFieldTableCell<List<Content>, Content>() {
 
                 @Override
-                protected void updateItem(Content content, boolean empty) {
+                public void updateItem(Content content, boolean empty) {
                     if (content == null)
                         return;
                     super.updateItem(content, empty);
@@ -259,13 +261,27 @@ public class SolutionModel {
                         updateSelected(false);
                     }
                 }
-            };
+            };           
             return cell;
         });
         aTableColumn.setCellValueFactory(cellData -> {
             Content content = cellData.getValue().get(column);
             return new ReadOnlyObjectWrapper<Content>(content);
         });
+        
+        aTableColumn.setEditable(true); 
+        aTableColumn.setOnEditCommit(event -> {
+            final Content value = event.getNewValue();
+            int row = event.getTablePosition().getRow();
+            try {
+              //  double d = value.value;
+                event.getTableView().getItems().get(row).set(column, value);
+                Event.fireEvent(event.getTableView(), new SolveItEvent());
+            } catch (NumberFormatException nfe) {
+                event.getTableView().getItems().get(row).set(column, value);
+            }
+        });    
+       
         return aTableColumn;
     }
 
