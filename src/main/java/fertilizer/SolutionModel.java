@@ -17,12 +17,15 @@ import org.apache.commons.math4.legacy.optim.linear.SimplexSolver;
 import org.apache.commons.math4.legacy.optim.nonlinear.scalar.GoalType;
 
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.cell.TextFieldTableCell;
+import static fertilizer.Celltype.*;
 
-public class SolutionModel { 
-    
-    private static final double objectiveConstant= 0.0;
-    
+public class SolutionModel {
+
+    private static final double objectiveConstant = 0.0;
+
     // Inputs as collections for easier insertion and deletion
     private LinkedHashMap<String, Double> ingredientMap;
     private LinkedHashMap<String, Double> nutrientMap;
@@ -30,27 +33,23 @@ public class SolutionModel {
     private ArrayList<Boolean> enableList;
     private LinkedHashMap<String, Relationship> constraintMap;
 
-    // Output as arrays for simplicity and easier interface with LP optimization library
+    // Output as arrays for simplicity and easier interface with LP optimization
+    // library
     private double[] solutionIngredientAmounts;
     private String solutionPrice;
     private double[] solutionNutrientAmounts;
-    private String solutionTotal;      
-    
-       
+    private String solutionTotal;
+
     private volatile boolean infeasible = false;
 
-    
     private List<String> rowHeaders;
     private int numberOfNutrientContraints;
-    
 
-    final int nameColumn ;
-    final int enableColumn ;
+    final int nameColumn;
+    final int enableColumn;
     final int startAnalysisColumn;
-    final int priceColumn ;
+    final int priceColumn;
     final int solutionColumn;
-
-   
 
     private List<List<Content>> cachedItems;
 
@@ -58,37 +57,32 @@ public class SolutionModel {
 
     private List<Relationship> constraintRelationsShips;
 
-   
-  
-  
-    public SolutionModel(MatrixBuilder matrix) {   
+    public SolutionModel(MatrixBuilder matrix) {
         this.ingredientMap = matrix.getIngredientMap();
         this.nutrientMap = matrix.getNutrientMap();
         this.coefficients = matrix.getAnalysisMatrixs();
         this.constraintMap = matrix.getConstraintMap();
-        this.enableList = matrix.getEnableMap().values()
-                .stream()
-                .collect(Collectors.toCollection(ArrayList<Boolean>::new));
-        
+        this.enableList = matrix.getEnableMap().values().stream().collect(Collectors.toCollection(ArrayList<Boolean>::new));
+
         nameColumn = 0;
-        enableColumn =nameColumn + 1;
-        startAnalysisColumn = enableColumn+1;
+        enableColumn = nameColumn + 1;
+        startAnalysisColumn = enableColumn + 1;
         priceColumn = nutrientMap.size() + startAnalysisColumn;
-        solutionColumn = priceColumn+1;
-        
-        this.rowHeaders = new ArrayList<String>();  
+        solutionColumn = priceColumn + 1;
+
+        this.rowHeaders = new ArrayList<String>();
         rowHeaders.addAll(ingredientMap.keySet());
         rowHeaders.add("Relationship");
         rowHeaders.add("Constraint lbs");
-        rowHeaders.add("Actual lbs");        
-        
+        rowHeaders.add("Actual lbs");
+
         columnHeaders = new ArrayList<>();
         columnHeaders.add("Ingredients");
         columnHeaders.add("Enable");
         columnHeaders.addAll(nutrientMap.keySet());
         columnHeaders.add("$/Ton");
-        columnHeaders.add("Amount lbs");  
-        
+        columnHeaders.add("Amount lbs");
+
         cachedItems = new ArrayList<>();
         for (int i = 0; i < rowHeaders.size(); i++) {
             ArrayList<Content> itemsRow = new ArrayList<>();
@@ -96,41 +90,41 @@ public class SolutionModel {
                 itemsRow.add(new Content());
             }
             cachedItems.add(itemsRow);
-            itemsRow.set(0, new Content(rowHeaders.get(i),Celltype.name));
+            itemsRow.set(0, new Content(rowHeaders.get(i), Celltype.name));
         }
         for (int i = 0; i < enableList.size(); i++) {
-            boolean  enable = enableList.get(i);
+            boolean enable = enableList.get(i);
             List<Content> itemsRows = cachedItems.get(i);
             itemsRows.set(enableColumn, new Content(enable));
         }
-        
+
         int rColumn = rowHeaders.indexOf("Relationship");
         List<Content> relationShipRow = cachedItems.get(rColumn);
         constraintRelationsShips = constraintMap.values().stream().collect(Collectors.toList());
         for (int j = 0; j < constraintRelationsShips.size(); j++) {
-            Relationship  realtionShip = constraintRelationsShips.get(j);
-            relationShipRow.set(j+startAnalysisColumn,new Content(realtionShip));
+            Relationship realtionShip = constraintRelationsShips.get(j);
+            relationShipRow.set(j + startAnalysisColumn, new Content(realtionShip));
         }
-        
-        for ( int j=0;j< coefficients.size();j++) {           
-             for (int i=0; i< coefficients.get(j).size(); i++ ) {
-                double coef = coefficients.get(j).get(i); 
-                cachedItems.get(i).set(j+startAnalysisColumn, new Content(coef, Celltype.analysis));
-            }            
+
+        for (int j = 0; j < coefficients.size(); j++) {
+            for (int i = 0; i < coefficients.get(j).size(); i++) {
+                double coef = coefficients.get(j).get(i);
+                cachedItems.get(i).set(j + startAnalysisColumn, new Content(coef, Celltype.analysis));
+            }
         }
-        
+
         List<Double> priceColList = ingredientMap.values().stream().collect(Collectors.toList());
         for (int i = 0; i < priceColList.size(); i++) {
             Double price = priceColList.get(i);
             cachedItems.get(i).set(priceColumn, new Content(price, Celltype.price));
         }
-        
+
         List<Double> constraintRowList = nutrientMap.values().stream().collect(Collectors.toList());
         for (int i = 0; i < constraintRowList.size(); i++) {
             Double requirementOrLimit = constraintRowList.get(i);
-            cachedItems.get(ingredientMap.size()+1).set(i+startAnalysisColumn, new Content(requirementOrLimit, Celltype.constraintAmount));
+            cachedItems.get(ingredientMap.size() + 1).set(i + startAnalysisColumn, new Content(requirementOrLimit, Celltype.constraintAmount));
         }
-        
+
         /*
         this.enableList = new ArrayList<Boolean>(matrix.getEnableMap().values());
         solutionIngredientAmounts = new double[ingredientMap.size()];
@@ -146,25 +140,22 @@ public class SolutionModel {
         amountColumn = numberOfNutrientContraints + 3;  
         */     
     }
-    
+
     public void updateSolutionItems() {
-        for (int i = 0; i< solutionIngredientAmounts.length; i++) {
+        for (int i = 0; i < solutionIngredientAmounts.length; i++) {
             double amt = solutionIngredientAmounts[i];
             cachedItems.get(i).set(solutionColumn, new Content(amt, Celltype.ingredientAmount));
         }
-        
+
         int actualRow = rowHeaders.indexOf("Actual lbs");
-        for (int j = 0; j< solutionNutrientAmounts.length; j++) {
+        for (int j = 0; j < solutionNutrientAmounts.length; j++) {
             double amt = solutionNutrientAmounts[j];
-            cachedItems.get(actualRow).set(j+startAnalysisColumn, new Content(amt, Celltype.actualAmount));
+            cachedItems.get(actualRow).set(j + startAnalysisColumn, new Content(amt, Celltype.actualAmount));
         }
-        cachedItems.get(actualRow).set(priceColumn, new Content(solutionPrice,Celltype.solutionPrice));
-        cachedItems.get(actualRow).set(solutionColumn, new Content(solutionTotal,Celltype.totalAmount));
-        
+        cachedItems.get(actualRow).set(priceColumn, new Content(solutionPrice, Celltype.solutionPrice));
+        cachedItems.get(actualRow).set(solutionColumn, new Content(solutionTotal, Celltype.totalAmount));
+
     }
-    
-  
-    
 
     public List<List<Content>> getItems() {
         return cachedItems;
@@ -182,14 +173,13 @@ public class SolutionModel {
             constraints.add(new LinearConstraint(constraintCoefficients, r, constraint));
         }
         int numberOfIngredients = ingredientMap.size();
-        double[] ingredientPrices = ingredientMap.values().stream().mapToDouble(D -> D.doubleValue() / 2000.0)
-                .toArray();
+        double[] ingredientPrices = ingredientMap.values().stream().mapToDouble(D -> D.doubleValue() / 2000.0).toArray();
         LinearObjectiveFunction objectiveFunction = new LinearObjectiveFunction(ingredientPrices, objectiveConstant);
 
         SimplexSolver solver = new SimplexSolver();
         try {
-            PointValuePair solution = solver.optimize(objectiveFunction, new LinearConstraintSet(constraints),
-                    GoalType.MINIMIZE, new NonNegativeConstraint(true));
+            PointValuePair solution = solver.optimize(objectiveFunction, new LinearConstraintSet(constraints), GoalType.MINIMIZE,
+                    new NonNegativeConstraint(true));
             double[] points = solution.getPoint();
             solutionIngredientAmounts = new double[numberOfIngredients];
             solutionPrice = String.format("$%.2f", solution.getValue().doubleValue());
@@ -219,17 +209,41 @@ public class SolutionModel {
         updateSolutionItems();
     }
 
-   
-    
-    public TableColumn<List<Content>,Content> getTableColumn(int column) {
-      var aTableColumn = new TableColumn<List<Content>, Content>(columnHeaders.get(column));
-      aTableColumn.setCellValueFactory( cellData -> {
-          Content content = cellData.getValue().get(column);
-          return new ReadOnlyObjectWrapper<Content>(content);          
-      });
-      return aTableColumn;         
+    public TableColumn<List<Content>, Content> getTableColumn(int column) {
+        var aTableColumn = new TableColumn<List<Content>, Content>(columnHeaders.get(column));
+        aTableColumn.setCellFactory(list ->  {
+            var cell = new TableCell<List<Content>, Content>(){
+
+                @Override
+                protected void updateItem(Content content, boolean empty) {
+                    Celltype celltype = content.celltype;
+                    switch (celltype) {
+                    case relationship: 
+                        super.updateItem(content, empty);
+                        setGraphic(getClip());
+                        if (empty && isSelected()) {
+                            updateSelected(false);
+                        }
+                        
+                    default:
+                       
+                    }
+                   
+                }
+
+                
+                
+            };
+            return cell;
+        });
+        aTableColumn.setCellValueFactory(cellData -> {
+            Content content = cellData.getValue().get(column);
+            return new ReadOnlyObjectWrapper<Content>(content);
+        });
+        return aTableColumn;
     }
-        /*
+
+ /*
        
          var list = new AbstractList<List<Content>>() {
 
