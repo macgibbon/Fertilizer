@@ -22,6 +22,7 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -228,19 +229,27 @@ public class SolutionModel {
                 protected void updateItem(Content content, boolean empty) {
                     if (content == null)
                         return;
+                    super.updateItem(content, empty);
                     Celltype celltype = content.celltype;
                     switch (celltype) {
                     case relationship: 
-                        super.updateItem(content, empty);
-                        ChoiceBox<String> cb = new ChoiceBox<>(choices);
-                       // cb.
-                        setGraphic(cb);
-                        if (empty && isSelected()) {
-                            updateSelected(false);
-                        }
                         
+                        ChoiceBox<String> cb = new ChoiceBox<>(choices);
+                        cb.setValue(content.name);
+                        setGraphic(cb);
+                        break;
+                    case enable:
+                        CheckBox cxbox = new CheckBox();
+                        cxbox.setIndeterminate(false);
+                        cxbox.setSelected(content.enabled);
+                        setGraphic(cxbox);
+                        break;
                     default:
-                       
+                        setGraphic(null);
+                        setText(content.toString());                       
+                    }
+                    if (empty && isSelected()) {
+                        updateSelected(false);
                     }
                    
                 }

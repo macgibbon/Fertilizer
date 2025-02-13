@@ -34,7 +34,7 @@ public class Content {
     }
 
     public Content(Relationship relationship) {
-        this.name = relationship.toString();
+        this.name = relationship.name();
         celltype = Celltype.relationship;        
     }
 
