@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Observable;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -21,13 +20,10 @@ import org.apache.commons.math4.legacy.optim.nonlinear.scalar.GoalType;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.cell.TextFieldTableCell;
-import static fertilizer.Celltype.*;
 
 public class SolutionModel {
 
@@ -190,6 +186,7 @@ public class SolutionModel {
             double[] points = solution.getPoint();
             solutionIngredientAmounts = new double[numberOfIngredients];
             solutionPrice = String.format("$%.2f", solution.getValue().doubleValue());
+            System.out.println(solutionPrice);
             solutionNutrientAmounts = new double[nutrientMap.size()];
             double total = 0.0;
             for (int i = 0; i < solutionIngredientAmounts.length; i++) {
@@ -222,8 +219,8 @@ public class SolutionModel {
             
     public TableColumn<List<Content>, Content> getTableColumn(int column) {
         var aTableColumn = new TableColumn<List<Content>, Content>(columnHeaders.get(column));
-        aTableColumn.setCellFactory(list ->  {
-            var cell = new TableCell<List<Content>, Content>(){
+        aTableColumn.setCellFactory(list -> {
+            var cell = new TableCell<List<Content>, Content>() {
 
                 @Override
                 protected void updateItem(Content content, boolean empty) {
@@ -232,8 +229,7 @@ public class SolutionModel {
                     super.updateItem(content, empty);
                     Celltype celltype = content.celltype;
                     switch (celltype) {
-                    case relationship: 
-                        
+                    case relationship:
                         ChoiceBox<String> cb = new ChoiceBox<>(choices);
                         cb.setValue(content.name);
                         setGraphic(cb);
@@ -244,18 +240,25 @@ public class SolutionModel {
                         cxbox.setSelected(content.enabled);
                         setGraphic(cxbox);
                         break;
+                    
+                    case actualAmount:
+                    case whitespace:
+                    case solutionPrice:
+                    case totalAmount:
+                    case ingredientAmount:
+                    case name:
+                        setGraphic(null);
+                        setText(content.toString());
+                        getStyleClass().add("readonly");
+                        break;                       
                     default:
                         setGraphic(null);
-                        setText(content.toString());                       
+                        setText(content.toString());
                     }
                     if (empty && isSelected()) {
                         updateSelected(false);
                     }
-                   
                 }
-
-                
-                
             };
             return cell;
         });

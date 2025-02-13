@@ -1,43 +1,43 @@
 
-.text-field-table-cell:even {
+.table-cell:even {
 	-fx-background-color: #CAF6CC ;
 }
 
-.text-field-table-cell:odd {
+.table-cell:odd {
 	-fx-background-color: #A5F3A7;
 }
 
-.text-field-table-cell.readonly:even {
+.table-cell.readonly:even {
 	-fx-background-color: E4EB8D ;
 }
 
-.text-field-table-cell.readonly:odd {
+.table-cell.readonly:odd {
 	-fx-background-color: F7FCB2 ;
 }
 
-.text-field-table-cell.readonly:selected {
+.table-cell.readonly:selected {
 	-fx-background-color: orange;
 }
 
-.text-field-table-cell:empty {
+.table-cell:empty {
 	-fx-background-color: white;
 }
 
-.text-field-table-cell:selected {
+.table-cell:selected {
 	-fx-background-color: deepskyblue;
 	-fx-padding:0;
 	-fx-text-fill : black;
 }
 
-.text-field-table-cell.readonly:empty {
+.table-cell.readonly:empty {
 	-fx-background-color: white;
 }
 
-.text-field-table-cell.infeasible {
+.table-cell.infeasible {
 	-fx-text-fill: red;
 }
 
-.text-field-table-cell .text-field {
+.table-cell .text-field {
    -fx-padding: 1; 
    -fx-border-color:blue; 
    -fx-background-color:yellow;  
