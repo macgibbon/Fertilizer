@@ -1,6 +1,7 @@
 package fertilizer;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -75,14 +76,16 @@ public class ContentTableCell extends TableCell<List<Content>, Content> {
     ChoiceBox<Relationship> cb;
     CheckBox cxbox;
     TextField tf;
+    private AtomicBoolean infeasible;
     
-    public ContentTableCell() {
+    public ContentTableCell(AtomicBoolean infeasible) {
         super();
+        this.infeasible = infeasible;
     }
 
     @Override
     public void startEdit() {
-        System.out.println("startEdit");
+        //System.out.println("startEdit");
         super.startEdit();
         Celltype celltype = getItem().celltype;
         switch (celltype) {
@@ -117,7 +120,7 @@ public class ContentTableCell extends TableCell<List<Content>, Content> {
 
     @Override
     public void commitEdit(Content newValue) {
-        System.out.println("commitEdit");
+        //System.out.println("commitEdit");
         super.commitEdit(newValue);
         setGraphic(null);
         setText(newValue.toString());      
@@ -125,7 +128,7 @@ public class ContentTableCell extends TableCell<List<Content>, Content> {
 
     @Override
     public void cancelEdit() {
-        System.out.println("cancelEdit");
+        //System.out.println("cancelEdit");
         super.cancelEdit();
         setGraphic(null);
         setText(getItem().toString());
@@ -133,7 +136,7 @@ public class ContentTableCell extends TableCell<List<Content>, Content> {
 
     @Override
     public void updateSelected(boolean selected) {
-        System.out.println("selected " + selected);
+        //System.out.println("selected " + selected);
         super.updateSelected(selected);
     }
 
@@ -170,7 +173,13 @@ public class ContentTableCell extends TableCell<List<Content>, Content> {
             case name:
                 setGraphic(null);
                 setText(content.toString());
-                getStyleClass().add("readonly");
+                setEditable(false);
+                getStyleClass().add("readonly");              
+                if (infeasible.get()) {
+                    this.getStyleClass().add("infeasible");
+                } else {
+                    this.getStyleClass().remove("infeasible");
+                }
                 break;
            //
            //     setGraphic(null);

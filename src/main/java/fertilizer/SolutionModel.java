@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -46,7 +47,7 @@ public class SolutionModel {
     private double[] solutionNutrientAmounts;
     private String solutionTotal;
 
-    private volatile boolean infeasible = false;
+    private AtomicBoolean infeasible = new AtomicBoolean(false);
 
     private List<String> rowHeaders;
     private int numberOfNutrientContraints;
@@ -168,7 +169,7 @@ public class SolutionModel {
     }
 
     public void calculateSolution() {
-        infeasible = false;
+        infeasible.set(false);
         double[] nutrientAmounts = nutrientMap.values().stream().mapToDouble(D -> D.doubleValue()).toArray();
         Collection<LinearConstraint> constraints = new ArrayList<>();
         for (int i = 0; i < nutrientAmounts.length; i++) {
@@ -197,7 +198,7 @@ public class SolutionModel {
             double[] points = solution.getPoint();
             solutionIngredientAmounts = new double[numberOfIngredients];
             solutionPrice = String.format("$%.2f", solution.getValue().doubleValue());
-            System.out.println(solutionPrice);
+            //System.out.println(solutionPrice);
             solutionNutrientAmounts = new double[nutrientMap.size()];
             double total = 0.0;
             for (int i = 0; i < solutionIngredientAmounts.length; i++) {
@@ -211,8 +212,7 @@ public class SolutionModel {
             }
             solutionTotal = String.format("%.0f lbs", total);
         } catch (NoFeasibleSolutionException n) {
-            System.out.println("Infeasible");
-            infeasible = true;
+            infeasible.set(true);
             solutionPrice = "!$!!!!!";
             solutionTotal = "!!!!! lbs";
             for (int i = 0; i < numberOfIngredients; i++) {
@@ -227,7 +227,7 @@ public class SolutionModel {
             
     public TableColumn<List<Content>, Content> getTableColumn(int column) {
         var aTableColumn = new TableColumn<List<Content>, Content>(columnHeaders.get(column));
-        aTableColumn.setCellFactory(list -> new ContentTableCell());
+        aTableColumn.setCellFactory(list -> new ContentTableCell(infeasible));
 
         aTableColumn.setCellValueFactory(cellData -> {
             Content content = cellData.getValue().get(column);
@@ -237,7 +237,7 @@ public class SolutionModel {
         aTableColumn.setEditable(true);
         aTableColumn.setOnEditCommit(event -> {
             final Content value = event.getNewValue();
-            System.out.println("Table edit commit " + event.getNewValue());
+            //System.out.println("Table edit commit " + event.getNewValue());
             int row = event.getTablePosition().getRow();
             try {
                 // double d = value.value;

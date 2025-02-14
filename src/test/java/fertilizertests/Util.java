@@ -62,7 +62,7 @@ public class Util {
     }
 
     private static void deleteFile(File file) {
-        System.out.println(file.getAbsolutePath());
+     //   System.out.println(file.getAbsolutePath());
         file.delete();
     }
 
