@@ -64,8 +64,16 @@ public class ContentTableCell extends TableCell<List<Content>, Content> {
         return choiceBox;
     }
     
+    static CheckBox createCheckBox(final Cell<Content> cell) {
+        CheckBox checkbox = new CheckBox();
+        checkbox.setMaxWidth(Double.MAX_VALUE);
+        checkbox.setIndeterminate(false);
+   //     checkbox.selectedProperty().addListener((observable, oldValue, newValue) -> cell.s(new Content(newValue)));
+        return checkbox;
+    }
+    
     ChoiceBox<Relationship> cb;
-    CheckBox cxbox = new CheckBox();
+    CheckBox cxbox;
     TextField tf;
     
     public ContentTableCell() {
@@ -86,6 +94,15 @@ public class ContentTableCell extends TableCell<List<Content>, Content> {
             setGraphic(cb);
             cb.requestFocus();
             break;
+        case enable:
+            cxbox = createCheckBox(this);
+            Boolean b = getItem().enabled;
+            cxbox.setSelected(b);
+             setText(null);           
+            setGraphic(cxbox);
+            cxbox.requestFocus();
+            cxbox.selectedProperty().addListener(observer -> this.commitEdit(new Content(cxbox.isSelected())));
+            break;  
 
         default:
             String oldText = getItem().toString();
@@ -141,10 +158,8 @@ public class ContentTableCell extends TableCell<List<Content>, Content> {
                 setText(content.toString());
                 break;
             case enable:
-                cxbox.setIndeterminate(false);
-                cxbox.setSelected(content.enabled);
-                setGraphic(cxbox);
-                setText(null);
+                setGraphic(null);
+                setText(content.toString());
                 break;
 
             case actualAmount:

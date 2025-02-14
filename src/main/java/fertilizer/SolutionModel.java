@@ -169,7 +169,6 @@ public class SolutionModel {
 
     public void calculateSolution() {
         infeasible = false;
-
         double[] nutrientAmounts = nutrientMap.values().stream().mapToDouble(D -> D.doubleValue()).toArray();
         Collection<LinearConstraint> constraints = new ArrayList<>();
         for (int i = 0; i < nutrientAmounts.length; i++) {
@@ -177,6 +176,15 @@ public class SolutionModel {
             double constraint = nutrientAmounts[i];
             Relationship r = constraintRelationsShips.get(i);
             constraints.add(new LinearConstraint(constraintCoefficients, r, constraint));
+        }
+        
+        for (int i = 0; i < enableList.size(); i++) {
+            boolean addConstraint = !enableList.get(i);
+            if (addConstraint) {
+                double[] newConstraints = new double[enableList.size()];
+                newConstraints[i] = 1.00;
+                constraints.add(new LinearConstraint(newConstraints, Relationship.EQ, 0.0));
+            }
         }
         int numberOfIngredients = ingredientMap.size();
         double[] ingredientPrices = ingredientMap.values().stream().mapToDouble(D -> D.doubleValue() / 2000.0).toArray();
@@ -203,6 +211,7 @@ public class SolutionModel {
             }
             solutionTotal = String.format("%.0f lbs", total);
         } catch (NoFeasibleSolutionException n) {
+            System.out.println("Infeasible");
             infeasible = true;
             solutionPrice = "!$!!!!!";
             solutionTotal = "!!!!! lbs";
@@ -260,8 +269,12 @@ public class SolutionModel {
             Double cp = ingredientMap.get(ingredient);
             ingredientMap.put(ingredient, content.value);
             break;
-        case enable:
+        case enable:           
+            Boolean b = enableList.get(row);
+            Boolean newB = content.enabled;
+            enableList.set(row, newB);
             break;
+           
         case relationship:
             Relationship r = constraintRelationsShips.get(column - 2);
             Relationship r2 = Relationship.valueOf(content.toString());
