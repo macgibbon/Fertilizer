@@ -7,29 +7,26 @@ import static fertilizer.Celltype.*;
 public class Content {
     public double value = 0.0;
     public String name = null;
-    public Boolean enabled;
+    public Boolean enabled = null;
     public Celltype celltype = whitespace;
     
     public Content() {
-        super();
         this.name = "";
     }
 
     public Content(String name, Celltype celltype) {
-        super();
-        this.name = name;
+        super();      
         this.celltype = celltype;
+        this.name = name;
     }
 
     public Content(double value, Celltype celltype) {
-        super();
         this.value = value;
         this.celltype = celltype;
     }
     
     public Content(Boolean b) {
-        super();
-        this.enabled = b;
+       this.enabled = b;
         celltype = enable;
     }
 
@@ -55,6 +52,31 @@ public class Content {
         } catch (Throwable t) {          
         }
         return value;
+    }
+    
+    public static Content update(Content oldContent, String newText) {
+        switch (oldContent.celltype) {
+        case name:
+            return new Content(newText, oldContent.celltype);
+
+        case analysis:
+        case price:
+        case constraintAmount:
+            double d = Double.valueOf(newText);
+            return new Content(d, oldContent.celltype);
+        case enable:
+            boolean b = Boolean.valueOf(newText);
+            return new Content(b);
+        case relationship:
+        case ingredientAmount:
+        case actualAmount:
+        case solutionPrice:
+        case totalAmount:
+        case whitespace:
+            throw new RuntimeException("Unexpected Entry");
+        default:
+            return new Content("",Celltype.name);
+        }
     }
 
 }

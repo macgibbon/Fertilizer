@@ -26,6 +26,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.util.converter.DefaultStringConverter;
 
 public class SolutionModel {
 
@@ -215,74 +216,61 @@ public class SolutionModel {
         updateSolutionItems();
     }
     
-    ObservableList<String> choices = FXCollections.observableArrayList(Stream.of(Relationship.values())
-            .map(r -> r.name())
-            .collect(Collectors.toList()));
+   
             
     public TableColumn<List<Content>, Content> getTableColumn(int column) {
         var aTableColumn = new TableColumn<List<Content>, Content>(columnHeaders.get(column));
-        aTableColumn.setCellFactory(list -> {
-            var cell = new TextFieldTableCell<List<Content>, Content>() {
+        aTableColumn.setCellFactory(list -> new ContentTableCell());
 
-                @Override
-                public void updateItem(Content content, boolean empty) {
-                    if (content == null)
-                        return;
-                    super.updateItem(content, empty);
-                    Celltype celltype = content.celltype;
-                    switch (celltype) {
-                    case relationship:
-                        ChoiceBox<String> cb = new ChoiceBox<>(choices);
-                        cb.setValue(content.name);
-                        setGraphic(cb);
-                        break;
-                    case enable:
-                        CheckBox cxbox = new CheckBox();
-                        cxbox.setIndeterminate(false);
-                        cxbox.setSelected(content.enabled);
-                        setGraphic(cxbox);
-                        break;
-                    
-                    case actualAmount:
-                    case whitespace:
-                    case solutionPrice:
-                    case totalAmount:
-                    case ingredientAmount:
-                    case name:
-                        setGraphic(null);
-                        setText(content.toString());
-                        getStyleClass().add("readonly");
-                        break;                       
-                    default:
-                        setGraphic(null);
-                        setText(content.toString());
-                    }
-                    if (empty && isSelected()) {
-                        updateSelected(false);
-                    }
-                }
-            };           
-            return cell;
-        });
         aTableColumn.setCellValueFactory(cellData -> {
             Content content = cellData.getValue().get(column);
             return new ReadOnlyObjectWrapper<Content>(content);
         });
         
-        aTableColumn.setEditable(true); 
+        
+
+        aTableColumn.setEditable(true);
         aTableColumn.setOnEditCommit(event -> {
             final Content value = event.getNewValue();
+            System.out.println("Table edit commit " + event.getNewValue());
             int row = event.getTablePosition().getRow();
             try {
-              //  double d = value.value;
+                // double d = value.value;
                 event.getTableView().getItems().get(row).set(column, value);
+                writeThroughCache(row,column,value);
                 Event.fireEvent(event.getTableView(), new SolveItEvent());
             } catch (NumberFormatException nfe) {
                 event.getTableView().getItems().get(row).set(column, value);
             }
-        });    
-       
+        });
+
         return aTableColumn;
+    }
+
+    private void writeThroughCache(int row, int column, Content content) {
+       Celltype celltype = content.celltype;
+       switch (celltype) {
+    case analysis:
+        Double a = coefficients.get(column-2).get(row);
+        coefficients.get(column-2).set(row, content.value);
+        break;
+    case constraintAmount:
+        String nutrient = nutrientMap.keySet().toArray(new String[0])[column-2];
+        Double c = nutrientMap.get(nutrient);
+        nutrientMap.put(nutrient,content.value);
+        break;
+    case price:
+        String ingredient = ingredientMap.keySet().toArray(new String[0])[row];
+        Double cp = ingredientMap.get(ingredient);
+        ingredientMap.put(ingredient,content.value);
+    case enable:
+        break;
+    case relationship:
+        break;
+    default:
+        throw new IllegalArgumentException("Unexpected value: " + celltype);
+    }
+        
     }
 
  /*
