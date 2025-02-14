@@ -14,12 +14,13 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import javafx.util.StringConverter;
 
 public class ContentTableCell extends TableCell<List<Content>, Content> {
 
-    static ObservableList<String> choices = FXCollections
-            .observableArrayList(Stream.of(Relationship.values()).map(r -> r.name()).collect(Collectors.toList()));
-
+    static ObservableList<Relationship> choices = FXCollections
+            .observableArrayList(Stream.of(Relationship.values()).collect(Collectors.toList()));
+  
     static  TextField createTextField(final Cell<Content> cell) {
           final TextField textField = new TextField(cell.getItem() == null ? "" : cell.getItem().toString());
 
@@ -35,28 +36,66 @@ public class ContentTableCell extends TableCell<List<Content>, Content> {
             }
         });
         return textField;
+    }   
+    
+    private static StringConverter<Relationship> relationshipConverter = new StringConverter<Relationship>() {
+        
+        @Override
+        public String toString(Relationship r) {
+            return r.name();
+        }
+        
+        @Override
+        public Relationship fromString(String string) {
+            return Relationship.valueOf(string);
+        }
+    };
+    
+    static ChoiceBox<Relationship> createChoiceBox(final Cell<Content> cell) {
+        ChoiceBox<Relationship> choiceBox = new ChoiceBox<>(choices);
+        choiceBox.setMaxWidth(Double.MAX_VALUE);
+        choiceBox.setConverter(relationshipConverter);
+        choiceBox.showingProperty().addListener(o -> {
+            if (!choiceBox.isShowing()) {
+                Relationship r = choiceBox.getSelectionModel().getSelectedItem();
+                cell.commitEdit(new Content(r));
+            }
+        });
+        return choiceBox;
     }
     
-    ChoiceBox<String> cb = new ChoiceBox<String>(choices);
+    ChoiceBox<Relationship> cb;
     CheckBox cxbox = new CheckBox();
     TextField tf;
     
-
     public ContentTableCell() {
         super();
     }
 
     @Override
     public void startEdit() {
-        super.startEdit();
         System.out.println("startEdit");
-        String oldText=getItem().toString();
-        setText(null);
-        tf = createTextField(this);
-        tf.setText(oldText);
-        setGraphic(tf);
-        tf.selectAll();
-        tf.requestFocus();
+        super.startEdit();
+        Celltype celltype = getItem().celltype;
+        switch (celltype) {
+        case relationship:
+            Relationship r = Relationship.valueOf(getItem().toString());
+            setText(null);
+            cb = createChoiceBox(this);
+            cb.getSelectionModel().select(r);
+            setGraphic(cb);
+            cb.requestFocus();
+            break;
+
+        default:
+            String oldText = getItem().toString();
+            setText(null);
+            tf = createTextField(this);
+            tf.setText(oldText);
+            setGraphic(tf);
+            tf.selectAll();
+            tf.requestFocus();
+        }
     }
 
     @Override
@@ -64,7 +103,7 @@ public class ContentTableCell extends TableCell<List<Content>, Content> {
         System.out.println("commitEdit");
         super.commitEdit(newValue);
         setGraphic(null);
-        setText(tf.getText());      
+        setText(newValue.toString());      
     }
 
     @Override
@@ -97,10 +136,9 @@ public class ContentTableCell extends TableCell<List<Content>, Content> {
                 setText(content.toString());
                 break;
             
-            case relationship:
-                cb.setValue(content.name);
-                setGraphic(cb);
-                setText(null);
+            case relationship:                
+                setGraphic(null);
+                setText(content.toString());
                 break;
             case enable:
                 cxbox.setIndeterminate(false);

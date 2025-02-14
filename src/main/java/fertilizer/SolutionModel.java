@@ -215,8 +215,6 @@ public class SolutionModel {
         }
         updateSolutionItems();
     }
-    
-   
             
     public TableColumn<List<Content>, Content> getTableColumn(int column) {
         var aTableColumn = new TableColumn<List<Content>, Content>(columnHeaders.get(column));
@@ -226,8 +224,6 @@ public class SolutionModel {
             Content content = cellData.getValue().get(column);
             return new ReadOnlyObjectWrapper<Content>(content);
         });
-        
-        
 
         aTableColumn.setEditable(true);
         aTableColumn.setOnEditCommit(event -> {
@@ -237,7 +233,7 @@ public class SolutionModel {
             try {
                 // double d = value.value;
                 event.getTableView().getItems().get(row).set(column, value);
-                writeThroughCache(row,column,value);
+                writeThroughCache(row, column, value);
                 Event.fireEvent(event.getTableView(), new SolveItEvent());
             } catch (NumberFormatException nfe) {
                 event.getTableView().getItems().get(row).set(column, value);
@@ -248,29 +244,33 @@ public class SolutionModel {
     }
 
     private void writeThroughCache(int row, int column, Content content) {
-       Celltype celltype = content.celltype;
-       switch (celltype) {
-    case analysis:
-        Double a = coefficients.get(column-2).get(row);
-        coefficients.get(column-2).set(row, content.value);
-        break;
-    case constraintAmount:
-        String nutrient = nutrientMap.keySet().toArray(new String[0])[column-2];
-        Double c = nutrientMap.get(nutrient);
-        nutrientMap.put(nutrient,content.value);
-        break;
-    case price:
-        String ingredient = ingredientMap.keySet().toArray(new String[0])[row];
-        Double cp = ingredientMap.get(ingredient);
-        ingredientMap.put(ingredient,content.value);
-    case enable:
-        break;
-    case relationship:
-        break;
-    default:
-        throw new IllegalArgumentException("Unexpected value: " + celltype);
-    }
-        
+        Celltype celltype = content.celltype;
+        switch (celltype) {
+        case analysis:
+            Double a = coefficients.get(column - 2).get(row);
+            coefficients.get(column - 2).set(row, content.value);
+            break;
+        case constraintAmount:
+            String nutrient = nutrientMap.keySet().toArray(new String[0])[column - 2];
+            Double c = nutrientMap.get(nutrient);
+            nutrientMap.put(nutrient, content.value);
+            break;
+        case price:
+            String ingredient = ingredientMap.keySet().toArray(new String[0])[row];
+            Double cp = ingredientMap.get(ingredient);
+            ingredientMap.put(ingredient, content.value);
+            break;
+        case enable:
+            break;
+        case relationship:
+            Relationship r = constraintRelationsShips.get(column - 2);
+            Relationship r2 = Relationship.valueOf(content.toString());
+            constraintRelationsShips.set(column - 2, r2);
+            break;
+        default:
+            throw new IllegalArgumentException("Unexpected value: " + celltype);
+        }
+
     }
 
  /*
