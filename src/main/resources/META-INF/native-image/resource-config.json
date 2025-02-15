@@ -1,21 +1,38 @@
 {
   "resources":{
-  "includes":[]},
+  "includes":[
+    {
+      "pattern":"\\Qcom/lowagie/text/pdf/fonts/Helvetica.afm\\E"
+    }, 
+    {
+      "pattern":"\\Qcom/lowagie/text/pdf/fonts/glyphlist.txt\\E"
+    }, 
+    {
+      "pattern":"\\Qcom/lowagie/text/version.properties\\E"
+    }
+  ]},
   "bundles":[
     {
       "name":"com.sun.javafx.tk.quantum.QuantumMessagesBundle",
-      "locales":[""]
+      "locales":[
+        "", 
+        "und"
+      ]
     }, 
     {
       "name":"com/sun/glass/ui/win/themes",
       "locales":[
         "", 
-        "en"
+        "en", 
+        "und"
       ]
     }, 
     {
       "name":"com/sun/javafx/scene/control/skin/resources/controls",
-      "locales":[""]
+      "locales":[
+        "", 
+        "und"
+      ]
     }, 
     {
       "name":"sun.awt.resources.awt",

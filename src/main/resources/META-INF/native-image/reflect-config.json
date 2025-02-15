@@ -3,6 +3,10 @@
   "name":"[Ljavafx.collections.transformation.SortedList$Element;"
 },
 {
+  "name":"com.lowagie.text.pdf.PdfName",
+  "allDeclaredFields":true
+},
+{
   "name":"com.sun.glass.ui.Screen"
 },
 {
@@ -105,6 +109,9 @@
   "queryAllDeclaredMethods":true,
   "methods":[
     {"name":"browseData","parameterTypes":[] }, 
+    {"name":"browseProgram","parameterTypes":[] }, 
+    {"name":"load","parameterTypes":[] }, 
+    {"name":"print","parameterTypes":[] }, 
     {"name":"save","parameterTypes":[] }
   ]
 },
@@ -161,11 +168,11 @@
 },
 {
   "name":"java.util.ArrayList",
-  "queriedMethods":[{"name":"<init>","parameterTypes":[] }]
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"java.util.LinkedHashMap",
-  "queriedMethods":[{"name":"<init>","parameterTypes":[] }]
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"javafx.fxml.FXMLLoader"
@@ -347,6 +354,27 @@
   "name":"javafx.stage.Window"
 },
 {
+  "name":"org.apache.commons.logging.LogFactory"
+},
+{
+  "name":"org.apache.commons.logging.impl.Jdk14Logger",
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.String"] }]
+},
+{
+  "name":"org.apache.commons.logging.impl.Log4jApiLogFactory"
+},
+{
+  "name":"org.apache.commons.logging.impl.LogFactoryImpl",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.apache.commons.logging.impl.Slf4jLogFactory"
+},
+{
+  "name":"org.apache.commons.logging.impl.WeakHashtable",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "name":"org.apache.commons.math4.legacy.optim.linear.Relationship",
   "allDeclaredFields":true
 },
@@ -356,7 +384,11 @@
 },
 {
   "name":"sun.misc.Unsafe",
-  "fields":[{"name":"theUnsafe"}]
+  "fields":[{"name":"theUnsafe"}],
+  "methods":[
+    {"name":"allocateInstance","parameterTypes":["java.lang.Class"] }, 
+    {"name":"invokeCleaner","parameterTypes":["java.nio.ByteBuffer"] }
+  ]
 },
 {
   "name":"sun.security.provider.MD5",
