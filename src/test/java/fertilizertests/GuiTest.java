@@ -177,7 +177,8 @@ public class GuiTest extends MainApp {
         robot.push(KeyCode.PERIOD);
         robot.push(KeyCode.DIGIT4);
         robot.push(KeyCode.DIGIT5);
-        robot.push(KeyCode.ESCAPE);
+        robot.press(KeyCode.ESCAPE);
+        robot.release(KeyCode.ESCAPE);
         // assert cell changed
     }
 
@@ -397,8 +398,11 @@ public class GuiTest extends MainApp {
     
     void testContentTableCell() {
         ContentTableCell cell = new ContentTableCell(new AtomicBoolean());
-        cell.updateSelected(false);
+         cell.updateSelected(false);
         cell.updateItem(new Content(), true);    
+        cell.updateItem(new Content(), false);  
+        cell.updateItem(null, true);    
+        cell.updateItem(null, false);  
         assertFalse(cell.isSelected());
     }
    

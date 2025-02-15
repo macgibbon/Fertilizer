@@ -30,12 +30,6 @@ public class ContentTableCell extends TableCell<List<Content>, Content> {
             cell.commitEdit(newContent);
             event.consume();
         });
-        textField.setOnKeyReleased(t -> {
-            if (t.getCode() == KeyCode.ESCAPE) {
-                cell.cancelEdit();
-                t.consume();
-            }
-        });
         return textField;
     }   
     
@@ -146,48 +140,28 @@ public class ContentTableCell extends TableCell<List<Content>, Content> {
         if (empty || content == null) {
             setText(null);
         } else {
+            setGraphic(null);
+            setText(content.toString());
             Celltype celltype = content.celltype;
             switch (celltype) {
-            
-            case analysis:
-            case price:
-            case constraintAmount:
-                setGraphic(null);
-                setText(content.toString());
-                break;
-            
-            case relationship:                
-                setGraphic(null);
-                setText(content.toString());
-                break;
-            case enable:
-                setGraphic(null);
-                setText(content.toString());
-                break;
-
             case actualAmount:
             case whitespace:
             case solutionPrice:
             case totalAmount:
             case ingredientAmount:
             case name:
-                setGraphic(null);
-                setText(content.toString());
                 setEditable(false);
-                getStyleClass().add("readonly");              
+                getStyleClass().add("readonly");
                 if (infeasible.get()) {
                     this.getStyleClass().add("infeasible");
                 } else {
                     this.getStyleClass().remove("infeasible");
                 }
                 break;
-           //
-           //     setGraphic(null);
-             //   setText(content.toString());
-           }
-            if (empty && isSelected()) {
-                updateSelected(false);
+            default:
+                break;
             }
+
         }
     }
 }
