@@ -182,11 +182,13 @@ public class GuiTest extends MainApp {
     void testRelationshipEntry(FxRobot robot) {
         robot.clickOn("Solution");
         delay(1);
-        robot.doubleClickOn("=");
+        robot.doubleClickOn("EQ");
+        robot.push(KeyCode.SPACE);
+        robot.push(KeyCode.DOWN);
+        robot.push(KeyCode.ENTER);
+ 
         delay(1);
-        robot.push(KeyCode.EQUALS);
-         robot.push(KeyCode.ENTER);
-     // solve assert solution changed
+        robot.clickOn("GEQ");     // solve assert solution changed
     }
 
     
@@ -212,6 +214,13 @@ public class GuiTest extends MainApp {
         robot.push(KeyCode.ENTER);
     }
 
+ // tests for code coverage
+    @Test
+    void testEnables(FxRobot robot) {
+        robot.doubleClickOn("true");
+        robot.push(KeyCode.SPACE);
+    }
+ 
     @Test
     void testUncaughtExceptionHandler(FxRobot robot) {
         Throwable error = null;

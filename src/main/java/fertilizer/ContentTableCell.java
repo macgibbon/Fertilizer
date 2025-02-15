@@ -23,7 +23,7 @@ public class ContentTableCell extends TableCell<List<Content>, Content> {
             .observableArrayList(Stream.of(Relationship.values()).collect(Collectors.toList()));
   
     static  TextField createTextField(final Cell<Content> cell) {
-          final TextField textField = new TextField(cell.getItem() == null ? "" : cell.getItem().toString());
+          final TextField textField = new TextField(cell.getItem().toString());
 
         textField.setOnAction(event -> {
             Content newContent = Content.update(cell.getItem(), textField.getText());

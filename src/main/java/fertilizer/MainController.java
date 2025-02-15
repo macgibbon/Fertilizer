@@ -1,6 +1,7 @@
 package fertilizer;
 
 
+import java.awt.Desktop;
 import java.awt.print.PrinterJob;
 import java.io.File;
 import java.io.FileReader;
@@ -254,5 +255,13 @@ public class MainController implements Initializable {
         document.close();
     }
 	
+    public void browseProgram() throws IOException {
+        Desktop.getDesktop().open(new File(System.getProperty("user.dir")));
+    }
+    
+    public void browseData() throws IOException {
+        Desktop.getDesktop().open(model.appDir);
+    }
+
 
 }
