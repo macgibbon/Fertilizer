@@ -56,9 +56,6 @@ public class Content {
     
     public static Content update(Content oldContent, String newText) {
         switch (oldContent.celltype) {
-        case name:
-            return new Content(newText, oldContent.celltype);
-
         case analysis:
         case price:
         case constraintAmount:
@@ -75,8 +72,7 @@ public class Content {
         case whitespace:
             throw new RuntimeException("Unexpected Entry");
         default:
-            return new Content("",Celltype.name);
+            return new Content(newText, oldContent.celltype);
         }
     }
-
 }

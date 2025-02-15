@@ -39,7 +39,7 @@ public class ContentTableCell extends TableCell<List<Content>, Content> {
         return textField;
     }   
     
-    private static StringConverter<Relationship> relationshipConverter = new StringConverter<Relationship>() {
+    public static StringConverter<Relationship> relationshipConverter = new StringConverter<Relationship>() {
         
         @Override
         public String toString(Relationship r) {

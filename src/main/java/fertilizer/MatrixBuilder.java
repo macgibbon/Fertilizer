@@ -12,22 +12,20 @@ import java.util.stream.Stream;
 import org.apache.commons.math4.legacy.optim.linear.Relationship;
 
 public class MatrixBuilder {
+    
+    private double[][] analysisMatrix;
+    private LinkedHashMap<String,Double> ingredientMap, nutrientMap;
+    private LinkedHashMap<String,Relationship> constraintMap; 
+    private LinkedHashMap<String,Boolean> enableMap; 
+
+    transient private HashMap<String, Integer> analysisIngredientMap,analysisNutrientMap;
+    transient private String[] nutrientNames, ingredientNames;
 
 
     public LinkedHashMap<String, Boolean> getEnableMap() {
         return enableMap;
     }
-
-    private double[][] analysisMatrix;
-
-    private LinkedHashMap<String,Double> ingredientMap, nutrientMap;
-    LinkedHashMap<String,Relationship> constraintMap; 
-    LinkedHashMap<String,Boolean> enableMap; 
-
-    private HashMap<String, Integer> analysisIngredientMap,analysisNutrientMap;
-    private String[] nutrientNames, ingredientNames;
-
-  
+ 
     public MatrixBuilder(ArrayList<ArrayList<String>> priceRows, ArrayList<ArrayList<String>> requirementRows, ArrayList<ArrayList<String>> ingredientRows) {
         ingredientMap = priceRows.stream()
                 //.skip(1) // skip headers

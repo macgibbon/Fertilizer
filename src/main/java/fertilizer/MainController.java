@@ -124,13 +124,12 @@ public class MainController implements Initializable {
 
     private void loadSolutionsFromModel(SolutionModel model) {
         solutiontable.getColumns().clear();  
-        solutiontable.setItems(FXCollections.emptyObservableList());
- 		solutiontable.setItems(FXCollections.observableArrayList(model.getItems()));
+        solutiontable.getItems().clear();;
+ 		solutiontable.getItems().addAll(solution.getItems());
  		int columns = model.getItems().get(0).size();
  		for (int i = 0; i < columns; i++) {
  		   solutiontable.getColumns().add(model.getTableColumn(i));
-        }
-       
+        }       
     }	
 
     private void createColumns(ArrayList<String> displayHeaders, TableView<List<String>> tableView, int strcolcount) {
@@ -179,8 +178,8 @@ public class MainController implements Initializable {
 	    solutiontable.getColumns().clear();  
 		solution.calculateSolution();
 		tabpane.getSelectionModel().select(SOLUTIONTAB);
-		solutiontable.setItems(FXCollections.emptyObservableList());
-		solutiontable.setItems(FXCollections.observableArrayList(solution.getItems()));
+		solutiontable.getItems().clear();
+		solutiontable.getItems().addAll(solution.getItems());
         int columns = solution.getItems().get(0).size();
         for (int i = 0; i < columns; i++) {
            solutiontable.getColumns().add(solution.getTableColumn(i));
@@ -202,7 +201,7 @@ public class MainController implements Initializable {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             FileWriter writer = new FileWriter(file);
             try {
-                gson.toJson(solution, writer);
+                gson.toJson(solution.getAsSolutionModel(), writer);
             } finally {
                 writer.close();
             }
@@ -221,12 +220,13 @@ public class MainController implements Initializable {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             FileReader jsonReader = new FileReader(file);
             try {
-                solution = gson.fromJson(jsonReader, SolutionModel.class);
+                PersistanceModel pmodel = gson.fromJson(jsonReader, PersistanceModel.class);
+                solution = new SolutionModel(pmodel);
+                solution.calculateSolution();
             } finally {
                 jsonReader.close();
             }
-            solutiontable.setItems(FXCollections.emptyObservableList());
-            solutiontable.getColumns().clear();
+          
             loadSolutionsFromModel(solution);
             tabpane.getSelectionModel().select(SOLUTIONTAB);
         }

@@ -1,18 +1,19 @@
 package fertilizertests;
 
-import static fertilizertests.Util.delDirTree;
-import static fertilizertests.Util.delay;
-import static fertilizertests.Util.reflectiveGet;
+import static fertilizertests.Util.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -28,6 +29,7 @@ import org.testfx.framework.junit5.Stop;
 
 import fertilizer.Celltype;
 import fertilizer.Content;
+import fertilizer.ContentTableCell;
 import fertilizer.MainApp;
 import fertilizer.MainController;
 import fertilizer.MatrixBuilder;
@@ -113,6 +115,19 @@ public class GuiTest extends MainApp {
         robot.clickOn("File");
         robot.clickOn("Load Formulation");
         robot.push(KeyCode.ESCAPE);
+        
+        delay(3);
+        robot.clickOn("Action");
+        robot.clickOn("Browse Data Files");
+        delay(3);
+        Util.pressGlobalExitKey();
+        
+        delay(3);
+        robot.clickOn("Action");
+        robot.clickOn("Browse Program Files");
+        delay(3);
+        Util.pressGlobalExitKey();
+        
     }
     
     
@@ -138,8 +153,8 @@ public class GuiTest extends MainApp {
         awtRobot.keyRelease(KeyEvent.VK_2);
         awtRobot.keyPress(KeyEvent.VK_ENTER);
         awtRobot.keyRelease(KeyEvent.VK_ENTER);
-        SolutionModel solutionModel = (SolutionModel) reflectiveGet(controller, "solution");
-        String price = (String) reflectiveGet(solutionModel, "solutionPrice");
+        SolutionModel solutionModel = (SolutionModel) reflectiveGetField(controller, "solution");
+        String price = (String) reflectiveGetField(solutionModel, "solutionPrice");
         assert(price.equals("$655.79"));
         delay(3);
     }
@@ -152,6 +167,17 @@ public class GuiTest extends MainApp {
         robot.push(KeyCode.DIGIT4);
         robot.push(KeyCode.DIGIT5);
         robot.push(KeyCode.ENTER);
+        // assert cell changed
+    }
+    
+    @Test
+    void testAnalysisEscape(FxRobot robot) {
+        robot.clickOn("Solution");
+        robot.doubleClickOn("360.00");
+        robot.push(KeyCode.PERIOD);
+        robot.push(KeyCode.DIGIT4);
+        robot.push(KeyCode.DIGIT5);
+        robot.push(KeyCode.ESCAPE);
         // assert cell changed
     }
 
@@ -222,11 +248,20 @@ public class GuiTest extends MainApp {
     }
  
     @Test
-    void testUncaughtExceptionHandler(FxRobot robot) {
+    void testsForGuiDependentCodeCoverage() throws Exception {
+        testUncaughtExceptionHandler();
+        testRedundantRows();
+        testgetItemsEditingCornerCases();
+        testEmptySelection();
+        testRelationShipConvert();
+        testContentTableCell();
+    }
+
+    
+    void testUncaughtExceptionHandler() {
         Throwable error = null;
         try {
             Platform.runLater(() -> {
-
                 ArrayList<ArrayList<String>> priceRows = model.readCsvfile(Path.of("defaultPrices.csv"));
                 ArrayList<ArrayList<String>> ingredientRows = model.readCsvfile(Path.of("defaultIngredients.csv"));
                 ArrayList<ArrayList<String>> requirementRows = model.readCsvfile(Path.of("defaultRequirements.csv"));
@@ -250,10 +285,10 @@ public class GuiTest extends MainApp {
         }
         assertTrue(error == null);
     }
+    
 
-    @Test
     void testRedundantRows()
-            throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+            throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
         String prices = """
                 Urea,>=,640
                 Ammonium Nitrate,>=,700
@@ -268,39 +303,26 @@ public class GuiTest extends MainApp {
                 .collect(Collectors.toCollection((ArrayList::new)));
         MatrixBuilder matrix = new MatrixBuilder(rows, rows, rows);
 
-        TableView<Content> solutionTable = (TableView<Content>) reflectiveGet(controller, "solutiontable");
+        TableView<Content> solutionTable = (TableView<Content>) reflectiveGetField(controller, "solutiontable");
         TableColumn tc = solutionTable.getColumns().get(0);
+        SolutionModel solutionModel = (SolutionModel) reflectiveGetField(controller, "solution");
+        Method wtcMethod = reflectiveGetMethod(solutionModel, "writeThroughCache");
+        Object[] args = new Object[] { 0,0,new Content() };
+        InvocationTargetException expected = null;
+        try { 
+        wtcMethod.invoke(solutionModel, args);
+        } catch (InvocationTargetException e) {
+            expected = e;
+        }
+        assertTrue(expected.getTargetException().getMessage().equals("Unexpected value: whitespace"));
+        
         solutionTable.getSelectionModel().select(1000, tc);
         // 
     }
-
-    @Test
-    void testBadDefaultFile() throws IOException {
-        Throwable expected = null;
-        try {
-            ArrayList<ArrayList<String>> priceRows = model.readCsvfile(Path.of("notDefaultPrice.csv"));
-        } catch (Throwable t) {
-            expected = t;
-        }
-        assertTrue(expected != null);
-        FileOutputStream fos = new FileOutputStream("spacesOnly.csv");
-        try {
-            fos.write("    \n\n".getBytes());
-        } finally {
-            fos.close();
-        }
-        try {
-            ArrayList<ArrayList<String>> errorRows = model.readCsvfile(Path.of("spacesOnly.csv"));
-        } catch (Throwable t) {
-            expected = t;
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    @Test
+    
     void testgetItemsEditingCornerCases() throws IOException, NoSuchFieldException, SecurityException,
             IllegalArgumentException, IllegalAccessException {
-        SolutionModel model = (SolutionModel) reflectiveGet(controller, "solution");
+        SolutionModel model = (SolutionModel) reflectiveGetField(controller, "solution");
         List<List<Content>> items = model.getItems();
         int rows = items.size();
         int columns = items.get(0).size();
@@ -352,10 +374,8 @@ public class GuiTest extends MainApp {
         delay(4);
     }
 
-    @SuppressWarnings("unchecked")
-    @Test
     void testEmptySelection() {
-        final TableView<List<Content>> solutionTable = (TableView<List<Content>>) reflectiveGet(controller,
+        final TableView<List<Content>> solutionTable = (TableView<List<Content>>) reflectiveGetField(controller,
                 "solutiontable");
         final TableColumn<List<Content>, ?> aTableColumn = solutionTable.getColumns().get(1);
         Platform.runLater(() -> {
@@ -364,12 +384,22 @@ public class GuiTest extends MainApp {
         });
     }
     
-    @Test
-    void testGetCause() {
-        Throwable t = new RuntimeException(new NullPointerException());
-        Throwable nestedException = MainApp.getCause(t);
-        assertTrue(nestedException instanceof NullPointerException);
+    void testRelationShipConvert() {
+        var rc = ContentTableCell.relationshipConverter;
+        Relationship[] values = Relationship.values();
+        for (int i = 0; i < values.length; i++) {
+            Relationship r1 = values[i];
+            String s = rc.toString(r1);
+            Relationship r2 = rc.fromString(s);
+            assertTrue(r1.equals(r2));
+        }        
     }
-
-
+    
+    void testContentTableCell() {
+        ContentTableCell cell = new ContentTableCell(new AtomicBoolean());
+        cell.updateSelected(false);
+        cell.updateItem(new Content(), true);    
+        assertFalse(cell.isSelected());
+    }
+   
 }

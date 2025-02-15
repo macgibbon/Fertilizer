@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import fertilizer.MainApp;
 import fertilizer.Model;
 
-class NonGuiTest extends MainApp {
+class LaunchingMainTest extends MainApp {
 
     // For code coverage of main method
     @Test
