@@ -100,7 +100,10 @@
 },
 {
   "name":"java.awt.Color",
-  "methods":[{"name":"getRGB","parameterTypes":[] }]
+  "methods":[
+    {"name":"getRGB","parameterTypes":[] }, 
+    {"name":"initIDs","parameterTypes":[] }
+  ]
 },
 {
   "name":"java.awt.Component",

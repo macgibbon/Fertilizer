@@ -142,6 +142,7 @@
 					
 					<attachList>
 					</attachList>
+					<nativeImageArgs></nativeImageArgs>
 					<runtimeArgs>-Dglass.accessible.force=false</runtimeArgs>
 					<mainClass>${main.class}</mainClass>
 
