@@ -18,6 +18,7 @@
 		<javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
 		<gluonfx.maven.plugin.version>1.0.23</gluonfx.maven.plugin.version>
 		<main.class>stamfordcoop/fertilizer.MainApp</main.class>
+		<app.main.class>fertilizer.MainApp</app.main.class>
 		<app.identifier>fertilizerapp</app.identifier>
 		<app.description>App to optimize component selection for customizing
 			field fertilizer mixes.</app.description>
@@ -230,10 +231,12 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.4.1</version>
 				<configuration>
 					<outputDirectory>target/jmods</outputDirectory>
 				</configuration>
 			</plugin>
+
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -252,8 +255,10 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
 
+			<plugin>
+				<!--has problem with automatic modules -->
+				<!-- run with command clean package jpackage:jpackage@win-->
 				<groupId>org.panteleyev</groupId>
 				<artifactId>jpackage-maven-plugin</artifactId>
 				<version>1.6.4</version>
@@ -287,7 +292,33 @@
 
 				</executions>
 			</plugin>
-
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.6.0</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+						<minimizeJar>true</minimizeJar>
+							<transformers>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<manifestEntries>
+										<Main-Class>${app.main.class}</Main-Class>
+										<X-Compile-Source-JDK>
+											${maven.compile.source}</X-Compile-Source-JDK>
+										<X-Compile-Target-JDK>
+											${maven.compile.target}</X-Compile-Target-JDK>
+									</manifestEntries>
+								</transformer>
+							</transformers>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
 		</plugins>
 	</build>
