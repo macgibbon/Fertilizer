@@ -1,15 +1,7 @@
 {
   "resources":{
   "includes":[
-    {
-      "pattern":"\\Qcom/lowagie/text/pdf/fonts/Helvetica.afm\\E"
-    }, 
-    {
-      "pattern":"\\Qcom/lowagie/text/pdf/fonts/glyphlist.txt\\E"
-    }, 
-    {
-      "pattern":"\\Qcom/lowagie/text/version.properties\\E"
-    }
+    
   ]},
   "bundles":[
     {

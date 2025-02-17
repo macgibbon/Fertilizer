@@ -36,14 +36,15 @@ public class MainApp extends Application {
 
 
     @Override
-	public void start(Stage primaryStage) throws Exception {
-        Thread.setDefaultUncaughtExceptionHandler((Thread t, Throwable e) -> showError(t,e)); 
-        model = Model.getInstance();        
+	public void start(Stage primaryStage){
+        try {
+        model = Model.getInstance();     
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         fh = new FileHandler(model.appDir.getAbsolutePath() + "/" + formatter.format(LocalDateTime.now())+ ".log", 1000000l,1,true);        
         fh.setFormatter(new SimpleFormatter());
         logger.addHandler(fh);
         logger.setUseParentHandlers(false);
+        Thread.setDefaultUncaughtExceptionHandler((Thread t, Throwable e) -> showError(t,e));
         currentStage = primaryStage;        
         URL resource = MainApp.class.getResource("/fertilizer/MainView.fxml");
         FXMLLoader loader = new FXMLLoader(resource);
@@ -61,6 +62,9 @@ public class MainApp extends Application {
 		primaryStage.setScene(scene);
 		scene.addEventHandler(SolveItEvent.READY, (e) -> controller.solve());
 		primaryStage.show();
+        } catch (Throwable e) {
+           showError(Thread.currentThread(), e);
+        }
 	}
     
 	@Override
@@ -77,6 +81,7 @@ public class MainApp extends Application {
 
 	protected void showError(Thread t, Throwable e) {
 	    getCause(e).printStackTrace();
+	    logger.log(Level.SEVERE, "Exception in App", getCause(e));  
 	    Platform.runLater(() -> {
 	        showErrorDialog(t, e);
 	    });
@@ -84,7 +89,7 @@ public class MainApp extends Application {
 	
     protected void showErrorDialog(Thread t, Throwable e) {
         try {       
-            logger.log(Level.SEVERE, "Exception in App", getCause(e));  
+          
             // Create a new dialog
             // Create a dialog to display the exception
             Alert alert = new Alert(AlertType.ERROR);

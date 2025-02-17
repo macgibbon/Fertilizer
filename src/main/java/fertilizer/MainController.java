@@ -2,21 +2,14 @@ package fertilizer;
 
 
 import java.awt.Desktop;
-import java.awt.print.PrinterJob;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-
-import org.apache.pdfbox.Loader;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.printing.PDFPageable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -28,6 +21,8 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.print.Printer;
+import javafx.print.PrinterJob;
 import javafx.scene.control.Menu;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TabPane;
@@ -35,9 +30,12 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.converter.DoubleStringConverter;
 
 public class MainController implements Initializable {
@@ -232,29 +230,7 @@ public class MainController implements Initializable {
         }
     }
     
-    public void print() throws Exception {
-        solve();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-        String filename = String.format("Fertilizer%s.pdf" ,formatter.format(LocalDateTime.now()));
-        File outFile = new File(model.appDir,filename);
-        var items = solutiontable.getItems();
-        String[] headers= solutiontable.getColumns().stream()
-                .map(column -> column.getText())
-                .toArray(String[]::new);
-        TablePdf pdf = new TablePdf(items, headers);
-        pdf.write(outFile);
-        
-        PDDocument document = Loader.loadPDF(outFile);
-
-        // Create a PrinterJob
-        PrinterJob job = PrinterJob.getPrinterJob();
-        // Set the PDF document as the printable object
-        job.setPageable(new PDFPageable(document));
-        job.print();
-        // Close the document
-        document.close();
-    }
-	
+    
     public void browseProgram() throws IOException {
         Desktop.getDesktop().open(new File(System.getProperty("user.dir")));
     }
@@ -262,6 +238,39 @@ public class MainController implements Initializable {
     public void browseData() throws IOException {
         Desktop.getDesktop().open(model.appDir);
     }
+    
+    public void print() throws IOException {
 
+        Printer printer = Printer.getDefaultPrinter();
+        Stage dialogStage = new Stage(StageStyle.DECORATED);
+        PrinterJob job = PrinterJob.createPrinterJob(printer);
+        BorderPane bp= new BorderPane();
+        TableView<List<Content>> printTable =new TableView<>();
+        printTable.getColumns().clear();  
+        printTable.getItems().clear();;
+        printTable.getItems().addAll(solution.getItems());
+        int columns = solution.getItems().get(0).size();
+        for (int i = 0; i < columns; i++) {
+            printTable.getColumns().add(solution.getTableColumn(i));
+        }       
+        if (job != null) {
+            boolean showDialog = job.showPageSetupDialog(dialogStage);
+            if (showDialog) {
+                solutiontable.setScaleX(0.60);
+                solutiontable.setScaleY(0.60);
+                solutiontable.setTranslateX(-220);
+                solutiontable.setTranslateY(-70);
+                boolean success = job.printPage(solutiontable);
+                if (success) {
+                    job.endJob();
+                }
+                solutiontable.setTranslateX(0);
+                solutiontable.setTranslateY(0);
+                solutiontable.setScaleX(1.0);
+                solutiontable.setScaleY(1.0);
+            }
+        }
+    }
+        
 
 }

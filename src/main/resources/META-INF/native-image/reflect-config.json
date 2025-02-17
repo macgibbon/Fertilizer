@@ -3,10 +3,6 @@
   "name":"[Ljavafx.collections.transformation.SortedList$Element;"
 },
 {
-  "name":"com.lowagie.text.pdf.PdfName",
-  "allDeclaredFields":true
-},
-{
   "name":"com.sun.glass.ui.Screen"
 },
 {
@@ -352,27 +348,6 @@
 },
 {
   "name":"javafx.stage.Window"
-},
-{
-  "name":"org.apache.commons.logging.LogFactory"
-},
-{
-  "name":"org.apache.commons.logging.impl.Jdk14Logger",
-  "methods":[{"name":"<init>","parameterTypes":["java.lang.String"] }]
-},
-{
-  "name":"org.apache.commons.logging.impl.Log4jApiLogFactory"
-},
-{
-  "name":"org.apache.commons.logging.impl.LogFactoryImpl",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"org.apache.commons.logging.impl.Slf4jLogFactory"
-},
-{
-  "name":"org.apache.commons.logging.impl.WeakHashtable",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"org.apache.commons.math4.legacy.optim.linear.Relationship",
