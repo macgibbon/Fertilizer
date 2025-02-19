@@ -24,5 +24,5 @@
     <stringAttribute key="org.eclipse.jdt.launching.MODULE_NAME" value="stamfordcoop"/>
     <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="Fertilizer"/>
     <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.m2e.launchconfig.sourcepathProvider"/>
-    <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-ea&#10;@{argLine} --add-exports javafx.graphics/com.sun.javafx.application=ALL-UNNAMED --add-opens javafx.graphics/com.sun.javafx.application=ALL-UNNAMED"/>
+    <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-ea"/>
 </launchConfiguration>

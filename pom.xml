@@ -12,7 +12,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.release>17</maven.compiler.release>
+		<maven.compiler.release>21</maven.compiler.release>
 		<javafx.version>18.0.2</javafx.version>
 
 		<javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
@@ -114,6 +114,53 @@
 					<mainClass>${main.class}</mainClass>
 				</configuration>
 			</plugin>
+			
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.3.1</version>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<!-- here the phase you need -->
+						<phase>compile</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>target/gluonfx/x86_64-windows</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${basedir}</directory>
+									<filtering>true</filtering>
+									<includes>
+										<include>*.csv</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-resources1</id>
+						<!-- here the phase you need -->
+						<phase>compile</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>target/defaults</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${basedir}</directory>
+									<filtering>true</filtering>
+									<includes>
+										<include>default*.csv</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
@@ -147,7 +194,7 @@
 				<version>1.6.4</version>
 
 				<configuration>
-					<name>HelloFX</name>
+					<name>Fertilizer App</name>
 					<appVersion>${version}</appVersion>
 					<vendor>${vendor}</vendor>
 					<input>target\shade\</input>
@@ -155,7 +202,7 @@
 					<mainJar>${project.artifactId}.jar</mainJar>
 					<destination>target/dist</destination>
 					<appVersion>${version}</appVersion>
-					<resourceDir>defaults</resourceDir>
+					<appContentPaths>defaults</appContentPaths>
 					<javaOptions>
 						<option>-Dfile.encoding=UTF-8</option>
 					</javaOptions>
@@ -173,4 +220,16 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>desktop</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<gluonfx.target>host</gluonfx.target>
+			</properties>
+		</profile>
+	</profiles>
 </project>

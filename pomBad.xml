@@ -315,6 +315,7 @@
 					<destination>target/dist</destination>
 					<appVersion>${version}</appVersion>
 					
+					
 					<resourceDir>target\defaults</resourceDir>				
 					<javaOptions>					
 						<option>-Dfile.encoding=UTF-8</option>
