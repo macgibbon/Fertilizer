@@ -22,7 +22,7 @@ class CodeCoverageTests {
         Throwable expected = null;
         Model model = Model.getInstance();
         try {           
-            ArrayList<ArrayList<String>> priceRows = model.readCsvfile(Path.of("notDefaultPrice.csv"));
+            ArrayList<ArrayList<String>> priceRows = model.readCsvfile("notDefaultPrice.csv");
         } catch (Throwable t) {
             expected = t;
         }
@@ -34,7 +34,7 @@ class CodeCoverageTests {
             fos.close();
         }
         try {
-            ArrayList<ArrayList<String>> errorRows = model.readCsvfile(Path.of("spacesOnly.csv"));
+            ArrayList<ArrayList<String>> errorRows = model.readCsvfile("spacesOnly.csv");
         } catch (Throwable t) {
             expected = t;
         }

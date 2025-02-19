@@ -245,14 +245,16 @@ public class MainController implements Initializable {
         pdf.write(outFile);
         
         PDDocument document = Loader.loadPDF(outFile);
-
+        try {
         // Create a PrinterJob
         PrinterJob job = PrinterJob.getPrinterJob();
         // Set the PDF document as the printable object
         job.setPageable(new PDFPageable(document));
         job.print();
         // Close the document
+        } finally {
         document.close();
+    }
     }
 	
     public void browseProgram() throws IOException {

@@ -263,9 +263,9 @@ public class GuiTest extends MainApp {
         Throwable error = null;
         try {
             Platform.runLater(() -> {
-                ArrayList<ArrayList<String>> priceRows = model.readCsvfile(Path.of("defaultPrices.csv"));
-                ArrayList<ArrayList<String>> ingredientRows = model.readCsvfile(Path.of("defaultIngredients.csv"));
-                ArrayList<ArrayList<String>> requirementRows = model.readCsvfile(Path.of("defaultRequirements.csv"));
+                ArrayList<ArrayList<String>> priceRows = model.readCsvfile("defaultPrices.csv");
+                ArrayList<ArrayList<String>> ingredientRows = model.readCsvfile("defaultIngredients.csv");
+                ArrayList<ArrayList<String>> requirementRows = model.readCsvfile("defaultRequirements.csv");
                 priceRows.remove(0);
                 requirementRows.remove(0);
                 ingredientRows.remove(0);

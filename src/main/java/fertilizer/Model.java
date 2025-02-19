@@ -42,24 +42,27 @@ public class Model {
         }
 
         preferences = Preferences.userNodeForPackage(getClass());
-        pricesPath = Path.of("defaultPrices.csv");
-        priceRows = readCsvfile(pricesPath);
-        ingredientsPath = Path.of("defaultIngredients.csv");
-        ingredientRows = readCsvfile(ingredientsPath);
-        requirementsPath = Path.of("defaultRequirements.csv");
-        requirementRows = readCsvfile(requirementsPath);
+
+        priceRows = readCsvfile("defaultPrices.csv");
+
+        ingredientRows = readCsvfile("defaultIngredients.csv");
+ 
+        requirementRows = readCsvfile("defaultRequirements.csv");
     }
 
-    public ArrayList<ArrayList<String>> readCsvfile(Path ingredientsPath) {
-        ArrayList<ArrayList<String>> lines;
+    public ArrayList<ArrayList<String>> readCsvfile(String defaultFileName) {
         try {
-            lines = Files.lines(ingredientsPath).filter(line -> line.length() != 0).map(line -> line.split(","))
+            Path defaultPath = Files.walk(Path.of("."))
+                    .filter(path -> path.endsWith(defaultFileName))
+                    .findFirst().get();
+            ArrayList<ArrayList<String>> lines = Files.lines(defaultPath)
+                    .filter(line -> line.length() != 0).map(line -> line.split(","))
                     .map(array -> new ArrayList<String>(Arrays.asList(array)))
                     .collect(Collectors.toCollection((ArrayList::new)));
+            return lines;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return lines;
     }
 
 }
