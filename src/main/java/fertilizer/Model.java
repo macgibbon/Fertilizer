@@ -60,7 +60,7 @@ public class Model {
                     .map(array -> new ArrayList<String>(Arrays.asList(array)))
                     .collect(Collectors.toCollection((ArrayList::new)));
             return lines;
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

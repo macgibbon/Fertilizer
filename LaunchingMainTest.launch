@@ -2,12 +2,11 @@
 <launchConfiguration type="org.eclipse.jdt.junit.launchconfig">
     <booleanAttribute key="org.eclipse.debug.core.ATTR_FORCE_SYSTEM_CONSOLE_ENCODING" value="false"/>
     <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
-        <listEntry value="/fertilizer/src/test/java/fertilizertests/NonGuiTest.java"/>
+        <listEntry value="/fertilizer/src/test/java/fertilizertests/LaunchingMainTest.java"/>
     </listAttribute>
     <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
         <listEntry value="1"/>
     </listAttribute>
-    <mapAttribute key="org.eclipse.debug.core.environmentVariables"/>
     <listAttribute key="org.eclipse.eclemma.core.SCOPE_IDS">
         <listEntry value="=fertilizer/src\/main\/resources=/maven.pomderived=/true=/=/optional=/true=/"/>
         <listEntry value="=fertilizer/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/"/>
@@ -33,5 +32,5 @@
     <stringAttribute key="org.eclipse.jdt.launching.MODULE_NAME" value="stamfordcoop"/>
     <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="fertilizer"/>
     <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.m2e.launchconfig.sourcepathProvider"/>
-    <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-ea"/>
+    <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-ea&#13;&#10; --add-exports javafx.graphics/com.sun.javafx.application=ALL-UNNAMED --add-opens javafx.graphics/com.sun.javafx.application=ALL-UNNAMED"/>
 </launchConfiguration>

@@ -8,6 +8,7 @@ import java.nio.file.Files;
 
 import org.junit.jupiter.api.Test;
 
+import fertilizer.Launcher;
 import fertilizer.MainApp;
 import fertilizer.Model;
 
@@ -26,7 +27,7 @@ class LaunchingMainTest extends MainApp {
         try {
             Thread launcherThread = new Thread(() ->  shutdown());
             launcherThread.start();
-            MainApp.main(new String[0]);   
+            Launcher.main(new String[0]);   
            } catch (Throwable t1) {
                t1.printStackTrace();
             t = t1;
@@ -43,15 +44,18 @@ class LaunchingMainTest extends MainApp {
   
 
     private void shutdown() {
-        delay(7);
+        delay(17);
         MainApp.close();
     }
+       
     
     @Test
     void testModelSingleton() {
         Model model = Model.getInstance();
         Model model2 = Model.getInstance();
         assert( model == model2);
+        
+        Launcher launcher = new Launcher();
     }
   
 }
