@@ -262,6 +262,8 @@
 					<javaOptions>
 						<option>-Dfile.encoding=UTF-8</option>
 					</javaOptions>
+					<winMenuGroup>Stamford Farmers Cooperative</winMenuGroup>	
+						
 				</configuration>
 
 				<executions>
@@ -269,7 +271,9 @@
 						<id>win</id>
 						<configuration>
 							<icon>icons/icon.ico</icon>
-							<winMenu>true</winMenu>
+							<winMenu>true</winMenu>		
+							<type>MSI</type>		
+													
 						</configuration>
 					</execution>
 				</executions>

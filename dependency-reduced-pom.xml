@@ -4,7 +4,7 @@
   <groupId>fertilizer</groupId>
   <artifactId>fertilizerapp</artifactId>
   <name>FertilizerApp</name>
-  <version>1.0.2</version>
+  <version>1.0.3</version>
   <description>App to optimize component selection for customizing field
 		fertilizer mixes.</description>
   <build>
@@ -150,6 +150,7 @@
             <configuration>
               <icon>icons/icon.ico</icon>
               <winMenu>true</winMenu>
+              <type>MSI</type>
             </configuration>
           </execution>
         </executions>
@@ -165,6 +166,7 @@
           <javaOptions>
             <option>-Dfile.encoding=UTF-8</option>
           </javaOptions>
+          <winMenuGroup>Stamford Farmers Cooperative</winMenuGroup>
         </configuration>
       </plugin>
     </plugins>
