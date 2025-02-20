@@ -18,9 +18,10 @@
 		<javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
 		<gluonfx.maven.plugin.version>1.0.23</gluonfx.maven.plugin.version>
 		<main.class>fertilizer.Launcher</main.class>
-		
+
 		<app.identifier>fertilizerapp</app.identifier>
-		<app.description>App to optimize component selection for customizing field fertilizer mixes.</app.description>
+		<app.description>App to optimize component selection for customizing
+			field fertilizer mixes.</app.description>
 		<package.type />
 		<module.name>stamfordcoop</module.name>
 		<vendor>Stamford Farmers Cooperative</vendor>
@@ -109,12 +110,12 @@
 			<plugin>
 				<groupId>org.openjfx</groupId>
 				<artifactId>javafx-maven-plugin</artifactId>
-				<version>0.0.3</version>
+				<version>${javafx.maven.plugin.version}</version>
 				<configuration>
 					<mainClass>${main.class}</mainClass>
 				</configuration>
 			</plugin>
-			
+
 			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>3.3.1</version>
@@ -161,7 +162,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
@@ -195,11 +196,21 @@
 					</execution>
 				</executions>
 			</plugin>
-			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.4.1</version>
+				<configuration>
+					<outputDirectory>target/jars</outputDirectory>
+					<excludes>**/maven/*</excludes>
+					<excludes>**/native-image/*</excludes>
+				</configuration>
+			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.2.0</version>
+				<version>3.6.0</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
@@ -207,7 +218,16 @@
 							<goal>shade</goal>
 						</goals>
 						<configuration>
-							<shadedArtifactAttached>true</shadedArtifactAttached>
+							<artifactSet>
+								<excludes>
+									<exclude>org.junit.jupiter:junit-jupiter-api:jar</exclude>
+									<exclude>org.apiguardian:apiguardian-api:jar</exclude>
+									<exclude>org.junit.jupiter:junit-jupiter-api:jar</exclude>
+									<exclude>org.opentest4j:opentest4j:jar</exclude>
+									<exclude>org.junit.platform:junit-platform-common:jars</exclude>
+								</excludes>
+							</artifactSet>
+							<shadedArtifactAttached>false</shadedArtifactAttached>
 							<shadedClassifierName>project-classifier</shadedClassifierName>
 							<outputFile>target\shade\${project.artifactId}.jar</outputFile>
 							<transformers>
@@ -223,20 +243,19 @@
 
 			<plugin>
 				<!--has problem with automatic modules -->
-				<!-- run with command clean package jpackage:jpackage@win-->
+				<!-- run with command clean package jpackage:jpackage@win -->
 				<groupId>org.panteleyev</groupId>
 				<artifactId>jpackage-maven-plugin</artifactId>
 				<version>1.6.4</version>
 
 				<configuration>
 					<name>Fertilizer App</name>
-					<appVersion>${version}</appVersion>
+					<appVersion>${project.version}</appVersion>
 					<vendor>${vendor}</vendor>
 					<input>target\shade\</input>
 					<mainClass>${main.class}</mainClass>
 					<mainJar>${project.artifactId}.jar</mainJar>
 					<destination>target/dist</destination>
-					<appVersion>${version}</appVersion>
 					<appContentPaths>defaults</appContentPaths>
 					<javaOptions>
 						<option>-Dfile.encoding=UTF-8</option>

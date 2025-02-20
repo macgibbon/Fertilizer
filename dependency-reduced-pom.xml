@@ -12,7 +12,9 @@
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
-        <configuration />
+        <configuration>
+          <release>${maven.compiler.release}</release>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.openjfx</groupId>
@@ -20,25 +22,6 @@
         <version>${javafx.maven.plugin.version}</version>
         <configuration>
           <mainClass>${main.class}</mainClass>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>com.gluonhq</groupId>
-        <artifactId>gluonfx-maven-plugin</artifactId>
-        <version>${gluonfx.maven.plugin.version}</version>
-        <configuration>
-          <verbose>false</verbose>
-          <target>${gluonfx.target}</target>
-          <attachList />
-          <nativeImageArgs />
-          <runtimeArgs>-Dglass.accessible.force=false</runtimeArgs>
-          <mainClass>${main.class}</mainClass>
-          <appIdentifier>${app.identifier}</appIdentifier>
-          <releaseConfiguration>
-            <description>${app.description}</description>
-            <vendor>Stamford Farmers Cooperative</vendor>
-            <version>${version}</version>
-          </releaseConfiguration>
         </configuration>
       </plugin>
       <plugin>
@@ -94,7 +77,6 @@
           <includes>
             <include>*Test*.java</include>
           </includes>
-          <argLine>@{argLine} --add-exports javafx.graphics/com.sun.javafx.application=ALL-UNNAMED --add-opens javafx.graphics/com.sun.javafx.application=ALL-UNNAMED</argLine>
         </configuration>
       </plugin>
       <plugin>
@@ -126,39 +108,30 @@
         </configuration>
       </plugin>
       <plugin>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-dependencies</id>
-            <phase>package</phase>
-            <goals>
-              <goal>copy-dependencies</goal>
-            </goals>
-            <configuration>
-              <includeScope>runtime</includeScope>
-              <outputDirectory>target/jmods</outputDirectory>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <artifactId>maven-shade-plugin</artifactId>
         <version>3.6.0</version>
         <executions>
           <execution>
+            <phase>package</phase>
             <goals>
               <goal>shade</goal>
             </goals>
             <configuration>
-              <outputFile>target/uber/${app.identifier}-${project.version}.jar</outputFile>
-              <minimizeJar>true</minimizeJar>
+              <artifactSet>
+                <excludes>
+                  <exclude>org.junit.jupiter:junit-jupiter-api:jar</exclude>
+                  <exclude>org.apiguardian:apiguardian-api:jar</exclude>
+                  <exclude>org.junit.jupiter:junit-jupiter-api:jar</exclude>
+                  <exclude>org.opentest4j:opentest4j:jar</exclude>
+                  <exclude>org.junit.platform:junit-platform-common:jars</exclude>
+                </excludes>
+              </artifactSet>
+              <shadedArtifactAttached>false</shadedArtifactAttached>
+              <shadedClassifierName>project-classifier</shadedClassifierName>
+              <outputFile>target\shade\${project.artifactId}.jar</outputFile>
               <transformers>
                 <transformer>
-                  <manifestEntries>
-                    <Main-Class>fertilizer.Launcher</Main-Class>
-                    <X-Compile-Source-JDK>${maven.compile.source}</X-Compile-Source-JDK>
-                    <X-Compile-Target-JDK>${maven.compile.target}</X-Compile-Target-JDK>
-                  </manifestEntries>
+                  <mainClass>${main.class}</mainClass>
                 </transformer>
               </transformers>
             </configuration>
@@ -179,15 +152,14 @@
           </execution>
         </executions>
         <configuration>
-          <name>Fertilizer App M</name>
-          <appVersion>${version}</appVersion>
+          <name>Fertilizer App</name>
+          <appVersion>${project.version}</appVersion>
           <vendor>${vendor}</vendor>
-          <input>.</input>
-          <mainClass>fertilizer.Launcher</mainClass>
-          <mainJar>target/uber/${app.identifier}-${project.version}.jar</mainJar>
+          <input>target\shade\</input>
+          <mainClass>${main.class}</mainClass>
+          <mainJar>${project.artifactId}.jar</mainJar>
           <destination>target/dist</destination>
-          <appVersion>${version}</appVersion>
-          <resourceDir>target\defaults</resourceDir>
+          <appContentPaths>defaults</appContentPaths>
           <javaOptions>
             <option>-Dfile.encoding=UTF-8</option>
           </javaOptions>
@@ -203,22 +175,6 @@
       </properties>
     </profile>
   </profiles>
-  <repositories>
-    <repository>
-      <id>Gluon</id>
-      <url>https://nexus.gluonhq.com/nexus/content/repositories/releases</url>
-    </repository>
-    <repository>
-      <id>snapshot</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-    </repository>
-  </repositories>
-  <pluginRepositories>
-    <pluginRepository>
-      <id>snapshot</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-    </pluginRepository>
-  </pluginRepositories>
   <dependencies>
     <dependency>
       <groupId>org.testfx</groupId>
@@ -242,16 +198,16 @@
     </dependency>
   </dependencies>
   <properties>
-    <maven.compiler.release>17</maven.compiler.release>
+    <maven.compiler.release>21</maven.compiler.release>
     <vendor>Stamford Farmers Cooperative</vendor>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <javafx.version>18.0.2</javafx.version>
     <module.name>stamfordcoop</module.name>
-    <main.class>stamfordcoop/fertilizer.MainApp</main.class>
+    <main.class>fertilizer.Launcher</main.class>
     <app.identifier>fertilizerapp</app.identifier>
     <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
-    <app.description>App to optimize component selection for customizing field fertilizer mixes.</app.description>
+    <app.description>App to optimize component selection for customizing
+			field fertilizer mixes.</app.description>
     <gluonfx.maven.plugin.version>1.0.23</gluonfx.maven.plugin.version>
-    <app.main.class>fertilizer.MainApp</app.main.class>
   </properties>
 </project>
