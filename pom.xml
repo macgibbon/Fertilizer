@@ -220,11 +220,13 @@
 						<configuration>
 							<artifactSet>
 								<excludes>
-									<exclude>org.junit.jupiter:junit-jupiter-api:jar</exclude>
-									<exclude>org.apiguardian:apiguardian-api:jar</exclude>
-									<exclude>org.junit.jupiter:junit-jupiter-api:jar</exclude>
-									<exclude>org.opentest4j:opentest4j:jar</exclude>
-									<exclude>org.junit.platform:junit-platform-common:jars</exclude>
+									<exclude>org.junit.jupiter:*</exclude>
+									<exclude>org.apiguardian:*</exclude>
+									<exclude>org.opentest4j:*</exclude>
+									<exclude>org.junit.platform:*</exclude>
+									<exclude>org.panteleyev:*</exclude>
+									<exclude>org.apache.maven.shared:*</exclude>
+									<exclude>org.opentest4j:*</exclude>
 								</excludes>
 							</artifactSet>
 							<shadedArtifactAttached>false</shadedArtifactAttached>
