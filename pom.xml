@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>fertilizer</groupId>
 	<artifactId>fertilizerapp</artifactId>
-	<version>1.0.2</version>
+	<version>1.0.3</version>
 	<name>FertilizerApp</name>
 	<description>App to optimize component selection for customizing field
 		fertilizer mixes.</description>
