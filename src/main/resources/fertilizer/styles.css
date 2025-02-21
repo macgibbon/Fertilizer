@@ -1,43 +1,45 @@
 
-.table-cell:even {
+   
+
+#solutiontable .table-cell:even {
 	-fx-background-color: #CAF6CC ;
 }
 
-.table-cell:odd {
+#solutiontable .table-cell:odd {
 	-fx-background-color: #A5F3A7;
 }
 
-.table-cell.readonly:even {
+#solutiontable .table-cell.readonly:even {
 	-fx-background-color: E4EB8D ;
 }
 
-.table-cell.readonly:odd {
+#solutiontable .table-cell.readonly:odd {
 	-fx-background-color: F7FCB2 ;
 }
 
-.table-cell.readonly:selected {
+#solutiontable .table-cell.readonly:selected {
 	-fx-background-color: orange;
 }
 
-.table-cell:empty {
+#solutiontable .table-cell:empty {
 	-fx-background-color: white;
 }
 
-.table-cell:selected {
+#solutiontable .table-cell:selected {
 	-fx-background-color: deepskyblue;
 	-fx-padding:0;
 	-fx-text-fill : black;
 }
 
-.table-cell.readonly:empty {
+#solutiontable .table-cell.readonly:empty {
 	-fx-background-color: white;
 }
 
-.table-cell.infeasible {
+#solutiontable .table-cell.infeasible {
 	-fx-text-fill: red;
 }
 
-.table-cell .text-field {
+#solutiontable .table-cell .text-field {
    -fx-padding: 1; 
    -fx-border-color:blue; 
    -fx-background-color:yellow;  

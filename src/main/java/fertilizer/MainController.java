@@ -2,12 +2,14 @@ package fertilizer;
 
 
 import java.awt.Desktop;
+
 import java.awt.print.PrinterJob;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -23,6 +25,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -34,6 +37,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -67,6 +71,9 @@ public class MainController implements Initializable {
 	@FXML
 	Menu menuFile;
 	
+	@FXML
+	TextField textFieldWeight;
+	
     FileChooser fileChooser;
     Model model;
     SolutionModel solution;
@@ -79,6 +86,7 @@ public class MainController implements Initializable {
 	@SuppressWarnings("unchecked")
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+	    Bindings.bindBidirectional(textFieldWeight.textProperty(), model.batchWt, new DecimalFormat("#.0"));
         loadDefaultData();
         solutiontable.setEditable(true);
         solutiontable.getSelectionModel().setCellSelectionEnabled(true);

@@ -9,6 +9,8 @@ import java.util.Arrays;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 
+import javafx.beans.property.SimpleDoubleProperty;
+
 public class Model {
 
     private Model() {
@@ -34,6 +36,8 @@ public class Model {
     public SolutionModel solutionModel;
     public File appDir;
 
+    public SimpleDoubleProperty batchWt = new SimpleDoubleProperty(8000.0);
+    
     private void loadDefaults() {
         File userDir = new File(System.getProperty("user.home"));
         appDir = new File(userDir, ".fertilizer");
