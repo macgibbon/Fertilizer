@@ -1,8 +1,8 @@
 Ingredient,Constraint,Requirements (lb)
-N,>=,180
-P,>=,360
-K,>=,360
-S,>=,20
-CA,>=,40
-MG,>=,60
-WT,=,2000
+N,>=,18
+P,>=,18
+K,>=,18
+S,>=,0
+CA,>=,0
+MG,>=,0
+WT,=,100
