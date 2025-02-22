@@ -11,6 +11,7 @@ import com.lowagie.text.Document;
 import com.lowagie.text.Font;
 import com.lowagie.text.FontFactory;
 import com.lowagie.text.PageSize;
+import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfPCell;
@@ -26,11 +27,14 @@ public class MixSheetPdf {
         Document document = new Document(PageSize.LETTER, 18, 18, 18, 18);
         PdfWriter.getInstance(document, new FileOutputStream(outFile));
         document.open();
+
         List<String> reportHeaders = model.getReportHeaders();
         for (String string : reportHeaders) {
-			document.add(new Phrase(string));
-		}
-        
+        	Paragraph paragraph = new Paragraph(string);
+        	paragraph.setFont(FontFactory.getFont(FontFactory.HELVETICA, 11, Font.NORMAL));
+        	paragraph.setAlignment(Paragraph.ALIGN_CENTER);
+        	document.add(paragraph);
+		}     
         
         String[] ingredientNames = solution.getIngredientMap().keySet()
                 .stream()

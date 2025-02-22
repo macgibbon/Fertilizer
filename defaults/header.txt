@@ -14,4 +14,3 @@ Density = 59.64 lb/cu ft
 
 {N} {P} {K}
 
-Material Name	Percent	Units/Batch	Scale	Actual
