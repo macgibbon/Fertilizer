@@ -76,6 +76,8 @@ public class SolutionModel {
     private ArrayList<String> columnHeaders;
     private List<Relationship> constraintRelationsShips;
 
+	private double totalAmount;
+
     public SolutionModel(PersistanceModel pm) {
         super();
         this.ingredientMap = pm.ingredientMap;
@@ -213,17 +215,17 @@ public class SolutionModel {
             solutionPrice = String.format("$%.2f", solution.getValue().doubleValue());
             //System.out.println(solutionPrice);
             solutionNutrientAmounts = new double[nutrientMap.size()];
-            double total = 0.0;
+            totalAmount = 0.0;
             for (int i = 0; i < solutionIngredientAmounts.length; i++) {
                 double amount = points[i];
                 solutionIngredientAmounts[i] = amount;
-                total += amount;
+                totalAmount += amount;
                 for (int j = 0; j < nutrientMap.size(); j++) {
                     double analysis = coefficients.get(j).get(i);
                     solutionNutrientAmounts[j] += amount * analysis;
                 }
             }
-            solutionTotal = String.format("%.0f lbs", total);
+            solutionTotal = String.format("%.0f lbs", totalAmount);
         } catch (NoFeasibleSolutionException n) {
             infeasible.set(true);
             solutionPrice = "!$!!!!!";
@@ -238,7 +240,11 @@ public class SolutionModel {
         updateSolutionItems();
     }
             
-    public TableColumn<List<Content>, Content> getTableColumn(int column) {
+    public double getTotalAmount() {
+		return totalAmount;
+	}
+
+	public TableColumn<List<Content>, Content> getTableColumn(int column) {
         var aTableColumn = new TableColumn<List<Content>, Content>(columnHeaders.get(column));
         aTableColumn.setCellFactory(list -> new ContentTableCell(infeasible));
         aTableColumn.setCellValueFactory(cellData -> {

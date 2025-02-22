@@ -270,6 +270,7 @@ public class MainController implements Initializable {
         File outFile = new File(model.appDir,filename);
         MixSheetPdf pdf = new MixSheetPdf(model,solution);
         pdf.write(outFile);
+       
         
  //       PDDocument document = Loader.loadPDF(outFile);
  //       try {

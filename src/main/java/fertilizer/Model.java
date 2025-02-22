@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 
@@ -35,8 +36,13 @@ public class Model {
     private Path pricesPath, ingredientsPath, requirementsPath;
     public SolutionModel solutionModel;
     public File appDir;
+    private List<String> reportHeaders;
 
-    public SimpleDoubleProperty batchWt = new SimpleDoubleProperty(8000.0);
+    public List<String> getReportHeaders() {
+		return reportHeaders;
+	}
+
+	public SimpleDoubleProperty batchWt = new SimpleDoubleProperty(8000.0);
     
     private void loadDefaults() {
         File userDir = new File(System.getProperty("user.home"));
@@ -52,9 +58,24 @@ public class Model {
         ingredientRows = readCsvfile("defaultIngredients.csv");
  
         requirementRows = readCsvfile("defaultRequirements.csv");
+        
+        reportHeaders = readTextFile("header.txt");
     }
 
-    public ArrayList<ArrayList<String>> readCsvfile(String defaultFileName) {
+    private List<String> readTextFile(String defaultFileName) {
+    	   try {
+               Path defaultPath = Files.walk(Path.of("."))
+                       .filter(path -> path.endsWith(defaultFileName))
+                       .findFirst().get();
+               List<String> lines = Files.lines(defaultPath)
+                       .collect(Collectors.toList());
+               return lines;
+           } catch (Exception e) {
+               throw new RuntimeException(e);
+           }
+	}
+
+	public ArrayList<ArrayList<String>> readCsvfile(String defaultFileName) {
         try {
             Path defaultPath = Files.walk(Path.of("."))
                     .filter(path -> path.endsWith(defaultFileName))
