@@ -271,17 +271,17 @@ public class MainController implements Initializable {
         MixSheetPdf pdf = new MixSheetPdf(model,solution);
         pdf.write(outFile);
         
-        PDDocument document = Loader.loadPDF(outFile);
-        try {
+ //       PDDocument document = Loader.loadPDF(outFile);
+ //       try {
         // Create a PrinterJob
-        PrinterJob job = PrinterJob.getPrinterJob();
+    //    PrinterJob job = PrinterJob.getPrinterJob();
         // Set the PDF document as the printable object
-        job.setPageable(new PDFPageable(document));
-        job.print();
+    //    job.setPageable(new PDFPageable(document));
+    //    job.print();
         // Close the document
-        } finally {
-        document.close();
-    }
+//        } finally {
+ //       document.close();
+  //  }
     }
     
 	

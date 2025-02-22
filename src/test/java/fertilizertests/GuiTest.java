@@ -134,13 +134,33 @@ public class GuiTest extends MainApp {
     // testing print requires using Windows print to PDF virtual driver
     @Test
     void testPrint(FxRobot robot) throws Exception {
-        File testPrintFile = new File(testFolder, "Test2.pdf");
-        if (testPrintFile.exists())
-            testPrintFile.delete();
+    	   File testPrintFile = new File(testFolder, "Test1.pdf");
+           if (testPrintFile.exists())
+               testPrintFile.delete();
+           robot.clickOn("Action");
+           robot.clickOn("Print feed mix");
+           delay(2);
+           java.awt.Robot awtRobot = new java.awt.Robot();
+           awtRobot.keyPress(KeyEvent.VK_T);
+           awtRobot.keyRelease(KeyEvent.VK_T);
+           awtRobot.keyPress(KeyEvent.VK_E);
+           awtRobot.keyRelease(KeyEvent.VK_E);
+           awtRobot.keyPress(KeyEvent.VK_S);
+           awtRobot.keyRelease(KeyEvent.VK_S);
+           awtRobot.keyPress(KeyEvent.VK_T);
+           awtRobot.keyRelease(KeyEvent.VK_T);
+           awtRobot.keyPress(KeyEvent.VK_1);
+           awtRobot.keyRelease(KeyEvent.VK_2);
+           awtRobot.keyPress(KeyEvent.VK_ENTER);
+           awtRobot.keyRelease(KeyEvent.VK_ENTER);
+    	
+    	
+        File testPrintFile2 = new File(testFolder, "Test2.pdf");
+        if (testPrintFile2.exists())
+            testPrintFile2.delete();
         robot.clickOn("Action");
-        robot.clickOn("Print least cost solution");
-        delay(2);
-        java.awt.Robot awtRobot = new java.awt.Robot();
+        robot.clickOn("Print least cost table");
+        delay(2);       
         awtRobot.keyPress(KeyEvent.VK_T);
         awtRobot.keyRelease(KeyEvent.VK_T);
         awtRobot.keyPress(KeyEvent.VK_E);
@@ -153,6 +173,10 @@ public class GuiTest extends MainApp {
         awtRobot.keyRelease(KeyEvent.VK_2);
         awtRobot.keyPress(KeyEvent.VK_ENTER);
         awtRobot.keyRelease(KeyEvent.VK_ENTER);
+        
+        
+        
+        
         SolutionModel solutionModel = (SolutionModel) reflectiveGetField(controller, "solution");
         String price = (String) reflectiveGetField(solutionModel, "solutionPrice");
         assert(price.equals("$655.79"));
