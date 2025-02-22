@@ -23,6 +23,30 @@ import javafx.scene.control.TableColumn;
 
 public class SolutionModel {
 
+    public LinkedHashMap<String, Double> getIngredientMap() {
+        return ingredientMap;
+    }
+
+    public void setIngredientMap(LinkedHashMap<String, Double> ingredientMap) {
+        this.ingredientMap = ingredientMap;
+    }
+
+    public LinkedHashMap<String, Boolean> getEnableMap() {
+        return enableMap;
+    }
+
+    public void setEnableMap(LinkedHashMap<String, Boolean> enableMap) {
+        this.enableMap = enableMap;
+    }
+
+    public double[] getSolutionIngredientAmounts() {
+        return solutionIngredientAmounts;
+    }
+
+    public void setSolutionIngredientAmounts(double[] solutionIngredientAmounts) {
+        this.solutionIngredientAmounts = solutionIngredientAmounts;
+    }
+
     private static final double objectiveConstant = 0.0;
 
     // Inputs as collections for easier insertion and deletion

@@ -268,7 +268,7 @@ public class MainController implements Initializable {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         String filename = String.format("MixSheet%s.pdf" ,formatter.format(LocalDateTime.now()));
         File outFile = new File(model.appDir,filename);
-        MixSheetPdf pdf = new MixSheetPdf(model);
+        MixSheetPdf pdf = new MixSheetPdf(model,solution);
         pdf.write(outFile);
         
         PDDocument document = Loader.loadPDF(outFile);
