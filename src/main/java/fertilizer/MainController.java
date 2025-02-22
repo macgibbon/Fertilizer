@@ -240,8 +240,7 @@ public class MainController implements Initializable {
         }
     }
     
-    public void print() throws Exception {
-        solve();
+    public void printTable() throws Exception {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         String filename = String.format("Fertilizer%s.pdf" ,formatter.format(LocalDateTime.now()));
         File outFile = new File(model.appDir,filename);
@@ -264,6 +263,27 @@ public class MainController implements Initializable {
         document.close();
     }
     }
+    
+    public void printMixsheet() throws Exception {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        String filename = String.format("MixSheet%s.pdf" ,formatter.format(LocalDateTime.now()));
+        File outFile = new File(model.appDir,filename);
+        MixSheetPdf pdf = new MixSheetPdf(model);
+        pdf.write(outFile);
+        
+        PDDocument document = Loader.loadPDF(outFile);
+        try {
+        // Create a PrinterJob
+        PrinterJob job = PrinterJob.getPrinterJob();
+        // Set the PDF document as the printable object
+        job.setPageable(new PDFPageable(document));
+        job.print();
+        // Close the document
+        } finally {
+        document.close();
+    }
+    }
+    
 	
     public void browseProgram() throws IOException {
         Desktop.getDesktop().open(new File(System.getProperty("user.dir")));

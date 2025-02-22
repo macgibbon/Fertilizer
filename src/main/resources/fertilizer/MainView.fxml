@@ -66,8 +66,10 @@
 					</items>
 				</Menu>
 				<Menu mnemonicParsing="false" text="Action">
-					<items>						
-						<MenuItem fx:id="printAction" mnemonicParsing="false" onAction="#print" text="Print least cost solution" />
+					<items>	
+						<MenuItem fx:id="printTable" mnemonicParsing="false" onAction="#printTable" text="Print least cost solution" />
+						<MenuItem fx:id="printMixsheet" mnemonicParsing="false" onAction="#printMixsheet" text="Print least cost solution" />
+										
 						<MenuItem fx:id="browseDataFiles" mnemonicParsing="false" onAction="#browseData" text="Browse Data Files" />
 						<MenuItem fx:id="browseProgramFiles" mnemonicParsing="false" onAction="#browseProgram" text="Browse Program Files" />
 					</items>
