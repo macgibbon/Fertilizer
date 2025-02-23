@@ -42,7 +42,7 @@ public class MixSheetPdf {
         	if (line.length() == 0)
         	    line = " ";
         	Paragraph paragraph = new Paragraph(line);
-        	paragraph.setFont(FontFactory.getFont(FontFactory.HELVETICA, 11, Font.NORMAL));
+        	paragraph.setFont(FontFactory.getFont(FontFactory.TIMES_ROMAN, 12, Font.NORMAL));
         	paragraph.setAlignment(Paragraph.ALIGN_CENTER);
         	document.add(paragraph);
 		}     
@@ -78,7 +78,7 @@ public class MixSheetPdf {
        
         int rows = sortedMixrows.length;
         for (int i = 0; i < cols; i++) {
-            cell = new PdfPCell(new Phrase(tableHeaders[i], FontFactory.getFont(FontFactory.HELVETICA, 11, Font.NORMAL)));
+            cell = new PdfPCell(new Phrase(tableHeaders[i], FontFactory.getFont(FontFactory.TIMES_ROMAN, 12, Font.BOLD)));
             cell.setBorder(Rectangle.NO_BORDER);
             cell.setBackgroundColor(new Color(0xC0, 0xC0, 0xC0));
             if (i == 0)
@@ -92,14 +92,14 @@ public class MixSheetPdf {
         for (int i = 0; i < rows; i++) {
         	MixRow mr = sortedMixrows[i];
 
-                PdfPCell tableCell = new PdfPCell(new Phrase(mr.name(), FontFactory.getFont(FontFactory.HELVETICA, 10, Font.NORMAL)));
+                PdfPCell tableCell = new PdfPCell(new Phrase(mr.name(), FontFactory.getFont(FontFactory.TIMES_ROMAN, 11, Font.BOLD)));
                 tableCell.setHorizontalAlignment(PdfPCell.ALIGN_LEFT);
                 table.addCell(tableCell);
                 
               
                 double percent = 100.0* (mr.amount()/solutionTotalAmount) ;
 				String percentasString = String.format("%.2f",percent);
-                PdfPCell tableCell3 = new PdfPCell(new Phrase(percentasString, FontFactory.getFont(FontFactory.HELVETICA, 10, Font.NORMAL)));  
+                PdfPCell tableCell3 = new PdfPCell(new Phrase(percentasString, FontFactory.getFont(FontFactory.TIMES_ROMAN, 11, Font.NORMAL)));  
                 tableCell3.setHorizontalAlignment(PdfPCell.ALIGN_RIGHT);
                 table.addCell(tableCell3);
                 
@@ -107,18 +107,18 @@ public class MixSheetPdf {
                 totalScale += batchAmount;
                 
                 String amountAsString = String.format("%.2f",batchAmount);
-                PdfPCell tableCell2 = new PdfPCell(new Phrase(amountAsString, FontFactory.getFont(FontFactory.HELVETICA, 10, Font.NORMAL)));  
+                PdfPCell tableCell2 = new PdfPCell(new Phrase(amountAsString, FontFactory.getFont(FontFactory.TIMES_ROMAN, 11, Font.NORMAL)));  
                 tableCell2.setHorizontalAlignment(PdfPCell.ALIGN_RIGHT);
                 table.addCell(tableCell2);
                 
                 
             	String totalAsString = String.format("%.0f",totalScale);
-                PdfPCell tableCell4= new PdfPCell(new Phrase(totalAsString, FontFactory.getFont(FontFactory.HELVETICA, 10, Font.NORMAL)));  
+                PdfPCell tableCell4= new PdfPCell(new Phrase(totalAsString, FontFactory.getFont(FontFactory.TIMES_ROMAN, 11, Font.BOLD)));  
                 tableCell4.setHorizontalAlignment(PdfPCell.ALIGN_RIGHT);
                 table.addCell(tableCell4);
                 
 
-                PdfPCell tableCell5= new PdfPCell(new Phrase("", FontFactory.getFont(FontFactory.HELVETICA, 10, Font.NORMAL)));  
+                PdfPCell tableCell5= new PdfPCell(new Phrase("", FontFactory.getFont(FontFactory.TIMES_ROMAN, 11, Font.NORMAL)));  
                 tableCell5.setHorizontalAlignment(PdfPCell.ALIGN_RIGHT);
                 table.addCell(tableCell5);
                

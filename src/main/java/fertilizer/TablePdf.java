@@ -53,7 +53,7 @@ public class TablePdf {
         PdfPCell cell = null;
         for (int i = 0; i < cols; i++) {
             cell = new PdfPCell(
-                    new Phrase(tableHeaders[i], FontFactory.getFont(FontFactory.HELVETICA, 11, Font.NORMAL)));
+                    new Phrase(tableHeaders[i], FontFactory.getFont(FontFactory.TIMES_ROMAN, 11, Font.NORMAL)));
             cell.setBorder(Rectangle.NO_BORDER);
             cell.setBackgroundColor(new Color(0xC0, 0xC0, 0xC0));
             table.addCell(cell);
@@ -63,7 +63,7 @@ public class TablePdf {
             for (int j = 0; j < cols; j++) {
                Content cellItem = row.get(j);
                 PdfPCell tableCell = new PdfPCell(
-                        new Phrase(cellItem.toString(), FontFactory.getFont(FontFactory.HELVETICA, 10, Font.NORMAL)));
+                        new Phrase(cellItem.toString(), FontFactory.getFont(FontFactory.TIMES_ROMAN, 10, Font.NORMAL)));
                 if (cellItem.name != null)
                     tableCell.setHorizontalAlignment(PdfPCell.ALIGN_LEFT);
                 else

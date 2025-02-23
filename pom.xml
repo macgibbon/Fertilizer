@@ -135,6 +135,7 @@
 									<filtering>true</filtering>
 									<includes>
 										<include>*.csv</include>
+										<include>header.txt</include>
 									</includes>
 								</resource>
 							</resources>
