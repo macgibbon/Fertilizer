@@ -11,6 +11,7 @@ import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleStringProperty;
 
 public class Model {
 
@@ -43,6 +44,7 @@ public class Model {
 	}
 
 	public SimpleDoubleProperty batchWt = new SimpleDoubleProperty(8000.0);
+	public SimpleStringProperty contact = new SimpleStringProperty("Stamford Farmers Cooperative");
     
     private void loadDefaults() {
         File userDir = new File(System.getProperty("user.home"));

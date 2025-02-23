@@ -74,6 +74,9 @@ public class MainController implements Initializable {
 	@FXML
 	TextField textFieldWeight;
 	
+	@FXML
+	TextField textFieldContact;
+	
     FileChooser fileChooser;
     Model model;
     SolutionModel solution;
@@ -87,6 +90,7 @@ public class MainController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 	    Bindings.bindBidirectional(textFieldWeight.textProperty(), model.batchWt, new DecimalFormat("#.0"));
+	    Bindings.bindBidirectional(textFieldContact.textProperty(), model.contact);
         loadDefaultData();
         solutiontable.setEditable(true);
         solutiontable.getSelectionModel().setCellSelectionEnabled(true);

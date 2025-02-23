@@ -36,8 +36,10 @@ public class MixSheetPdf {
         for (String line : reportHeaders) {        	
         	if (line.contains("{Date}"))
         	    line = line.replace("{Date}", LocalDate.now().format(DateTimeFormatter.ofPattern("MM-dd-yyyy")));
-        	   if (line.contains("{NPK}"))
-                   line = line.replace("{NPK}", solution.getStandardDescription());
+        	if (line.contains("{NPK}"))
+                line = line.replace("{NPK}", solution.getStandardDescription());
+        	if (line.contains("{Contact}"))
+                   line = line.replace("{Contact}", model.contact.get());          
        
         	if (line.length() == 0)
         	    line = " ";
