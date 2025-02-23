@@ -12,5 +12,5 @@ Material System is Dry Mixing
 Density = 59.64 lb/cu ft
 
 
-{N} {P} {K}
+{NPK}
 

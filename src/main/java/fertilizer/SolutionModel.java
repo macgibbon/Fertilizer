@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.math4.legacy.optim.PointValuePair;
 import org.apache.commons.math4.legacy.optim.linear.LinearConstraint;
@@ -77,6 +78,8 @@ public class SolutionModel {
     private List<Relationship> constraintRelationsShips;
 
 	private double totalAmount;
+
+    private String standardDescription;
 
     public SolutionModel(PersistanceModel pm) {
         super();
@@ -176,6 +179,25 @@ public class SolutionModel {
         cachedItems.get(actualRow).set(priceColumn, new Content(solutionPrice, Celltype.solutionPrice));
         cachedItems.get(actualRow).set(solutionColumn, new Content(solutionTotal, Celltype.totalAmount));
 
+        
+        String[] npkheader = {"N","P","K"};
+        List<String> nutrientNames = nutrientMap.keySet().stream().toList();
+        String[] reportHeader = Stream.of(npkheader)
+              .map(n ->  nutrientNames.indexOf(n) )
+              .mapToDouble(index -> solutionNutrientAmounts[index])
+              .mapToObj(d-> String.format("%.0f", d))
+              .toArray(String[]::new);
+        StringBuilder sb = new StringBuilder(reportHeader[0]);
+        for (int i = 1; i < reportHeader.length; i++) {
+            sb.append("-");
+            sb.append(reportHeader[i]);
+        }
+        standardDescription = sb.toString();   
+
+    }
+
+    public String getStandardDescription() {
+        return standardDescription;
     }
 
     public List<List<Content>> getItems() {

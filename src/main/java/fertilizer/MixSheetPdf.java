@@ -4,8 +4,11 @@ import java.awt.Color;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.Font;
@@ -28,9 +31,17 @@ public class MixSheetPdf {
         PdfWriter.getInstance(document, new FileOutputStream(outFile));
         document.open();
 
+         
         List<String> reportHeaders = model.getReportHeaders();
-        for (String string : reportHeaders) {
-        	Paragraph paragraph = new Paragraph(string);
+        for (String line : reportHeaders) {        	
+        	if (line.contains("{Date}"))
+        	    line = line.replace("{Date}", LocalDate.now().format(DateTimeFormatter.ofPattern("MM-dd-yyyy")));
+        	   if (line.contains("{NPK}"))
+                   line = line.replace("{NPK}", solution.getStandardDescription());
+       
+        	if (line.length() == 0)
+        	    line = " ";
+        	Paragraph paragraph = new Paragraph(line);
         	paragraph.setFont(FontFactory.getFont(FontFactory.HELVETICA, 11, Font.NORMAL));
         	paragraph.setAlignment(Paragraph.ALIGN_CENTER);
         	document.add(paragraph);
@@ -67,8 +78,7 @@ public class MixSheetPdf {
        
         int rows = sortedMixrows.length;
         for (int i = 0; i < cols; i++) {
-            cell = new PdfPCell(
-                    new Phrase(tableHeaders[i], FontFactory.getFont(FontFactory.HELVETICA, 11, Font.NORMAL)));
+            cell = new PdfPCell(new Phrase(tableHeaders[i], FontFactory.getFont(FontFactory.HELVETICA, 11, Font.NORMAL)));
             cell.setBorder(Rectangle.NO_BORDER);
             cell.setBackgroundColor(new Color(0xC0, 0xC0, 0xC0));
             if (i == 0)
