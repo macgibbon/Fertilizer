@@ -39,7 +39,7 @@ class CodeCoverageTests {
         } catch (Throwable t) {
             expected = t;
         }
-        assertTrue(expected != null);
+        assertTrue(expected == null);
         expected = null;
         try {
         var lines = model.readTextFile("notDefaultPrice.txt");

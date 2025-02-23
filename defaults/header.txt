@@ -1,7 +1,7 @@
 Mix Sheet
 {Date}
 
-Mark MacGibbon
+{Contact}
 6 South Street
 Stamford, NY 12167
 (707) 353-9968
