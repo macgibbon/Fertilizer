@@ -62,7 +62,7 @@ public class Model {
         reportHeaders = readTextFile("header.txt");
     }
 
-    private List<String> readTextFile(String defaultFileName) {
+    public List<String> readTextFile(String defaultFileName) {
     	   try {
                Path defaultPath = Files.walk(Path.of("."))
                        .filter(path -> path.endsWith(defaultFileName))

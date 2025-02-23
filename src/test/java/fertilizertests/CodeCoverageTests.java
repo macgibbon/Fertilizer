@@ -33,11 +33,20 @@ class CodeCoverageTests {
         } finally {
             fos.close();
         }
+        expected = null;
         try {
             ArrayList<ArrayList<String>> errorRows = model.readCsvfile("spacesOnly.csv");
         } catch (Throwable t) {
             expected = t;
         }
+        assertTrue(expected != null);
+        expected = null;
+        try {
+        var lines = model.readTextFile("notDefaultPrice.txt");
+        } catch (Throwable t) {
+            expected = t;
+        }
+        assertTrue(expected != null);
     }
 
     @Test

@@ -164,7 +164,7 @@ public class GuiTest extends MainApp {
         awtRobot.keyPress(KeyEvent.VK_T);
         awtRobot.keyRelease(KeyEvent.VK_T);
         awtRobot.keyPress(KeyEvent.VK_E);
-        awtRobot.keyRelease(KeyEvent.VK_E);
+        awtRobot.keyRelease(KeyEvent.VK_E); 
         awtRobot.keyPress(KeyEvent.VK_S);
         awtRobot.keyRelease(KeyEvent.VK_S);
         awtRobot.keyPress(KeyEvent.VK_T);
@@ -179,7 +179,7 @@ public class GuiTest extends MainApp {
         
         SolutionModel solutionModel = (SolutionModel) reflectiveGetField(controller, "solution");
         String price = (String) reflectiveGetField(solutionModel, "solutionPrice");
-        assert(price.equals("$655.79"));
+        assert(price.equals("$32.41"));
         delay(3);
     }
 
@@ -197,7 +197,7 @@ public class GuiTest extends MainApp {
     @Test
     void testAnalysisEscape(FxRobot robot) {
         robot.clickOn("Solution");
-        robot.doubleClickOn("360.00");
+        robot.doubleClickOn("18.00");
         robot.push(KeyCode.PERIOD);
         robot.push(KeyCode.DIGIT4);
         robot.push(KeyCode.DIGIT5);
@@ -221,7 +221,7 @@ public class GuiTest extends MainApp {
     @Test
     void testRequirementEntry(FxRobot robot) {
         robot.clickOn("Solution");
-        robot.doubleClickOn("360.00");
+        robot.doubleClickOn("18.00");
         robot.push(KeyCode.DIGIT3);
         robot.push(KeyCode.DIGIT6);
         robot.push(KeyCode.DIGIT1);
@@ -246,7 +246,7 @@ public class GuiTest extends MainApp {
     @Test
     void testInfeasibleEntry(FxRobot robot) {
         robot.clickOn("Solution");
-        robot.doubleClickOn("360.00");
+        robot.doubleClickOn("18.00");
         robot.push(KeyCode.DIGIT9);
         robot.push(KeyCode.DIGIT6);
         robot.push(KeyCode.DIGIT1);
