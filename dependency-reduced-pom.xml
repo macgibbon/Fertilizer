@@ -42,6 +42,7 @@
                   <filtering>true</filtering>
                   <includes>
                     <include>*.csv</include>
+                    <include>header.txt</include>
                   </includes>
                 </resource>
               </resources>
@@ -77,6 +78,10 @@
           <includes>
             <include>*Test*.java</include>
           </includes>
+          <argLine>@{argLine} --add-exports
+						javafx.graphics/com.sun.javafx.application=ALL-UNNAMED
+						--add-opens
+						javafx.graphics/com.sun.javafx.application=ALL-UNNAMED</argLine>
         </configuration>
       </plugin>
       <plugin>
