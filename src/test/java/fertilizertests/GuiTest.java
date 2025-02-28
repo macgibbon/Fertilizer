@@ -172,10 +172,7 @@ public class GuiTest extends MainApp {
         awtRobot.keyPress(KeyEvent.VK_2);
         awtRobot.keyRelease(KeyEvent.VK_2);
         awtRobot.keyPress(KeyEvent.VK_ENTER);
-        awtRobot.keyRelease(KeyEvent.VK_ENTER);
-        
-        
-        
+        awtRobot.keyRelease(KeyEvent.VK_ENTER);       
         
         SolutionModel solutionModel = (SolutionModel) reflectiveGetField(controller, "solution");
         String price = (String) reflectiveGetField(solutionModel, "solutionPrice");
@@ -183,6 +180,24 @@ public class GuiTest extends MainApp {
         delay(3);
     }
 
+    @Test
+    void testAbortPrintTable(FxRobot robot) throws Exception {
+        robot.clickOn("Action");
+        robot.clickOn("Print least cost table");
+        delay(2);
+        java.awt.Robot awtRobot = new java.awt.Robot();
+        awtRobot.keyPress(KeyEvent.VK_ESCAPE);
+    }
+    
+    @Test
+    void testAbortPrintFeedMix(FxRobot robot) throws Exception {
+        robot.clickOn("Action");
+        robot.clickOn("Print feed mix");
+        delay(2);
+        java.awt.Robot awtRobot = new java.awt.Robot();
+        awtRobot.keyPress(KeyEvent.VK_ESCAPE);
+    }
+    
     @Test
     void testAnalysisEntry(FxRobot robot) {
         robot.clickOn("Solution");
