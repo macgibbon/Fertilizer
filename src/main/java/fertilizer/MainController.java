@@ -2,7 +2,7 @@ package fertilizer;
 
 
 import java.awt.Desktop;
-
+import java.awt.print.PrinterAbortException;
 import java.awt.print.PrinterJob;
 import java.io.File;
 import java.io.FileReader;
@@ -66,7 +66,7 @@ public class MainController implements Initializable {
 	TabPane tabpane;
 
 	@FXML
-	TextArea textarea;
+	TextArea notes;
 	
 	@FXML
 	Menu menuFile;
@@ -91,6 +91,8 @@ public class MainController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 	    Bindings.bindBidirectional(textFieldWeight.textProperty(), model.batchWt, new DecimalFormat("#.0"));
 	    Bindings.bindBidirectional(textFieldContact.textProperty(), model.contact);
+        Bindings.bindBidirectional(notes.textProperty(), model.notes);
+
         loadDefaultData();
         solutiontable.setEditable(true);
         solutiontable.getSelectionModel().setCellSelectionEnabled(true);
@@ -261,9 +263,12 @@ public class MainController implements Initializable {
 			job.setPageable(new PDFPageable(document));
 			job.print();
 			// Close the document
-		} finally {
+        } catch (PrinterAbortException e) {
+            // User cancelled the print job
+        }  finally {
 			document.close();
 		}
+	
 	}
     
 	public void printMixsheet() throws Exception {
@@ -281,6 +286,8 @@ public class MainController implements Initializable {
 			job.setPageable(new PDFPageable(document));
 			job.print();
 			// Close the document
+        } catch (PrinterAbortException e) {
+            // User cancelled the print job
 		} finally {
 			document.close();
 		}

@@ -129,6 +129,12 @@ public class MixSheetPdf {
      // step 3: we open the document
       
         document.add(table);
+        
+        document.add(new Paragraph(" "));
+        Paragraph paragraph = new Paragraph(model.notes.get());
+        paragraph.setFont(FontFactory.getFont(FontFactory.TIMES_ROMAN, 12, Font.NORMAL));
+        paragraph.setAlignment(Paragraph.ALIGN_CENTER);
+        document.add(paragraph);
         document.close();
 
            

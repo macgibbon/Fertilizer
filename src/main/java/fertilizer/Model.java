@@ -45,6 +45,7 @@ public class Model {
 
 	public SimpleDoubleProperty batchWt = new SimpleDoubleProperty(8000.0);
 	public SimpleStringProperty contact = new SimpleStringProperty("Stamford Farmers Cooperative");
+	public SimpleStringProperty notes = new SimpleStringProperty("Notes:");
     
     private void loadDefaults() {
         File userDir = new File(System.getProperty("user.home"));
