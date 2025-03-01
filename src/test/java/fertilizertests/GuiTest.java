@@ -1,6 +1,10 @@
 package fertilizertests;
 
-import static fertilizertests.Util.*;
+import static fertilizertests.Util.delDirTree;
+import static fertilizertests.Util.delay;
+import static fertilizertests.Util.reflectiveGetField;
+import static fertilizertests.Util.reflectiveGetMethod;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -9,7 +13,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -87,6 +90,10 @@ public class GuiTest extends MainApp {
         robot.push(KeyCode.O);
         robot.push(KeyCode.N);
         robot.push(KeyCode.ENTER);
+        File savedFile = new File(model.appDir, "FERT.JSON");
+        assertTrue(savedFile.exists());
+        String oldPrice = (String) reflectiveGetField(model.solutionModel, "solutionPrice");
+        // assert file exists and solution price matches
         // check that file exists and solution price matches
 
         // change cell 0 0 
@@ -105,8 +112,10 @@ public class GuiTest extends MainApp {
         robot.push(KeyCode.N);
         robot.push(KeyCode.ENTER);
         // assert cell 0 0 different
-
+        String newPrice = (String) reflectiveGetField(model.solutionModel, "solutionPrice");
+        assertEquals(oldPrice, newPrice);
         delay(3);
+        
         robot.clickOn("File");
         robot.clickOn("Save Formulation");
         robot.push(KeyCode.ESCAPE);
