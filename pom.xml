@@ -267,8 +267,10 @@
 					<javaOptions>
 						<option>-Dfile.encoding=UTF-8</option>
 					</javaOptions>
-					<winMenuGroup>Stamford Farmers Cooperative</winMenuGroup>	
-						
+					<winDirChooser>true</winDirChooser>
+					<winShortcut>true</winShortcut>
+					<winMenu>true</winMenu>
+					<winMenuGroup>Stamford Farmers Cooperative</winMenuGroup>						
 				</configuration>
 
 				<executions>
