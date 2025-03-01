@@ -99,14 +99,23 @@ public class GuiTest extends MainApp {
         robot.push(KeyCode.ENTER);
         File savedFile = new File(model.appDir, "FERT.JSON");
         assertTrue(savedFile.exists());
-        String oldPrice = (String) reflectiveGetField(model.solutionModel, "solutionPrice");
-        // assert file exists and solution price matches
-        // check that file exists and solution price matches
 
-        File fileDir = Model.getInstance().appDir;
-        File pdfFile = new File(fileDir, "fert.json");
-        PdfTextExtractor  extractor = new PdfTextExtractor(new PdfReader(new FileInputStream(pdfFile)));
-        String s = extractor.getTextFromPage(1);
+        SolutionModel solution = (SolutionModel) reflectiveGetField(controller, "solution");
+        String oldPrice = (String) reflectiveGetField(solution,"solutionPrice");
+        assertTrue(oldPrice.equals("$32.41"));
+        
+        robot.clickOn("Solution");
+        robot.doubleClickOn("0.46");
+        robot.push(KeyCode.PERIOD);
+        robot.push(KeyCode.DIGIT4);
+        robot.push(KeyCode.DIGIT0);
+        robot.push(KeyCode.ENTER);
+        delay(3);
+        SolutionModel solutionChanged = (SolutionModel) reflectiveGetField(controller, "solution");
+        String changedPrice =  (String) reflectiveGetField(solutionChanged,"solutionPrice");
+        assertTrue(changedPrice.equals("$32.80"));
+        
+
        
         // change cell 0 0
         delay(3);
@@ -124,7 +133,9 @@ public class GuiTest extends MainApp {
         robot.push(KeyCode.N);
         robot.push(KeyCode.ENTER);
         // assert cell 0 0 different
-        String newPrice = (String) reflectiveGetField(model.solutionModel, "solutionPrice");
+        delay(3);
+        SolutionModel solutionNew = (SolutionModel) reflectiveGetField(controller, "solution");        
+        String newPrice =  (String) reflectiveGetField(solutionNew,"solutionPrice");
         assertEquals(oldPrice, newPrice);
         delay(3);
         
@@ -193,10 +204,12 @@ public class GuiTest extends MainApp {
         awtRobot.keyPress(KeyEvent.VK_ENTER);
         awtRobot.keyRelease(KeyEvent.VK_ENTER);
 
-        SolutionModel solutionModel = (SolutionModel) reflectiveGetField(controller, "solution");
-        String price = (String) reflectiveGetField(solutionModel, "solutionPrice");
-        assert (price.equals("$32.41"));
-        delay(3);
+        /*
+        File fileDir = Model.getInstance().appDir;
+        File pdfFile = new File(fileDir, "fert.json");
+        PdfTextExtractor  extractor = new PdfTextExtractor(new PdfReader(new FileInputStream(pdfFile)));
+        String s = extractor.getTextFromPage(1);
+        */
     }
 
     @Test
@@ -219,12 +232,7 @@ public class GuiTest extends MainApp {
 
     @Test
     void testAnalysisEntry(FxRobot robot) {
-        robot.clickOn("Solution");
-        robot.doubleClickOn("0.46");
-        robot.push(KeyCode.PERIOD);
-        robot.push(KeyCode.DIGIT4);
-        robot.push(KeyCode.DIGIT5);
-        robot.push(KeyCode.ENTER);
+      
         // assert cell changed
     }
 

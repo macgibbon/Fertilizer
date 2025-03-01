@@ -35,7 +35,6 @@ public class Model {
     public Preferences preferences;
     public ArrayList<ArrayList<String>> ingredientRows, priceRows, requirementRows, mergedMatrix;
     private Path pricesPath, ingredientsPath, requirementsPath;
-    public SolutionModel solutionModel;
     public File appDir;
     private List<String> reportHeaders;
 

@@ -219,7 +219,7 @@ public class MainController implements Initializable {
             } finally {
                 writer.close();
             }
-        }
+        }      
     }
 	
     public void load() throws JsonSyntaxException, JsonIOException, IOException {
@@ -244,6 +244,7 @@ public class MainController implements Initializable {
             loadSolutionsFromModel(solution);
             tabpane.getSelectionModel().select(SOLUTIONTAB);
         }
+        solve();
     }
     
 	public void printTable() throws Exception {
