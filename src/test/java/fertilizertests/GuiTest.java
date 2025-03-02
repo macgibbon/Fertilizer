@@ -14,6 +14,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,9 +24,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.math4.legacy.optim.linear.Relationship;
-import org.apache.pdfbox.Loader;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -184,7 +182,7 @@ public class GuiTest extends MainApp {
         awtRobot.keyRelease(KeyEvent.VK_2);
         awtRobot.keyPress(KeyEvent.VK_ENTER);
         awtRobot.keyRelease(KeyEvent.VK_ENTER);
-
+        delay(3);
         File testPrintFile2 = new File(testFolder, "Test2.pdf");
         if (testPrintFile2.exists())
             testPrintFile2.delete();
@@ -203,13 +201,19 @@ public class GuiTest extends MainApp {
         awtRobot.keyRelease(KeyEvent.VK_2);
         awtRobot.keyPress(KeyEvent.VK_ENTER);
         awtRobot.keyRelease(KeyEvent.VK_ENTER);
+        delay(3);
 
-        /*
-        File fileDir = Model.getInstance().appDir;
-        File pdfFile = new File(fileDir, "fert.json");
-        PdfTextExtractor  extractor = new PdfTextExtractor(new PdfReader(new FileInputStream(pdfFile)));
-        String s = extractor.getTextFromPage(1);
-        */
+        File pdfFile = Files.list(testFolder.toPath())
+            .map(path -> path.toFile())
+            .filter(file -> file.getName().startsWith("MixSheet"))
+            .findAny().get();
+        assertTrue(pdfFile.exists());
+        PdfReader reader = new PdfReader(new FileInputStream(pdfFile));
+        PdfTextExtractor extractor = new PdfTextExtractor(reader);
+        String text = extractor.getTextFromPage(1);
+        assertTrue(text.contains("Mix Sheet"));
+        assertTrue(text.contains("6962"));
+        System.out.println(text);
     }
 
     @Test
@@ -228,12 +232,6 @@ public class GuiTest extends MainApp {
         delay(2);
         java.awt.Robot awtRobot = new java.awt.Robot();
         awtRobot.keyPress(KeyEvent.VK_ESCAPE);
-    }
-
-    @Test
-    void testAnalysisEntry(FxRobot robot) {
-      
-        // assert cell changed
     }
 
     @Test
@@ -396,12 +394,21 @@ public class GuiTest extends MainApp {
         int relationshipRow = rows - 3;
         int nameColumn = 0;
 
-        var pairs = List.of(new Pair(0, nameColumn), // test name column
+        var pairs = List.of(
+                new Pair(0, nameColumn), // test name column
                 new Pair(0, solutionAmountColumn), // test solution nutrient amount column
                 new Pair(solutionAmountRow, 1), // test solution ingredient amount column
-                new Pair(12, 10), new Pair(11, 10), new Pair(9, 13), new Pair(9, 12), new Pair(9, 11), new Pair(10, 10),
-
-                new Pair(4, 5), new Pair(8, 12), new Pair(12, 2), new Pair(1, 13), new Pair(0, 15),
+                new Pair(12, 10), 
+                new Pair(11, 10), 
+                new Pair(9, 13), 
+                new Pair(9, 12), 
+                new Pair(9, 11), 
+                new Pair(10, 10),
+                new Pair(4, 5), 
+                new Pair(8, 12), 
+                new Pair(12, 2), 
+                new Pair(1, 13), 
+                new Pair(0, 15),
                 new Pair(requirementRow, priceColumn)); // test price in requirement row
 
         // new Pair(0, columns - 2),
