@@ -133,7 +133,7 @@ public class MixSheetPdf {
         document.add(new Paragraph(" "));
         Paragraph paragraph = new Paragraph(model.notes.get());
         paragraph.setFont(FontFactory.getFont(FontFactory.TIMES_ROMAN, 12, Font.NORMAL));
-        paragraph.setAlignment(Paragraph.ALIGN_CENTER);
+        paragraph.setAlignment(Paragraph.ALIGN_LEFT);
         document.add(paragraph);
         document.close();
 
