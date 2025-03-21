@@ -2,11 +2,13 @@ package fertilizer;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 
@@ -45,6 +47,7 @@ public class Model {
 	public SimpleDoubleProperty batchWt = new SimpleDoubleProperty(8000.0);
 	public SimpleStringProperty contact = new SimpleStringProperty("Stamford Farmers Cooperative");
 	public SimpleStringProperty notes = new SimpleStringProperty("Notes:");
+	public SimpleStringProperty version = new SimpleStringProperty();
     
     private void loadDefaults() {
         File userDir = new File(System.getProperty("user.home"));
@@ -52,16 +55,23 @@ public class Model {
         if (!appDir.exists()) {
             appDir.mkdirs();
         }
-
         preferences = Preferences.userNodeForPackage(getClass());
-
         priceRows = readCsvfile("defaultPrices.csv");
-
         ingredientRows = readCsvfile("defaultIngredients.csv");
- 
         requirementRows = readCsvfile("defaultRequirements.csv");
-        
-        reportHeaders = readTextFile("header.txt");
+        reportHeaders = readTextFile("header.txt");            
+        version.set(loadProperty("version.properties", "application.version"));        
+    }
+
+    public String loadProperty(String fileName, String propertyName) {
+        try (InputStream input = getClass().getClassLoader().getResourceAsStream(fileName)) {
+            Properties properties = new Properties();
+            properties.load(input);
+            String version = properties.getProperty(propertyName);
+            return version;
+        } catch (Exception e) {
+           throw new RuntimeException(e);
+        }
     }
 
     public List<String> readTextFile(String defaultFileName) {

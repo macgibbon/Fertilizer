@@ -32,6 +32,7 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
@@ -76,6 +77,9 @@ public class MainController implements Initializable {
 	
 	@FXML
 	TextField textFieldContact;
+
+	@FXML
+	MenuItem menuItemVersion;
 	
     FileChooser fileChooser;
     Model model;
@@ -92,6 +96,7 @@ public class MainController implements Initializable {
 	    Bindings.bindBidirectional(textFieldWeight.textProperty(), model.batchWt, new DecimalFormat("#.0"));
 	    Bindings.bindBidirectional(textFieldContact.textProperty(), model.contact);
         Bindings.bindBidirectional(notes.textProperty(), model.notes);
+        menuItemVersion.textProperty().bind(Bindings.concat("Version ", model.version));
 
         loadDefaultData();
         solutiontable.setEditable(true);

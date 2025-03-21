@@ -78,7 +78,7 @@
 				</Menu>
 				<Menu mnemonicParsing="false" text="Help">
 					<items>
-						<MenuItem mnemonicParsing="false" text="Version 1.0.2" />
+						<MenuItem fx:id="menuItemVersion" mnemonicParsing="false" text="Version 0.0.0" />
 					</items>
 				</Menu>
 			</menus>

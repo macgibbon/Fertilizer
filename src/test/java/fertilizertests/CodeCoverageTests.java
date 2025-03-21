@@ -21,7 +21,7 @@ class CodeCoverageTests {
     void testBadDefaultFile() throws IOException {
         Throwable expected = null;
         Model model = Model.getInstance();
-        try {           
+        try {
             ArrayList<ArrayList<String>> priceRows = model.readCsvfile("notDefaultPrice.csv");
         } catch (Throwable t) {
             expected = t;
@@ -42,7 +42,13 @@ class CodeCoverageTests {
         assertTrue(expected == null);
         expected = null;
         try {
-        var lines = model.readTextFile("notDefaultPrice.txt");
+            var lines = model.readTextFile("notDefaultPrice.txt");
+        } catch (Throwable t) {
+            expected = t;
+        }
+        assertTrue(expected != null);
+        try {
+            var version = model.loadProperty("notThere.properties", "something");
         } catch (Throwable t) {
             expected = t;
         }
