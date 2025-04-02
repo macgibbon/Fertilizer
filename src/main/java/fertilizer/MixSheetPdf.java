@@ -50,8 +50,7 @@ public class MixSheetPdf {
 		}     
         
         String[] ingredientNames = solution.getIngredientMap().keySet()
-                .stream()
-                .filter(ing -> solution.getEnableMap().get(ing))
+                .stream()              
                 .toArray(String[]::new);
 
        	double solutionTotalAmount = solution.getTotalAmount();
