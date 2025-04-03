@@ -2,6 +2,7 @@ package fertilizertests;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -27,7 +28,8 @@ class CodeCoverageTests {
             expected = t;
         }
         assertTrue(expected != null);
-        FileOutputStream fos = new FileOutputStream("spacesOnly.csv");
+        File currentDefaults = new File(model.appDir, "currentDefaults");
+        FileOutputStream fos = new FileOutputStream(new File(currentDefaults,"spacesOnly.csv"));
         try {
             fos.write("    \n\n".getBytes());
         } finally {
@@ -63,6 +65,25 @@ class CodeCoverageTests {
     }
     
     @Test
+    void testCreateUserDir() {
+        String realUserHome = System.getProperty("user.home");
+        try {
+            System.setProperty("user.home", "C:/Users/.test");   
+            File testFolder = new File(System.getProperty("user.home"));
+            if (testFolder.exists()) {
+                Util.delDirTree(testFolder);
+            }
+            Model.reset();
+            Model model = Model.getInstance();
+          
+        } catch (Throwable t) {           
+        } finally {
+            System.setProperty("user.home", realUserHome);
+        }
+    }
+       
+    
+    @Test
     void testContentUpdates() {
         Content nameContent = new Content("Urea", Celltype.name);
         Content.update(nameContent, "Urea mix");
@@ -76,6 +97,26 @@ class CodeCoverageTests {
         } catch (RuntimeException re) {
             assertTrue(re.getMessage().equals("Unexpected Entry"));
         }
+    }
+    
+    
+    @Test
+    void testCopy() {
+        Throwable expected = null;
+        try {
+            Model.copy(Path.of("somewhere"), Path.of("somewhereelse"), Path.of("aFile"));
+        } catch (Throwable t) {
+            expected = t;
+        }
+        assertTrue(expected != null);
+        
+        Throwable expected2 = null;
+        try {
+            Model.deepCopy(Path.of("somewhere"), Path.of("somewhereelse"));
+        } catch (Throwable t) {
+            expected2 = t;
+        }
+        assertTrue(expected2 != null);
     }
     
 }

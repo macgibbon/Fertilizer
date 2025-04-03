@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -19,11 +20,7 @@ public class Model {
 
     private Model() {
         super();
-        try {
-            loadDefaults();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        loadDefaults();
     }
 
     private static Model instance;
@@ -40,7 +37,6 @@ public class Model {
 
     public Preferences preferences;
     public ArrayList<ArrayList<String>> ingredientRows, priceRows, requirementRows, mergedMatrix;
-    private Path pricesPath, ingredientsPath, requirementsPath;
     public File appDir;
     private List<String> reportHeaders;
 
@@ -54,16 +50,15 @@ public class Model {
     public SimpleStringProperty version = new SimpleStringProperty();
     private File currentDefaults;
 
-    private void loadDefaults() throws IOException {
+    private void loadDefaults()  {
         File userDir = new File(System.getProperty("user.home"));
         appDir = new File(userDir, ".fertilizer");
         if (!appDir.exists()) {
             appDir.mkdirs();
         }
         currentDefaults = new File(appDir, "currentDefaults");
-        Path defaultPath = Files.walk(Path.of(".")).filter(path -> path.endsWith("defaults")).findFirst().get();
+        Path defaultPath = Path.of("./defaults");        
         deepCopy(defaultPath, currentDefaults.toPath());
-
         preferences = Preferences.userNodeForPackage(getClass());
         priceRows = readCsvfile("defaultPrices.csv");
         ingredientRows = readCsvfile("defaultIngredients.csv");
@@ -109,26 +104,22 @@ public class Model {
         }
     }
 
-    public static void deepCopy(Path sourcePath, Path targetPath) throws IOException {
-        Files.walk(sourcePath).forEach(source -> {
-            try {
-                copy(sourcePath, targetPath, source);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
+    public static void deepCopy(Path sourcePath, Path targetPath)  {
+        try (Stream<Path> stream = Files.walk(sourcePath)) {
+            stream.forEach(source -> copy(sourcePath, targetPath, source));
+        } catch (IOException e) {
+           throw new RuntimeException(e);
+        }
     }
 
-    private static void copy(Path sourcePath, Path targetPath, Path source) throws IOException {
+    public static void copy(Path sourcePath, Path targetPath, Path source)  {
         Path target = targetPath.resolve(sourcePath.relativize(source));
-        if (Files.isDirectory(source)) {
-            if (!Files.exists(target)) {
-                Files.createDirectories(target);
-            }
-        } else {
-            if (!(target.toFile().exists())) {
+        if (!(target.toFile().exists())) {
+            try {
                 Files.copy(source, target);
-            }           
+            } catch (IOException e) {
+               throw new RuntimeException(e);
+            }
         }
     }
 

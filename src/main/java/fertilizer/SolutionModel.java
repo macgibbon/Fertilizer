@@ -23,45 +23,29 @@ import javafx.event.Event;
 import javafx.scene.control.TableColumn;
 
 public class SolutionModel {
-
-    public LinkedHashMap<String, Double> getIngredientMap() {
-        return ingredientMap;
-    }
-
-  
-
-    public LinkedHashMap<String, Boolean> getEnableMap() {
-        return enableMap;
-    }
-
-   
-    public double[] getSolutionIngredientAmounts() {
-        return solutionIngredientAmounts;
-    }
-
-   
-
+    
     private static final double objectiveConstant = 0.0;
 
     // Inputs as collections for easier insertion and deletion
     private LinkedHashMap<String, Double> ingredientMap;
+ 
     private LinkedHashMap<String, Double> nutrientMap;
     private ArrayList<ArrayList<Double>> coefficients;
     private LinkedHashMap<String,Boolean> enableMap;
     private LinkedHashMap<String, Relationship> constraintMap;
-
-
     // Output as arrays for simplicity and easier interface with LP optimization
     // library
     private double[] solutionIngredientAmounts;
     private String solutionPrice;
+
+
     private double[] solutionNutrientAmounts;
     private String solutionTotal;
     private AtomicBoolean infeasible = new AtomicBoolean(false);
-
     // members for displaying in tableView
     private List<String> rowHeaders;
     int nameColumn;
+
     int enableColumn;
     int startAnalysisColumn;
     int priceColumn;
@@ -69,10 +53,17 @@ public class SolutionModel {
     private List<List<Content>> cachedItems;
     private ArrayList<String> columnHeaders;
     private List<Relationship> constraintRelationsShips;
-
-	private double totalAmount;
-
+    private double totalAmount;
     private String standardDescription;
+
+	public SolutionModel(MatrixBuilder matrix) {
+        this.ingredientMap = matrix.getIngredientMap();
+        this.nutrientMap = matrix.getNutrientMap();
+        this.coefficients = matrix.getAnalysisMatrixs();
+        this.constraintMap = matrix.getConstraintMap();
+        this.enableMap = matrix.getEnableMap();
+        initMembersForTableView();
+    }
 
     public SolutionModel(PersistanceModel pm) {
         super();
@@ -84,16 +75,109 @@ public class SolutionModel {
         initMembersForTableView();
     }
 
-    public SolutionModel(MatrixBuilder matrix) {
-        this.ingredientMap = matrix.getIngredientMap();
-        this.nutrientMap = matrix.getNutrientMap();
-        this.coefficients = matrix.getAnalysisMatrixs();
-        this.constraintMap = matrix.getConstraintMap();
-        this.enableMap = matrix.getEnableMap();
-        initMembersForTableView();
+    public void calculateSolution() {
+        infeasible.set(false);
+        double[] nutrientAmounts = nutrientMap.values().stream().mapToDouble(D -> D.doubleValue()).toArray();
+        Collection<LinearConstraint> constraints = new ArrayList<>();
+        for (int i = 0; i < nutrientAmounts.length; i++) {
+            double[] constraintCoefficients = coefficients.get(i).stream().mapToDouble(D -> D.doubleValue()).toArray();
+            double constraint = nutrientAmounts[i];
+            Relationship r = constraintRelationsShips.get(i);
+            constraints.add(new LinearConstraint(constraintCoefficients, r, constraint));
+        }
+        
+        List<Boolean> enableList = enableMap.values().stream().collect(Collectors.toCollection(ArrayList<Boolean>::new));
+        for (int i = 0; i < enableList.size(); i++) {
+            boolean addConstraint = !enableList.get(i);
+            if (addConstraint) {
+                double[] newConstraints = new double[enableList.size()];
+                newConstraints[i] = 1.00;
+                constraints.add(new LinearConstraint(newConstraints, Relationship.EQ, 0.0));
+            }
+        }
+        int numberOfIngredients = ingredientMap.size();
+        double[] ingredientPrices = ingredientMap.values().stream().mapToDouble(D -> D.doubleValue() / 2000.0).toArray();
+        LinearObjectiveFunction objectiveFunction = new LinearObjectiveFunction(ingredientPrices, objectiveConstant);
+
+        SimplexSolver solver = new SimplexSolver();
+        try {
+            PointValuePair solution = solver.optimize(objectiveFunction, new LinearConstraintSet(constraints), GoalType.MINIMIZE,
+                    new NonNegativeConstraint(true));
+            double[] points = solution.getPoint();
+            solutionIngredientAmounts = new double[numberOfIngredients];
+            solutionPrice = String.format("$%.2f", solution.getValue().doubleValue());
+            //System.out.println(solutionPrice);
+            solutionNutrientAmounts = new double[nutrientMap.size()];
+            totalAmount = 0.0;
+            for (int i = 0; i < solutionIngredientAmounts.length; i++) {
+                double amount = points[i];
+                solutionIngredientAmounts[i] = amount;
+                totalAmount += amount;
+                for (int j = 0; j < nutrientMap.size(); j++) {
+                    double analysis = coefficients.get(j).get(i);
+                    solutionNutrientAmounts[j] += amount * analysis;
+                }
+            }
+            solutionTotal = String.format("%.0f lbs", totalAmount);
+        } catch (NoFeasibleSolutionException n) {
+            infeasible.set(true);
+            solutionPrice = "!$!!!!!";
+            solutionTotal = "!!!!! lbs";
+            for (int i = 0; i < numberOfIngredients; i++) {
+                solutionIngredientAmounts[i] = 0;
+            }
+            for (int j = 0; j < solutionNutrientAmounts.length; j++) {
+                solutionNutrientAmounts[j] = 0;
+            }
+        }
+        updateSolutionItems();
     }
 
-    private void initMembersForTableView() {
+    public PersistanceModel getAsSolutionModel() {
+        return new PersistanceModel(ingredientMap, nutrientMap, coefficients, enableMap, constraintMap);    
+    }
+
+    public LinkedHashMap<String, Double> getIngredientMap() {
+        return ingredientMap;
+    }
+
+    public List<List<Content>> getItems() {
+        return cachedItems;
+    }
+
+    public double[] getSolutionIngredientAmounts() {
+        return solutionIngredientAmounts;
+    }
+
+    public String getStandardDescription() {
+        return standardDescription;
+    }
+
+    public TableColumn<List<Content>, Content> getTableColumn(int column) {
+        var aTableColumn = new TableColumn<List<Content>, Content>(columnHeaders.get(column));
+        aTableColumn.setCellFactory(list -> new ContentTableCell(infeasible));
+        aTableColumn.setCellValueFactory(cellData -> {
+            Content content = cellData.getValue().get(column);
+            return new ReadOnlyObjectWrapper<Content>(content);
+        });
+        aTableColumn.setEditable(true);
+        aTableColumn.setOnEditCommit(event -> {
+            final Content value = event.getNewValue();
+            // System.out.println("Table edit commit " + event.getNewValue());
+            int row = event.getTablePosition().getRow();
+            // double d = value.value;
+            event.getTableView().getItems().get(row).set(column, value);
+            writeThroughCache(row, column, value);
+            Event.fireEvent(event.getTableView(), new SolveItEvent());
+        });
+        return aTableColumn;
+    }
+            
+    public double getTotalAmount() {
+		return totalAmount;
+	}
+
+	private void initMembersForTableView() {
         nameColumn = 0;
         enableColumn = nameColumn + 1;
         startAnalysisColumn = enableColumn + 1;
@@ -188,97 +272,7 @@ public class SolutionModel {
         standardDescription = sb.toString();   
 
     }
-
-    public String getStandardDescription() {
-        return standardDescription;
-    }
-
-    public List<List<Content>> getItems() {
-        return cachedItems;
-    }
-
-    public void calculateSolution() {
-        infeasible.set(false);
-        double[] nutrientAmounts = nutrientMap.values().stream().mapToDouble(D -> D.doubleValue()).toArray();
-        Collection<LinearConstraint> constraints = new ArrayList<>();
-        for (int i = 0; i < nutrientAmounts.length; i++) {
-            double[] constraintCoefficients = coefficients.get(i).stream().mapToDouble(D -> D.doubleValue()).toArray();
-            double constraint = nutrientAmounts[i];
-            Relationship r = constraintRelationsShips.get(i);
-            constraints.add(new LinearConstraint(constraintCoefficients, r, constraint));
-        }
-        
-        List<Boolean> enableList = enableMap.values().stream().collect(Collectors.toCollection(ArrayList<Boolean>::new));
-        for (int i = 0; i < enableList.size(); i++) {
-            boolean addConstraint = !enableList.get(i);
-            if (addConstraint) {
-                double[] newConstraints = new double[enableList.size()];
-                newConstraints[i] = 1.00;
-                constraints.add(new LinearConstraint(newConstraints, Relationship.EQ, 0.0));
-            }
-        }
-        int numberOfIngredients = ingredientMap.size();
-        double[] ingredientPrices = ingredientMap.values().stream().mapToDouble(D -> D.doubleValue() / 2000.0).toArray();
-        LinearObjectiveFunction objectiveFunction = new LinearObjectiveFunction(ingredientPrices, objectiveConstant);
-
-        SimplexSolver solver = new SimplexSolver();
-        try {
-            PointValuePair solution = solver.optimize(objectiveFunction, new LinearConstraintSet(constraints), GoalType.MINIMIZE,
-                    new NonNegativeConstraint(true));
-            double[] points = solution.getPoint();
-            solutionIngredientAmounts = new double[numberOfIngredients];
-            solutionPrice = String.format("$%.2f", solution.getValue().doubleValue());
-            //System.out.println(solutionPrice);
-            solutionNutrientAmounts = new double[nutrientMap.size()];
-            totalAmount = 0.0;
-            for (int i = 0; i < solutionIngredientAmounts.length; i++) {
-                double amount = points[i];
-                solutionIngredientAmounts[i] = amount;
-                totalAmount += amount;
-                for (int j = 0; j < nutrientMap.size(); j++) {
-                    double analysis = coefficients.get(j).get(i);
-                    solutionNutrientAmounts[j] += amount * analysis;
-                }
-            }
-            solutionTotal = String.format("%.0f lbs", totalAmount);
-        } catch (NoFeasibleSolutionException n) {
-            infeasible.set(true);
-            solutionPrice = "!$!!!!!";
-            solutionTotal = "!!!!! lbs";
-            for (int i = 0; i < numberOfIngredients; i++) {
-                solutionIngredientAmounts[i] = 0;
-            }
-            for (int j = 0; j < solutionNutrientAmounts.length; j++) {
-                solutionNutrientAmounts[j] = 0;
-            }
-        }
-        updateSolutionItems();
-    }
-            
-    public double getTotalAmount() {
-		return totalAmount;
-	}
-
-	public TableColumn<List<Content>, Content> getTableColumn(int column) {
-        var aTableColumn = new TableColumn<List<Content>, Content>(columnHeaders.get(column));
-        aTableColumn.setCellFactory(list -> new ContentTableCell(infeasible));
-        aTableColumn.setCellValueFactory(cellData -> {
-            Content content = cellData.getValue().get(column);
-            return new ReadOnlyObjectWrapper<Content>(content);
-        });
-        aTableColumn.setEditable(true);
-        aTableColumn.setOnEditCommit(event -> {
-            final Content value = event.getNewValue();
-            // System.out.println("Table edit commit " + event.getNewValue());
-            int row = event.getTablePosition().getRow();
-            // double d = value.value;
-            event.getTableView().getItems().get(row).set(column, value);
-            writeThroughCache(row, column, value);
-            Event.fireEvent(event.getTableView(), new SolveItEvent());
-        });
-        return aTableColumn;
-    }
-
+    
     private void writeThroughCache(int row, int column, Content content) {
         Celltype celltype = content.celltype;
         switch (celltype) {
@@ -311,10 +305,6 @@ public class SolutionModel {
         default:
             throw new IllegalArgumentException("Unexpected value: " + celltype);
         }
-    }
-    
-    public PersistanceModel getAsSolutionModel() {
-        return new PersistanceModel(ingredientMap, nutrientMap, coefficients, enableMap, constraintMap);    
     }
  
 }
