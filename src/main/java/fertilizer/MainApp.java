@@ -59,7 +59,10 @@ public class MainApp extends Application {
 		Scene scene = new Scene(root, width * 0.75, height * 0.75);
 		scene.getStylesheets().add(getClass().getResource("/fertilizer/styles.css").toExternalForm());
 		primaryStage.setScene(scene);
-		scene.addEventHandler(SolveItEvent.READY, (e) -> controller.solve());
+		// let all commits and invalidation events be processed before we start
+		scene.addEventHandler(SolveItEvent.READY, (e) -> {
+		   Platform.runLater(() -> controller.solve());
+		});
 		primaryStage.show();
 	}
     

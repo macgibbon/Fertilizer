@@ -14,7 +14,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.util.StringConverter;
 
 public class ContentTableCell extends TableCell<List<Content>, Content> {
@@ -22,9 +22,14 @@ public class ContentTableCell extends TableCell<List<Content>, Content> {
     static ObservableList<Relationship> choices = FXCollections
             .observableArrayList(Stream.of(Relationship.values()).collect(Collectors.toList()));
   
-    static  TextField createTextField(final Cell<Content> cell) {
+    static  TextField createTextField(final ContentTableCell cell) {
           final TextField textField = new TextField(cell.getItem().toString());
-
+          textField.addEventFilter(KeyEvent.ANY, event -> {
+              // System.out.println(event);
+              if (event.getCode()== javafx.scene.input.KeyCode.ESCAPE) {
+                  cell.escapeEdit();
+              }           
+          });
         textField.setOnAction(event -> {
             Content newContent = Content.update(cell.getItem(), textField.getText());
             cell.commitEdit(newContent);
@@ -32,7 +37,8 @@ public class ContentTableCell extends TableCell<List<Content>, Content> {
         });
         return textField;
     }   
-    
+   
+
     public static StringConverter<Relationship> relationshipConverter = new StringConverter<Relationship>() {
         
         @Override
@@ -79,7 +85,7 @@ public class ContentTableCell extends TableCell<List<Content>, Content> {
 
     @Override
     public void startEdit() {
-        //System.out.println("startEdit");
+        // System.out.println("startEdit");
         super.startEdit();
         Celltype celltype = getItem().celltype;
         switch (celltype) {
@@ -114,7 +120,7 @@ public class ContentTableCell extends TableCell<List<Content>, Content> {
 
     @Override
     public void commitEdit(Content newValue) {
-        //System.out.println("commitEdit");
+        // System.out.println("commitEdit " + newValue.toString());
         super.commitEdit(newValue);
         setGraphic(null);
         setText(newValue.toString());      
@@ -122,15 +128,23 @@ public class ContentTableCell extends TableCell<List<Content>, Content> {
 
     @Override
     public void cancelEdit() {
-        //System.out.println("cancelEdit");
+        // System.out.println("cancelEdit " + getItem().toString());
+        Content newValue = Content.update(getItem(), tf.getText());
+        super.commitEdit(newValue);
+        setGraphic(null);
+        setText(newValue.toString());
+    }    
+    
+    private void escapeEdit() {
+        // System.out.println("escapeEdit " + getItem().toString());
         super.cancelEdit();
         setGraphic(null);
-        setText(getItem().toString());
+        setText(getItem().toString());        
     }
 
     @Override
     public void updateSelected(boolean selected) {
-        //System.out.println("selected " + selected);
+        // System.out.println("selected " + selected);
         super.updateSelected(selected);
     }
 

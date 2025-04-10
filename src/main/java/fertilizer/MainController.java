@@ -102,13 +102,7 @@ public class MainController implements Initializable {
         solutiontable.setEditable(true);
         solutiontable.getSelectionModel().setCellSelectionEnabled(true);
         solutiontable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        solutiontable.getSelectionModel().selectedItemProperty().addListener((o, oldSelection, newSelection) -> {
-            var selectedCells = solutiontable.getSelectionModel().getSelectedCells();
-            if (selectedCells.size() > 0) {
-                var selectedCell = selectedCells.get(0);
-                solutiontable.edit(selectedCell.getRow(), selectedCell.getTableColumn());
-            }
-        });
+       
        fileChooser = new FileChooser();
        fileChooser.getExtensionFilters().add(new ExtensionFilter("Json Files", "*.json")); 
        solve();
