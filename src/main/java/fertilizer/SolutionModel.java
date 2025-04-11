@@ -306,5 +306,32 @@ public class SolutionModel {
             throw new IllegalArgumentException("Unexpected value: " + celltype);
         }
     }
+    
+    public ArrayList<Batch> getBatchList() {        
+        String[] ingredientNames = ingredientMap.keySet().stream().toArray(String[]::new);
+        double solutionTotalAmount = totalAmount;
+        double[] ingredientAmounts = solutionIngredientAmounts;
+        ArrayList<MixRow> mixrows = new ArrayList<>();
+        for (int i = 0; i < ingredientAmounts.length; i++) {
+            mixrows.add(new MixRow(ingredientNames[i], ingredientAmounts[i]));
+        }
+        MixRow[] sortedMixrows = mixrows.stream().filter(mr -> mr.amount() > 0.0).sorted().toArray(MixRow[]::new);
+        int rows = sortedMixrows.length;   
+
+        double totalScale = 0;
+        Model model = Model.getInstance();
+        ArrayList<Batch> batches = new ArrayList<>();
+        for (int i = 0; i < rows; i++) {
+            MixRow mr = sortedMixrows[i];
+            String name = mr.name();
+            double amount = mr.amount();
+            double percent = 100.0 * (amount / solutionTotalAmount);
+            double batchAmount = amount * model.batchWt.get() / solutionTotalAmount;
+            totalScale += batchAmount;
+            Batch batch = new Batch(name, percent, batchAmount, totalScale, "");
+            batches.add(batch);
+        }
+        return batches;
+    }
  
 }
