@@ -15,16 +15,13 @@ import java.util.stream.Stream;
 
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class Model {
 
-    private Model() {
-        super();
-        loadDefaults();
-    }
-
     private static Model instance;
-
+    
     public static synchronized Model getInstance() {
         if (instance == null)
             instance = new Model();
@@ -35,20 +32,46 @@ public class Model {
         instance = null;
     }
 
-    public Preferences preferences;
-    public ArrayList<ArrayList<String>> ingredientRows, priceRows, requirementRows, mergedMatrix;
+    public static void copy(Path sourcePath, Path targetPath, Path source)  {
+        Path target = targetPath.resolve(sourcePath.relativize(source));
+        if (!(target.toFile().exists())) {
+            try {
+                Files.copy(source, target);
+            } catch (IOException e) {
+               throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public static void deepCopy(Path sourcePath, Path targetPath)  {
+        try (Stream<Path> stream = Files.walk(sourcePath)) {
+            stream.forEach(source -> copy(sourcePath, targetPath, source));
+        } catch (IOException e) {
+           throw new RuntimeException(e);
+        }
+    }
+
+    public ObservableList<Batch> batchTableList = FXCollections.observableArrayList();
+    public ObservableList<List<Content>> soulutionTableList = FXCollections.observableArrayList();
+    public SimpleStringProperty version = new SimpleStringProperty();
+    public SimpleDoubleProperty batchWt = new SimpleDoubleProperty(8000.0);
+    public SimpleStringProperty contact = new SimpleStringProperty("Stamford Farmers Cooperative");
+    public SimpleStringProperty notes = new SimpleStringProperty("Notes:");
+ 
     public File appDir;
-    private List<String> reportHeaders;
+    public File currentDefaults;
+    public ArrayList<ArrayList<String>> ingredientRows, priceRows, requirementRows, mergedMatrix; 
+    public Preferences preferences;
+    private List<String> reportHeaders;  
+
+    private Model() {
+        super();
+        loadDefaults();
+    }
 
     public List<String> getReportHeaders() {
         return reportHeaders;
     }
-
-    public SimpleDoubleProperty batchWt = new SimpleDoubleProperty(8000.0);
-    public SimpleStringProperty contact = new SimpleStringProperty("Stamford Farmers Cooperative");
-    public SimpleStringProperty notes = new SimpleStringProperty("Notes:");
-    public SimpleStringProperty version = new SimpleStringProperty();
-    private File currentDefaults;
 
     private void loadDefaults()  {
         File userDir = new File(System.getProperty("user.home"));
@@ -78,16 +101,6 @@ public class Model {
         }
     }
 
-    public List<String> readTextFile(String defaultFileName) {
-        try {
-            Path defaultPath = Files.walk(appDir.toPath()).filter(path -> path.endsWith(defaultFileName)).findFirst().get();
-            List<String> lines = Files.lines(defaultPath).collect(Collectors.toList());
-            return lines;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public ArrayList<ArrayList<String>> readCsvfile(String defaultFileName) {
         try {
             Path defaultPath = Files.walk(currentDefaults.toPath())
@@ -104,22 +117,13 @@ public class Model {
         }
     }
 
-    public static void deepCopy(Path sourcePath, Path targetPath)  {
-        try (Stream<Path> stream = Files.walk(sourcePath)) {
-            stream.forEach(source -> copy(sourcePath, targetPath, source));
-        } catch (IOException e) {
-           throw new RuntimeException(e);
-        }
-    }
-
-    public static void copy(Path sourcePath, Path targetPath, Path source)  {
-        Path target = targetPath.resolve(sourcePath.relativize(source));
-        if (!(target.toFile().exists())) {
-            try {
-                Files.copy(source, target);
-            } catch (IOException e) {
-               throw new RuntimeException(e);
-            }
+    public List<String> readTextFile(String defaultFileName) {
+        try {
+            Path defaultPath = Files.walk(appDir.toPath()).filter(path -> path.endsWith(defaultFileName)).findFirst().get();
+            List<String> lines = Files.lines(defaultPath).collect(Collectors.toList());
+            return lines;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

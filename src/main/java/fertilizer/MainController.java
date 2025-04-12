@@ -132,7 +132,7 @@ public class MainController implements Initializable {
 		
 	    MatrixBuilder matrix = new MatrixBuilder(prices, requirements, ingredients);
 	    solution = new SolutionModel(matrix);
-	    loadSolutionsFromModel(solution);
+	    solutiontable.setItems(model.soulutionTableList);
 	}
 
     private void loadSolutionsFromModel(SolutionModel model) {
@@ -190,13 +190,14 @@ public class MainController implements Initializable {
 	public void solve()  {
 	    solutiontable.getColumns().clear();  
 		solution.calculateSolution();
+		solution.calculateBatch();
 		tabpane.getSelectionModel().select(SOLUTIONTAB);
 		solutiontable.getItems().clear();
 		solutiontable.getItems().addAll(solution.getItems());
         int columns = solution.getItems().get(0).size();
         for (int i = 0; i < columns; i++) {
            solutiontable.getColumns().add(solution.getTableColumn(i));
-        }
+        }        
 	}
 	
     public void save() throws JsonIOException, IOException {
@@ -235,7 +236,6 @@ public class MainController implements Initializable {
             try {
                 PersistanceModel pmodel = gson.fromJson(jsonReader, PersistanceModel.class);
                 solution = new SolutionModel(pmodel);
-                solution.calculateSolution();
             } finally {
                 jsonReader.close();
             }
@@ -267,8 +267,7 @@ public class MainController implements Initializable {
             // User cancelled the print job
         }  finally {
 			document.close();
-		}
-	
+		}	
 	}
     
 	public void printMixsheet() throws Exception {

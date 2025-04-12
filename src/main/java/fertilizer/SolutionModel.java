@@ -130,24 +130,45 @@ public class SolutionModel {
                 solutionNutrientAmounts[j] = 0;
             }
         }
-        updateSolutionItems();
+        for (int i = 0; i < solutionIngredientAmounts.length; i++) {
+            double amt = solutionIngredientAmounts[i];
+            cachedItems.get(i).set(solutionColumn, new Content(amt, Celltype.ingredientAmount));
+        }
+        
+        int actualRow = rowHeaders.indexOf("Actual lbs");
+        for (int j = 0; j < solutionNutrientAmounts.length; j++) {
+            double amt = solutionNutrientAmounts[j];
+            cachedItems.get(actualRow).set(j + startAnalysisColumn, new Content(amt, Celltype.actualAmount));
+        }
+        cachedItems.get(actualRow).set(priceColumn, new Content(solutionPrice, Celltype.solutionPrice));
+        cachedItems.get(actualRow).set(solutionColumn, new Content(solutionTotal, Celltype.totalAmount));
+        
+        
+        String[] npkheader = {"N","P","K"};
+        List<String> nutrientNames = nutrientMap.keySet().stream().toList();
+        String[] reportHeader = Stream.of(npkheader)
+              .map(n ->  nutrientNames.indexOf(n) )
+              .mapToDouble(index -> solutionNutrientAmounts[index])
+              .mapToObj(d-> String.format("%.0f", d))
+              .toArray(String[]::new);
+        StringBuilder sb = new StringBuilder(reportHeader[0]);
+        for (int i = 1; i < reportHeader.length; i++) {
+            sb.append("-");
+            sb.append(reportHeader[i]);
+        }
+        standardDescription = sb.toString();
     }
 
     public PersistanceModel getAsSolutionModel() {
         return new PersistanceModel(ingredientMap, nutrientMap, coefficients, enableMap, constraintMap);    
     }
 
-    public LinkedHashMap<String, Double> getIngredientMap() {
-        return ingredientMap;
-    }
-
+  
     public List<List<Content>> getItems() {
         return cachedItems;
     }
 
-    public double[] getSolutionIngredientAmounts() {
-        return solutionIngredientAmounts;
-    }
+   
 
     public String getStandardDescription() {
         return standardDescription;
@@ -173,10 +194,7 @@ public class SolutionModel {
         return aTableColumn;
     }
             
-    public double getTotalAmount() {
-		return totalAmount;
-	}
-
+  
 	private void initMembersForTableView() {
         nameColumn = 0;
         enableColumn = nameColumn + 1;
@@ -255,7 +273,7 @@ public class SolutionModel {
         }
         cachedItems.get(actualRow).set(priceColumn, new Content(solutionPrice, Celltype.solutionPrice));
         cachedItems.get(actualRow).set(solutionColumn, new Content(solutionTotal, Celltype.totalAmount));
-
+        Model.getInstance().soulutionTableList.setAll(cachedItems);
         
         String[] npkheader = {"N","P","K"};
         List<String> nutrientNames = nutrientMap.keySet().stream().toList();
@@ -307,7 +325,7 @@ public class SolutionModel {
         }
     }
     
-    public ArrayList<Batch> getBatchList() {        
+    public void calculateBatch() {        
         String[] ingredientNames = ingredientMap.keySet().stream().toArray(String[]::new);
         double solutionTotalAmount = totalAmount;
         double[] ingredientAmounts = solutionIngredientAmounts;
@@ -320,7 +338,7 @@ public class SolutionModel {
 
         double totalScale = 0;
         Model model = Model.getInstance();
-        ArrayList<Batch> batches = new ArrayList<>();
+        List<Batch> batchList = new ArrayList<>();
         for (int i = 0; i < rows; i++) {
             MixRow mr = sortedMixrows[i];
             String name = mr.name();
@@ -329,9 +347,9 @@ public class SolutionModel {
             double batchAmount = amount * model.batchWt.get() / solutionTotalAmount;
             totalScale += batchAmount;
             Batch batch = new Batch(name, percent, batchAmount, totalScale, "");
-            batches.add(batch);
+            batchList.add(batch);
         }
-        return batches;
+        Model.getInstance().batchTableList.setAll(batchList);
     }
  
 }

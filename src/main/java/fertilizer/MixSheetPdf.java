@@ -70,7 +70,7 @@ public class MixSheetPdf {
             table.addCell(cell);
         }
         
-        ArrayList<Batch> batches = solution.getBatchList();
+        List<Batch> batches = Model.getInstance().batchTableList;
         int rows = batches.size();
         for (int i = 0; i < rows; i++) {
             Batch batchrow = batches.get(i);
