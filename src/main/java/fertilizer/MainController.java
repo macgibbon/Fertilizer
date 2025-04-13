@@ -152,7 +152,7 @@ public class MainController implements Initializable {
         colummn3.setCellValueFactory(data ->  Bindings.format("%.2f",data.getValue().amount()));  
       
         TableColumn<Batch, String> colummn4 = new TableColumn<>("Scale");
-        colummn4.setCellValueFactory(data ->  Bindings.format("%.2f",data.getValue().scale()));  
+        colummn4.setCellValueFactory(data ->  Bindings.format("%.0f",data.getValue().scale()));  
         batchtable.getColumns().addAll(colummn1,colummn2,colummn3,colummn4);
 	}
 
