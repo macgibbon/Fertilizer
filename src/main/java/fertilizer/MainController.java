@@ -28,6 +28,7 @@ import com.google.gson.JsonSyntaxException;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -47,7 +48,7 @@ import javafx.util.converter.DoubleStringConverter;
 
 public class MainController implements Initializable {
     
-    private static final int SOLUTIONTAB = 0;
+    public static final int SOLUTIONTAB = 0;
 
     public static final String LAST_USED_FOLDER = "lastUsedFolder";
 
@@ -62,6 +63,10 @@ public class MainController implements Initializable {
 
 	@FXML
 	TableView<List<String>> pricestable;
+	
+
+    @FXML
+    TableView<Batch> batchtable;
 
 	@FXML
 	TabPane tabpane;
@@ -105,10 +110,12 @@ public class MainController implements Initializable {
        
        fileChooser = new FileChooser();
        fileChooser.getExtensionFilters().add(new ExtensionFilter("Json Files", "*.json")); 
+       textFieldWeight.setOnAction( e  -> solve());
        solve();
     }
 
-	private void loadDefaultData() {
+	@SuppressWarnings("unchecked")
+    private void loadDefaultData() {
 	    var prices = model.priceRows;
 		var priceHeaders = new ArrayList<String>(prices.remove(0));
 		pricestable.setItems(FXCollections.observableArrayList(prices));
@@ -133,6 +140,20 @@ public class MainController implements Initializable {
 	    MatrixBuilder matrix = new MatrixBuilder(prices, requirements, ingredients);
 	    solution = new SolutionModel(matrix);
 	    solutiontable.setItems(model.soulutionTableList);
+	    
+	    batchtable.setItems(model.batchTableList);
+	    TableColumn<Batch, String> colummn1 = new TableColumn<>("Material Name");
+	    colummn1.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().name()));
+
+	    TableColumn<Batch, String> colummn2 = new TableColumn<>("Percent");
+	    colummn2.setCellValueFactory(data -> Bindings.format("%.2f",data.getValue().percent()));  
+       
+        TableColumn<Batch, String> colummn3 = new TableColumn<>("Units/Batch");
+        colummn3.setCellValueFactory(data ->  Bindings.format("%.2f",data.getValue().amount()));  
+      
+        TableColumn<Batch, String> colummn4 = new TableColumn<>("Scale");
+        colummn4.setCellValueFactory(data ->  Bindings.format("%.2f",data.getValue().scale()));  
+        batchtable.getColumns().addAll(colummn1,colummn2,colummn3,colummn4);
 	}
 
     private void loadSolutionsFromModel(SolutionModel model) {
@@ -191,7 +212,7 @@ public class MainController implements Initializable {
 	    solutiontable.getColumns().clear();  
 		solution.calculateSolution();
 		solution.calculateBatch();
-		tabpane.getSelectionModel().select(SOLUTIONTAB);
+		
 		solutiontable.getItems().clear();
 		solutiontable.getItems().addAll(solution.getItems());
         int columns = solution.getItems().get(0).size();
@@ -241,8 +262,9 @@ public class MainController implements Initializable {
             }
           
             loadSolutionsFromModel(solution);
-            tabpane.getSelectionModel().select(SOLUTIONTAB);
+          
         }
+        tabpane.getSelectionModel().select(SOLUTIONTAB);
         solve();
     }
     

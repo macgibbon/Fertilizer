@@ -62,6 +62,7 @@ public class MainApp extends Application {
 		// let all commits and invalidation events be processed before we start
 		scene.addEventHandler(SolveItEvent.READY, (e) -> {
 		   Platform.runLater(() -> controller.solve());
+		   controller.tabpane.getSelectionModel().select(MainController.SOLUTIONTAB);
 		});
 		primaryStage.show();
 	}

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
@@ -11,8 +12,12 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/18.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fertilizer.MainController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fertilizer.MainController">
 	<center>
 		<TabPane fx:id="tabpane" prefHeight="200.0" prefWidth="200.0" side="BOTTOM" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
 			<tabs>
@@ -26,20 +31,45 @@
 						</BorderPane>
 					</content>
 				</Tab>
+	
 				<Tab text="Work Order">
                <content>
-                  <AnchorPane prefHeight="200.0" prefWidth="200.0">
-                     <children>
-                        <Label layoutX="18.0" layoutY="22.0" prefHeight="18.0" prefWidth="76.0" text="Contact" />
-                        <Label layoutX="24.0" layoutY="91.0" text="Notes" />
-                        <TextField fx:id="textFieldWeight" layoutX="123.0" layoutY="51.0" text="8000" />
-                        <TextArea fx:id="notes" layoutX="123.2" layoutY="80.8" prefHeight="254.0" prefWidth="466.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="123.0" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="81.0" />
-                        <Label layoutX="18.0" layoutY="54.0" prefHeight="18.0" prefWidth="76.0" text="Total Mix Wt" />
-                        <TextField fx:id="textFieldContact" layoutX="123.0" layoutY="19.0" text="Mark MacGibbon" />
-                     </children>
-                  </AnchorPane>
+                  <BorderPane prefHeight="200.0" prefWidth="200.0">
+                     <top>
+                        <GridPane BorderPane.alignment="CENTER">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="291.0" minWidth="10.0" prefWidth="125.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="475.0" minWidth="10.0" prefWidth="475.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Label prefHeight="17.0" prefWidth="60.0" text="Contact" />
+                              <Label text="Total Mix Wt." GridPane.rowIndex="1" />
+                              <TextField fx:id="textFieldWeight" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <TextField fx:id="textFieldContact" GridPane.columnIndex="1" />                              
+                           </children>
+                        </GridPane>
+                     </top>
+                     <bottom>
+                        <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                           <children>
+                              <Label minWidth="-Infinity" prefWidth="125.0" text="Notes" />
+                              <TextArea fx:id="notes" prefHeight="100.0" prefWidth="10000.0" />
+                           </children>
+                        </HBox>
+                     </bottom>
+                     <center>
+                        <TableView fx:id="batchtable" BorderPane.alignment="CENTER">
+                           <BorderPane.margin>
+                              <Insets bottom="10.0" top="10.0" />
+                           </BorderPane.margin></TableView>
+                     </center>
+                  </BorderPane>
                </content>
-				</Tab>
+            </Tab>
 				<Tab text="Default Prices">
 					<content>
 						<TableView fx:id="pricestable" />
@@ -55,6 +85,7 @@
 						<TableView fx:id="ingredientstable" />
 					</content>
 				</Tab>
+           
 			</tabs>
 		</TabPane>
 	</center>
