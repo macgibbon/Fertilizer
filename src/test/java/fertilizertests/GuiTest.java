@@ -113,6 +113,29 @@ public class GuiTest extends MainApp {
         String changedPrice =  (String) reflectiveGetField(solutionChanged,"solutionPrice");
         assertTrue(changedPrice.equals("$32.80"));
         
+        robot.clickOn("Solution");
+        robot.doubleClickOn("0.40");
+        robot.push(KeyCode.PERIOD);
+        robot.push(KeyCode.DIGIT5);
+        robot.push(KeyCode.DIGIT2);
+        
+        robot.doubleClickOn("0.18");
+
+        delay(3);
+        String changedPrice2 =  (String) reflectiveGetField(solutionChanged,"solutionPrice");
+        assertTrue(changedPrice2.equals("$32.17"));
+        
+        robot.clickOn("Solution");
+        robot.doubleClickOn("0.52");
+        robot.push(KeyCode.PERIOD);
+        robot.push(KeyCode.DIGIT4);
+        robot.push(KeyCode.DIGIT9);
+        robot.push(KeyCode.ESCAPE);
+
+        delay(3);
+        String changedPrice3 =  (String) reflectiveGetField(solutionChanged,"solutionPrice");
+        assertTrue(changedPrice3.equals("$32.17"));
+        
 
        
         // change cell 0 0
@@ -255,6 +278,7 @@ public class GuiTest extends MainApp {
         robot.push(KeyCode.DIGIT1);
         robot.push(KeyCode.ENTER);
         delay(5);
+        SolutionModel solutionNew = (SolutionModel) reflectiveGetField(controller, "solution");   
         // solve assert solution changed
     }
 

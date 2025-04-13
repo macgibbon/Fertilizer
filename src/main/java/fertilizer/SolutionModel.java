@@ -259,39 +259,8 @@ public class SolutionModel {
             cachedItems.get(ingredientMap.size() + 1).set(i + startAnalysisColumn, new Content(requirementOrLimit, Celltype.constraintAmount));
         }
     }
-
-    public void updateSolutionItems() {
-        for (int i = 0; i < solutionIngredientAmounts.length; i++) {
-            double amt = solutionIngredientAmounts[i];
-            cachedItems.get(i).set(solutionColumn, new Content(amt, Celltype.ingredientAmount));
-        }
-
-        int actualRow = rowHeaders.indexOf("Actual lbs");
-        for (int j = 0; j < solutionNutrientAmounts.length; j++) {
-            double amt = solutionNutrientAmounts[j];
-            cachedItems.get(actualRow).set(j + startAnalysisColumn, new Content(amt, Celltype.actualAmount));
-        }
-        cachedItems.get(actualRow).set(priceColumn, new Content(solutionPrice, Celltype.solutionPrice));
-        cachedItems.get(actualRow).set(solutionColumn, new Content(solutionTotal, Celltype.totalAmount));
-        Model.getInstance().soulutionTableList.setAll(cachedItems);
-        
-        String[] npkheader = {"N","P","K"};
-        List<String> nutrientNames = nutrientMap.keySet().stream().toList();
-        String[] reportHeader = Stream.of(npkheader)
-              .map(n ->  nutrientNames.indexOf(n) )
-              .mapToDouble(index -> solutionNutrientAmounts[index])
-              .mapToObj(d-> String.format("%.0f", d))
-              .toArray(String[]::new);
-        StringBuilder sb = new StringBuilder(reportHeader[0]);
-        for (int i = 1; i < reportHeader.length; i++) {
-            sb.append("-");
-            sb.append(reportHeader[i]);
-        }
-        standardDescription = sb.toString();   
-
-    }
-    
-    private void writeThroughCache(int row, int column, Content content) {
+	
+	private void writeThroughCache(int row, int column, Content content) {
         Celltype celltype = content.celltype;
         switch (celltype) {
         case analysis:
