@@ -186,6 +186,7 @@ public class GuiTest extends MainApp {
     // testing print requires using Windows print to PDF virtual driver
     @Test
     void testPrint(FxRobot robot) throws Exception {
+        model.batchWt.set(8000.0);
         File testPrintFile = new File(testFolder, "Test1.pdf");
         if (testPrintFile.exists())
             testPrintFile.delete();
@@ -235,8 +236,9 @@ public class GuiTest extends MainApp {
         PdfTextExtractor extractor = new PdfTextExtractor(reader);
         String text = extractor.getTextFromPage(1);
         assertTrue(text.contains("Mix Sheet"));
-        assertTrue(text.contains("6962"));
         System.out.println(text);
+        assertTrue(text.contains("6962"));
+       
     }
 
     @Test
@@ -333,6 +335,24 @@ public class GuiTest extends MainApp {
     void testEnables(FxRobot robot) {
         robot.doubleClickOn("true");
         robot.push(KeyCode.SPACE);
+    }
+    
+    // tests for code coverage
+    @Test
+    void testBatchWt(FxRobot robot) {
+        robot.clickOn("Work Order");
+        robot.clickOn("8000.0");
+        robot.push(KeyCode.DIGIT9);
+        robot.push(KeyCode.DIGIT0);
+        robot.push(KeyCode.DIGIT0);
+        robot.push(KeyCode.DIGIT0);
+        robot.push(KeyCode.ENTER);
+        robot.push(KeyCode.DIGIT8);
+        robot.push(KeyCode.DIGIT0);
+        robot.push(KeyCode.DIGIT0);
+        robot.push(KeyCode.DIGIT0);
+        robot.push(KeyCode.ENTER);
+       
     }
 
     @Test
