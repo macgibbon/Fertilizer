@@ -347,11 +347,23 @@ public class GuiTest extends MainApp {
         robot.push(KeyCode.DIGIT0);
         robot.push(KeyCode.DIGIT0);
         robot.push(KeyCode.ENTER);
-        robot.push(KeyCode.DIGIT8);
+        assertTrue(model.batchWt.get() == 9000.0);
+        
+        robot.push(KeyCode.DIGIT4);
+        robot.push(KeyCode.DIGIT0);
+        robot.push(KeyCode.DIGIT0);
+        robot.push(KeyCode.DIGIT0);
+        robot.clickOn("Solution");
+        assertTrue(model.batchWt.get() == 4000.0);
+        
+        robot.clickOn("Work Order");
+        robot.clickOn("8000.0");
+        robot.push(KeyCode.DIGIT9);
         robot.push(KeyCode.DIGIT0);
         robot.push(KeyCode.DIGIT0);
         robot.push(KeyCode.DIGIT0);
         robot.push(KeyCode.ENTER);
+        assertTrue(model.batchWt.get() == 8000.0); 
        
     }
 

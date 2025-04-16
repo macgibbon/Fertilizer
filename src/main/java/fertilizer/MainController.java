@@ -30,6 +30,7 @@ import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Menu;
@@ -95,23 +96,32 @@ public class MainController implements Initializable {
         this.model = model;
     }
    
-	@SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-	    Bindings.bindBidirectional(textFieldWeight.textProperty(), model.batchWt, new DecimalFormat("#.0"));
-	    Bindings.bindBidirectional(textFieldContact.textProperty(), model.contact);
+        Bindings.bindBidirectional(textFieldWeight.textProperty(), model.batchWt, new DecimalFormat("#.0"));        
+        textFieldWeight.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue)
+                textFieldWeight.fireEvent(new ActionEvent());
+        });
+        
+        Bindings.bindBidirectional(textFieldContact.textProperty(), model.contact);
+        textFieldContact.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue)
+                textFieldContact.fireEvent(new ActionEvent());
+        });
+        
         Bindings.bindBidirectional(notes.textProperty(), model.notes);
         menuItemVersion.textProperty().bind(Bindings.concat("Version ", model.version));
-
         loadDefaultData();
         solutiontable.setEditable(true);
         solutiontable.getSelectionModel().setCellSelectionEnabled(true);
         solutiontable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-       
-       fileChooser = new FileChooser();
-       fileChooser.getExtensionFilters().add(new ExtensionFilter("Json Files", "*.json")); 
-       textFieldWeight.setOnAction( e  -> solve());
-       solve();
+
+        fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(new ExtensionFilter("Json Files", "*.json"));
+        textFieldWeight.setOnAction(e -> solve());
+        solve();
     }
 
 	@SuppressWarnings("unchecked")
