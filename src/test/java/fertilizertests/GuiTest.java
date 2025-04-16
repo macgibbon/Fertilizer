@@ -341,7 +341,7 @@ public class GuiTest extends MainApp {
     @Test
     void testBatchWt(FxRobot robot) {
         robot.clickOn("Work Order");
-        robot.clickOn("8000.0");
+        robot.doubleClickOn("8000.0");
         robot.push(KeyCode.DIGIT9);
         robot.push(KeyCode.DIGIT0);
         robot.push(KeyCode.DIGIT0);
@@ -349,6 +349,8 @@ public class GuiTest extends MainApp {
         robot.push(KeyCode.ENTER);
         assertTrue(model.batchWt.get() == 9000.0);
         
+        robot.clickOn("Work Order");
+        robot.doubleClickOn("9000");
         robot.push(KeyCode.DIGIT4);
         robot.push(KeyCode.DIGIT0);
         robot.push(KeyCode.DIGIT0);
@@ -357,14 +359,22 @@ public class GuiTest extends MainApp {
         assertTrue(model.batchWt.get() == 4000.0);
         
         robot.clickOn("Work Order");
-        robot.clickOn("8000.0");
-        robot.push(KeyCode.DIGIT9);
+        robot.doubleClickOn("4000");
+        robot.push(KeyCode.DIGIT8);
         robot.push(KeyCode.DIGIT0);
         robot.push(KeyCode.DIGIT0);
         robot.push(KeyCode.DIGIT0);
         robot.push(KeyCode.ENTER);
-        assertTrue(model.batchWt.get() == 8000.0); 
-       
+        assertTrue(model.batchWt.get() == 8000.0);        
+        
+        robot.clickOn("Stamford Farmers Cooperative");
+        robot.doubleClickOn("Stamford Farmers Cooperative");
+        robot.push(KeyCode.M);
+        robot.push(KeyCode.A);
+        robot.push(KeyCode.R);
+        robot.push(KeyCode.K);
+        robot.clickOn("Work Order");
+        assertTrue(model.contact.get().equals("mark"));        
     }
 
     @Test
