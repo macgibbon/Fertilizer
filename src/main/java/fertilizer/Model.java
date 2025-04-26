@@ -57,12 +57,14 @@ public class Model {
     public SimpleDoubleProperty batchWt = new SimpleDoubleProperty(8000.0);
     public SimpleStringProperty contact = new SimpleStringProperty("Stamford Farmers Cooperative");
     public SimpleStringProperty notes = new SimpleStringProperty("Notes:");
+    public SimpleDoubleProperty meanDensity = new SimpleDoubleProperty(40.0); 
  
     public File appDir;
     public File currentDefaults;
-    public ArrayList<ArrayList<String>> ingredientRows, priceRows, requirementRows, mergedMatrix; 
+    public ArrayList<ArrayList<String>> ingredientRows, priceRows, requirementRows, densityRows, mergedMatrix; 
     public Preferences preferences;
-    private List<String> reportHeaders;  
+    private List<String> reportHeaders;
+   
 
     private Model() {
         super();
@@ -86,6 +88,7 @@ public class Model {
         priceRows = readCsvfile("defaultPrices.csv");
         ingredientRows = readCsvfile("defaultIngredients.csv");
         requirementRows = readCsvfile("defaultRequirements.csv");
+        densityRows = readCsvfile("defaultDensities.csv");
         reportHeaders = readTextFile("header.txt");
         version.set(loadProperty("version.properties", "application.version"));
     }
@@ -119,7 +122,9 @@ public class Model {
 
     public List<String> readTextFile(String defaultFileName) {
         try {
-            Path defaultPath = Files.walk(appDir.toPath()).filter(path -> path.endsWith(defaultFileName)).findFirst().get();
+            Path defaultPath = Files.walk(currentDefaults.toPath())
+                    .filter(path -> path.endsWith(defaultFileName))
+                    .findFirst().get();
             List<String> lines = Files.lines(defaultPath).collect(Collectors.toList());
             return lines;
         } catch (Exception e) {

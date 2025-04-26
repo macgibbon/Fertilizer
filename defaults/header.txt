@@ -9,7 +9,7 @@ Stamford, NY 12167
 
 
 Material System is Dry Mixing
-Density = 59.64 lb/cu ft
+Density = {Density}
 
 
 {NPK}

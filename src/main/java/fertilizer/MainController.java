@@ -33,6 +33,7 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
@@ -65,6 +66,8 @@ public class MainController implements Initializable {
 	@FXML
 	TableView<List<String>> pricestable;
 	
+	@FXML
+	TableView<List<String>> densitiestable;	
 
     @FXML
     TableView<Batch> batchtable;
@@ -86,6 +89,9 @@ public class MainController implements Initializable {
 
 	@FXML
 	MenuItem menuItemVersion;
+	
+	@FXML
+	Label meandensitylabel;
 	
     FileChooser fileChooser;
     Model model;
@@ -121,6 +127,7 @@ public class MainController implements Initializable {
         fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new ExtensionFilter("Json Files", "*.json"));
         textFieldWeight.setOnAction(e -> solve());
+        meandensitylabel.textProperty().bind(Bindings.format("%.2f",model.meanDensity));
         solve();
     }
 
@@ -132,6 +139,13 @@ public class MainController implements Initializable {
 		pricestable.getSelectionModel().setCellSelectionEnabled(true);
 		pricestable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 		createColumns(priceHeaders, pricestable,1);
+		
+		var densities = model.densityRows;
+        var densityHeaders = new ArrayList<String>(densities.remove(0));
+        densitiestable.setItems(FXCollections.observableArrayList(densities));
+        densitiestable.getSelectionModel().setCellSelectionEnabled(true);
+        densitiestable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        createColumns(densityHeaders, densitiestable,1);
 
 		var ingredients = model.ingredientRows;
 		var ingredientHeaders = new ArrayList<String>(ingredients.remove(0));
@@ -139,6 +153,8 @@ public class MainController implements Initializable {
 		ingredientstable.getSelectionModel().setCellSelectionEnabled(true);
 		ingredientstable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 		createColumns(ingredientHeaders, ingredientstable,1);
+		
+		
 
 		var requirements = model.requirementRows;
 		var requirementHeaders = new ArrayList<String>(requirements.remove(0));
@@ -152,18 +168,21 @@ public class MainController implements Initializable {
 	    solutiontable.setItems(model.soulutionTableList);
 	    
 	    batchtable.setItems(model.batchTableList);
-	    TableColumn<Batch, String> colummn1 = new TableColumn<>("Material Name");
+	    TableColumn<Batch, String> colummn1 = new TableColumn<>(Batch.tableHeaders[0]);
 	    colummn1.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().name()));
 
-	    TableColumn<Batch, String> colummn2 = new TableColumn<>("Percent");
-	    colummn2.setCellValueFactory(data -> Bindings.format("%.2f",data.getValue().percent()));  
+	    TableColumn<Batch, String> colummn2 = new TableColumn<>(Batch.tableHeaders[1]);
+        colummn2.setCellValueFactory(data -> Bindings.format("%.2f",data.getValue().density()));  
+	    
+	    TableColumn<Batch, String> colummn3 = new TableColumn<>(Batch.tableHeaders[2]);
+	    colummn3.setCellValueFactory(data -> Bindings.format("%.2f",data.getValue().percent()));  
        
-        TableColumn<Batch, String> colummn3 = new TableColumn<>("Units/Batch");
-        colummn3.setCellValueFactory(data ->  Bindings.format("%.2f",data.getValue().amount()));  
+        TableColumn<Batch, String> colummn4 = new TableColumn<>((Batch.tableHeaders[3]));
+        colummn4.setCellValueFactory(data ->  Bindings.format("%.2f",data.getValue().amount()));  
       
-        TableColumn<Batch, String> colummn4 = new TableColumn<>("Scale");
-        colummn4.setCellValueFactory(data ->  Bindings.format("%.0f",data.getValue().scale()));  
-        batchtable.getColumns().addAll(colummn1,colummn2,colummn3,colummn4);
+        TableColumn<Batch, String> colummn5 = new TableColumn<>((Batch.tableHeaders[4]));
+        colummn5.setCellValueFactory(data ->  Bindings.format("%.0f",data.getValue().scale()));  
+        batchtable.getColumns().addAll(colummn1,colummn2,colummn3,colummn4,colummn5);
 	}
 
     private void loadSolutionsFromModel(SolutionModel model) {

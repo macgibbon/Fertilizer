@@ -6,9 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.Font;
@@ -39,6 +37,8 @@ public class MixSheetPdf {
                 line = line.replace("{NPK}", solution.getStandardDescription());
             if (line.contains("{Contact}"))
                 line = line.replace("{Contact}", model.contact.get());
+            if (line.contains("{Density}"))
+                line = line.replace("{Density}", String.format("%.2f lb/ft\u00b3", model.meanDensity.get()));
             if (line.length() == 0)
                 line = " ";
             Paragraph paragraph = new Paragraph(line);
@@ -46,8 +46,8 @@ public class MixSheetPdf {
             paragraph.setAlignment(Paragraph.ALIGN_CENTER);
             document.add(paragraph);
         }
-
        
+        
         int cols = Batch.tableHeaders.length;
         float[] widths = new float[cols];
         widths[0] = 4.0f;
@@ -77,6 +77,12 @@ public class MixSheetPdf {
             PdfPCell tableCell = new PdfPCell(new Phrase(batchrow.name(), FontFactory.getFont(FontFactory.TIMES_ROMAN, 11, Font.BOLD)));
             tableCell.setHorizontalAlignment(PdfPCell.ALIGN_LEFT);
             table.addCell(tableCell);
+            
+            double density = batchrow.density();
+            String densityAsString = String.format("%.2f", density);
+            PdfPCell tableCell1 = new PdfPCell(new Phrase(densityAsString, FontFactory.getFont(FontFactory.TIMES_ROMAN, 11, Font.NORMAL)));
+            tableCell1.setHorizontalAlignment(PdfPCell.ALIGN_RIGHT);
+            table.addCell(tableCell1);
 
             double percent = batchrow.percent();
             String percentasString = String.format("%.2f", percent);

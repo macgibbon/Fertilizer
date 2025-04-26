@@ -1,9 +1,12 @@
 package fertilizer;
 
+import static fertilizer.Content.convertDouble;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -307,18 +310,25 @@ public class SolutionModel {
 
         double totalScale = 0;
         Model model = Model.getInstance();
+        Map<String, Double> densityMap = model.densityRows.stream()
+                //.skip(1) // skip headers
+                .collect(Collectors.toMap(row -> row.get(0), row -> convertDouble(row.get(1)), (x, y) -> y, LinkedHashMap::new));
         List<Batch> batchList = new ArrayList<>();
+        double averageDensity = 0.0;
         for (int i = 0; i < rows; i++) {
             MixRow mr = sortedMixrows[i];
             String name = mr.name();
+            double density = densityMap.get(name);
             double amount = mr.amount();
             double percent = 100.0 * (amount / solutionTotalAmount);
+            averageDensity += density * percent / 100.0;
             double batchAmount = amount * model.batchWt.get() / solutionTotalAmount;
             totalScale += batchAmount;
-            Batch batch = new Batch(name, percent, batchAmount, totalScale, "");
+            Batch batch = new Batch(name, density, percent, batchAmount, totalScale, "");
             batchList.add(batch);
         }
-        Model.getInstance().batchTableList.setAll(batchList);
+        model.meanDensity.set(averageDensity);
+        model.batchTableList.setAll(batchList);
     }
  
 }

@@ -10,12 +10,12 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fertilizer.MainController">
 	<center>
@@ -47,26 +47,36 @@
                           </rowConstraints>
                            <children>
                               <Label prefHeight="17.0" prefWidth="60.0" text="Contact" />
-                              <Label text="Total Mix Wt." GridPane.rowIndex="1" />
+                              <Label text="Total Mix Wt. (lbs)" GridPane.rowIndex="1" />
                               <TextField fx:id="textFieldWeight" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                               <TextField fx:id="textFieldContact" GridPane.columnIndex="1" />                              
                            </children>
                         </GridPane>
                      </top>
-                     <bottom>
-                        <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                           <children>
-                              <Label minWidth="-Infinity" prefWidth="125.0" text="Notes" />
-                              <TextArea fx:id="notes" prefHeight="100.0" prefWidth="10000.0" />
-                           </children>
-                        </HBox>
-                     </bottom>
                      <center>
                         <TableView fx:id="batchtable" BorderPane.alignment="CENTER">
                            <BorderPane.margin>
                               <Insets bottom="10.0" top="10.0" />
                            </BorderPane.margin></TableView>
                      </center>
+                     <bottom>
+                        <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+                           <children>
+                              <HBox  prefWidth="200.0">
+                                 <children>
+                                    <Label prefHeight="17.0" prefWidth="125.0" text="Mean Density (lb/ft&#x00b3;)" />
+                                    <Label fx:id="meandensitylabel" prefHeight="17.0" prefWidth="116.0" />
+                                 </children>
+                              </HBox>
+                              <HBox prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <Label minWidth="-Infinity" prefWidth="125.0" text="Notes" />
+                                    <TextArea fx:id="notes" prefHeight="100.0" prefWidth="10000.0" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </bottom>
                   </BorderPane>
                </content>
             </Tab>
@@ -85,6 +95,11 @@
 						<TableView fx:id="ingredientstable" />
 					</content>
 				</Tab>
+            <Tab text="Default Densities">
+               <content>
+                  <TableView fx:id="densitiestable" />
+               </content>
+            </Tab>
            
 			</tabs>
 		</TabPane>
