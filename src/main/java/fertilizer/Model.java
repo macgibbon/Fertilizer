@@ -89,7 +89,7 @@ public class Model {
         ingredientRows = readCsvfile("defaultIngredients.csv");
         requirementRows = readCsvfile("defaultRequirements.csv");
         densityRows = readCsvfile("defaultDensities.csv");
-        reportHeaders = readTextFile("header.txt");
+        reportHeaders = readTextFile("header1.txt");
         version.set(loadProperty("version.properties", "application.version"));
     }
 
