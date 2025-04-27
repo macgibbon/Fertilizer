@@ -4,6 +4,8 @@ import static fertilizertests.Util.delDirTree;
 import static fertilizertests.Util.delay;
 import static fertilizertests.Util.reflectiveGetField;
 import static fertilizertests.Util.reflectiveGetMethod;
+import static fertilizertests.Util.setContent;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -44,6 +46,8 @@ import fertilizer.MatrixBuilder;
 import fertilizer.Model;
 import fertilizer.SolutionModel;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
+import javafx.scene.control.SelectionModel;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.KeyCode;
@@ -100,6 +104,9 @@ public class GuiTest extends MainApp {
 
         SolutionModel solution = (SolutionModel) reflectiveGetField(controller, "solution");
         String oldPrice = (String) reflectiveGetField(solution,"solutionPrice");
+        assertTrue(oldPrice.equals("$32.41"));
+        
+        String mean = (String) reflectiveGetField(solution,"solutionPrice");
         assertTrue(oldPrice.equals("$32.41"));
         
         robot.clickOn("Solution");
@@ -319,6 +326,58 @@ public class GuiTest extends MainApp {
         delay(1);
         // solve assert solution changed
     }
+    
+    @Test
+    void testRoundingCornerCase(FxRobot robot) {
+        robot.clickOn("Solution");
+        robot.clickOn("Relationship");
+        robot.push(KeyCode.RIGHT);
+        robot.push(KeyCode.RIGHT);
+        robot.push(KeyCode.SPACE);
+        delay(1);
+        robot.push(KeyCode.SPACE);
+        delay(1);
+        robot.push(KeyCode.DOWN);
+        robot.push(KeyCode.SPACE);
+        robot.push(KeyCode.ENTER);
+        
+        robot.clickOn("Relationship");
+        robot.push(KeyCode.RIGHT);
+        robot.push(KeyCode.RIGHT);
+        robot.push(KeyCode.DOWN);
+        robot.push(KeyCode.SPACE);
+        robot.push(KeyCode.DIGIT2);
+        robot.push(KeyCode.DIGIT1);
+        robot.push(KeyCode.ENTER);
+
+        robot.clickOn("Relationship");
+        robot.push(KeyCode.RIGHT);
+        robot.push(KeyCode.RIGHT);
+        robot.push(KeyCode.RIGHT);
+        robot.push(KeyCode.DOWN);
+        robot.push(KeyCode.SPACE);
+        robot.push(KeyCode.DIGIT0);
+        robot.push(KeyCode.ENTER);
+      
+        delay(1);
+        robot.clickOn("Relationship");
+        robot.push(KeyCode.RIGHT);
+        robot.push(KeyCode.RIGHT);
+        robot.push(KeyCode.RIGHT);
+        robot.push(KeyCode.RIGHT);
+        robot.push(KeyCode.DOWN);
+        robot.push(KeyCode.SPACE);
+        robot.push(KeyCode.DIGIT0);
+        robot.push(KeyCode.ENTER);
+      
+
+
+        delay(1);
+        delay(10);
+        // solve assert solution changed
+    }
+
+   
 
     // tests for code coverage
     @Test
@@ -365,7 +424,9 @@ public class GuiTest extends MainApp {
         robot.push(KeyCode.DIGIT0);
         robot.push(KeyCode.DIGIT0);
         robot.push(KeyCode.ENTER);
-        assertTrue(model.batchWt.get() == 8000.0);        
+        assertTrue(model.batchWt.get() == 8000.0);      
+        
+        assertTrue(model.meanDensity.get()- 62.36 < .001);      
         
         robot.clickOn("Stamford Farmers Cooperative");
         robot.doubleClickOn("Stamford Farmers Cooperative");

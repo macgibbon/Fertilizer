@@ -297,7 +297,7 @@ public class SolutionModel {
         }
     }
     
-    public void calculateBatch() {        
+    public void calculateBatch() {
         String[] ingredientNames = ingredientMap.keySet().stream().toArray(String[]::new);
         double solutionTotalAmount = totalAmount;
         double[] ingredientAmounts = solutionIngredientAmounts;
@@ -306,13 +306,14 @@ public class SolutionModel {
             mixrows.add(new MixRow(ingredientNames[i], ingredientAmounts[i]));
         }
         MixRow[] sortedMixrows = mixrows.stream().filter(mr -> mr.amount() > 0.0).sorted().toArray(MixRow[]::new);
-        int rows = sortedMixrows.length;   
+        int rows = sortedMixrows.length;
 
         double totalScale = 0;
         Model model = Model.getInstance();
         Map<String, Double> densityMap = model.densityRows.stream()
-                //.skip(1) // skip headers
-                .collect(Collectors.toMap(row -> row.get(0), row -> convertDouble(row.get(1)), (x, y) -> y, LinkedHashMap::new));
+                // .skip(1) // skip headers
+               // .collect(Collectors.toMap(row -> row.get(0), row -> convertDouble(row.get(1)), (x, y) -> y, LinkedHashMap::new));
+                .collect(Collectors.toMap(row -> row.get(0), row -> convertDouble(row.get(1))));
         List<Batch> batchList = new ArrayList<>();
         double averageDensity = 0.0;
         for (int i = 0; i < rows; i++) {
@@ -320,12 +321,17 @@ public class SolutionModel {
             String name = mr.name();
             double density = densityMap.get(name);
             double amount = mr.amount();
-            double percent = 100.0 * (amount / solutionTotalAmount);
-            averageDensity += density * percent / 100.0;
-            double batchAmount = amount * model.batchWt.get() / solutionTotalAmount;
-            totalScale += batchAmount;
-            Batch batch = new Batch(name, density, percent, batchAmount, totalScale, "");
-            batchList.add(batch);
+            if (amount >= 0.0095) {
+                double percent = 100.0 * (amount / solutionTotalAmount);
+                averageDensity += density * percent / 100.0;
+                double batchAmount = amount * model.batchWt.get() / solutionTotalAmount;
+                totalScale += batchAmount;
+                Batch batch = new Batch(name, density, percent, batchAmount, totalScale, "");
+                batchList.add(batch);
+            }
+            else {
+                System.out.println("Skipping " + name + " with amount " + amount);
+            }
         }
         model.meanDensity.set(averageDensity);
         model.batchTableList.setAll(batchList);
